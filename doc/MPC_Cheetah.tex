@@ -1,0 +1,147 @@
+\documentclass{article}
+
+\usepackage{amsmath, amsfonts, amsthm} 
+\usepackage{bm}
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{subfigure}
+\usepackage{geometry}
+
+\geometry{
+	paper=a4paper, 
+	top=2.5cm,
+	bottom=2.5cm, 
+	left=2.5cm, 
+	right=3cm,
+	headsep=0.75cm, 
+}
+\title{Cheetah MPC}
+\author{Zhuang Yulun}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Conventions}
+
+
+\begin{tabular}{l l}
+    \hline
+    Notation & \\
+    \hline
+    $ i$ & ith leg\\
+    $_\mathcal B$ &left subscript for body coordinate system\\
+    $[\mathbf x]_\times \in \mathbb R^{3\times 3}$ & skew-symmetric matrix, $[\mathbf x]_\times \mathbf y = \mathbf x \times \mathbf y$\\
+    $\mathbf \Theta = [\phi, \theta, \psi]^T$ & orientation as ZYX Euler angles\\
+    $\mathbf J_i\in \mathbb R^{3\times 3}$ & foot Jacobain\\
+    $\mathbf\Lambda_i\in \mathbb R^{3\times 3}$ &operational space inertia matrix\\
+    $\mathbf K_p, \mathbf K_d\in \mathbb R^{3\times 3}$ &diagonal positive definite pd gain matrices\\
+    \hline
+
+\end{tabular}
+
+\section{State Space Model}
+$$
+\begin{aligned}
+    &\frac{\mathrm d}{\mathrm d t} \hat{\mathbf\Theta}=R_{z}(\psi) \hat{\mathbf\Theta} \\
+    &\frac{\mathrm d}{\mathrm d t} \hat{\mathbf p}=\hat{\dot{\mathbf p}} \\
+    &\frac{\mathrm d}{\mathrm d t} \hat{\mathbf \omega}=\hat{\mathbf I}^{-1} \sum_{i=1}^{n} \mathbf r_{i} \times \mathbf f_{i}=\hat{\mathbf I}^{-1}\left(\left[\mathbf r_{1}\right]_{\times} \mathbf f_{1}+\cdots+\left[\mathbf r_{n}\right]_{\times} \mathbf f_{n}\right) \\
+    &\frac{\mathrm d}{\mathrm d t} \hat{\dot{\mathbf p}}=\frac{\sum_{i=1}^{n} \mathbf f_{i}}{m}-\mathbf g=\frac{\mathbf f_{1}+\cdots+\mathbf f_{n}}{m}-\mathbf g
+\end{aligned}
+$$
+
+\\
+
+$$
+\begin{aligned}
+    \frac{\mathrm{d}}{\mathrm{d} t}\left[
+    \begin{array}{c}
+        \hat{\mathbf\Theta} \\
+        \hat{\mathbf{p}} \\
+        \hat{\mathbf{\omega}} \\
+        \hat{\dot{\mathbf{p}}}\\
+        \mathbf g
+    \end{array}
+    \right]=
+    \left[
+    \begin{array}{lllll}
+        \mathbf{0}_{3} & \mathbf{0}_{3} & \mathbf{R}_{z}(\psi) & \mathbf{0}_{3} & \mathbf 0_{1\times 3}\\
+        \mathbf{0}_{3} & \mathbf{0}_{3} & \mathbf{0}_{3} & \mathbf{I}_{3} & \mathbf 0_{1\times 3}\\
+        \mathbf{0}_{3} & \mathbf{0}_{3} & \mathbf{0}_{3} & \mathbf{0}_{3} & \mathbf 0_{1\times 3}\\
+        \mathbf{0}_{3} & \mathbf{0}_{3} & \mathbf{0}_{3} & \mathbf{0}_{3} & [0\ 0\ 1]^T\\
+        \mathbf{0}_{1\times 3} & \mathbf{0}_{1\times 3} & \mathbf{0}_{1\times 3} & \mathbf{0}_{1\times 3} & 0
+    \end{array}
+    \right]&\left[
+    \begin{array}{c}
+        \hat{\mathbf{\Theta}} \\
+        \hat{\mathbf{p}} \\
+        \hat{\mathbf \omega} \\
+        \hat{\dot{\mathbf{p}}}\\
+        \mathbf g
+    \end{array}\right]\\
+    +\left[
+    \begin{array}{lll}
+        \mathbf{0}_{3} & \cdots & \mathbf{0}_{3} \\
+        \mathbf{0}_{3} & \cdots & \mathbf{0}_{3} \\
+        \hat{\mathbf{I}}^{-1}\left[\mathbf{r}_{1}\right]_{\times} & \cdots & \hat{\mathbf{I}}^{-1}\left[\mathbf{r}_{4}\right]_\times \\
+        \mathbf{I}_{3} / m & \cdots & \mathbf{I}_{3} / m\\
+        \mathbf{0}_{1\times 3}&\cdots&\mathbf{0}_{1\times 3}
+    \end{array}
+    \right]
+    &\left[\begin{array}{c}
+    \mathbf{f}_{1} \\
+    \vdots \\
+    \mathbf{f}_{4}
+    \end{array}\right]
+\end{aligned}
+$$
+
+
+\section{QP Formulation}
+$$
+\begin{aligned}
+    \bm{x_k} &= \mathbf A^k\bm x_0 + \sum_{i=0}^{k-1}\mathbf{A}^{k-1-i}\mathbf B \mathbf u_i\\
+    \left[
+        \begin{array}{c}
+            \bm x_1\\
+            \bm x_2\\
+            \vdots \\
+            \bm x_k
+        \end{array}
+    \right]
+    &=
+    \left[
+        \begin{array}{c}
+            \mathbf A^1\\
+            \mathbf A^2\\
+            \vdots\\
+            \mathbf A^k
+        \end{array}
+    \right]
+    \bm x_0
+    +
+    \left[
+        \begin{array}{ccccc}
+            \bm 0 & & &\cdots & \bm 0\\
+            \mathbf B & \bm 0 && \cdots & \bm 0\\
+            \mathbf{AB} & \mathbf B & \bm 0 & \cdots & \bm 0\\
+            \vdots & & & \ddots & \vdots\\
+            \mathbf{A}^{k-1}\mathbf B & \mathbf{A}^{k-1}\mathbf B & \bm 0 & \cdots & \mathbf B
+        \end{array}
+    \right]
+    \left[
+        \begin{array}{c}
+            \mathbf u_0\\
+            \mathbf u_1\\
+            \vdots\\
+            \mathbf u_{k-1}\\
+        \end{array}
+    \right]
+\end{aligned}
+$$
+
+
+
+\end{document}
