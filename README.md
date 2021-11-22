@@ -1,1 +1,1 @@
-# rl-mpc-locomotion
+# RL MPC Locomotion
