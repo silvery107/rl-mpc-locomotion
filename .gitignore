@@ -132,3 +132,4 @@ dmypy.json
 *.aux
 *.synctex.*
 .tmp.*
+*.gslides
