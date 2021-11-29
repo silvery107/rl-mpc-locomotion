@@ -133,3 +133,4 @@ dmypy.json
 *.synctex.*
 .tmp.*
 *.gslides
+*.drawio
