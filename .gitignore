@@ -132,3 +132,6 @@ dmypy.json
 *.aux
 *.synctex.*
 .vscode/
+.tmp.*
+*.gslides
+*.drawio
