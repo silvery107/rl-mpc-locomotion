@@ -38,7 +38,7 @@ gym.add_ground(sim, plane_params)
 xiaotian = "urdf/Xiaotian-ROS/urdf/xiaotian_description.urdf"
 aliengo = "urdf/aliengo_description/xacro/aliengo.urdf"
 anymal = "urdf/anymal_c/urdf/anymal.urdf"
-asset_root = "../assets"
+asset_root = "home/silvery/isaacgym/assets"
 asset_file = aliengo
 asset_options = gymapi.AssetOptions()
 asset_options.fix_base_link = True
