@@ -15,7 +15,7 @@
 
 ### Static Import
 
-<img src="./images/aliengo_static.png" width=400>
+<img src="../images/aliengo_static.png" width=400>
 
 ### Parallelized Training
 
@@ -23,7 +23,7 @@
 python python/rlgpu/train.py --task=Aliengo
 ```
 
-<img src="./images/aliengo_train.png" width=400>
+<img src="../images/aliengo_train.png" width=400>
 
 
 ## Xiaotian
@@ -36,4 +36,4 @@ python python/rlgpu/train.py --task=Aliengo
 
 ### Static Import
 
-<img src="./images/xiaotian_static.png" width=400>
+<img src="../images/xiaotian_static.png" width=400>
