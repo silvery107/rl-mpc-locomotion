@@ -134,4 +134,5 @@ dmypy.json
 .vscode/
 .tmp.*
 *.gslides
+*.gdoc
 *.ini
