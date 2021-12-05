@@ -133,6 +133,4 @@ dmypy.json
 *.synctex.*
 .vscode/
 .tmp.*
-*.gslides
-*.gdoc
 *.ini
