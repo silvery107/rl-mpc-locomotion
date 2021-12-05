@@ -7,11 +7,11 @@ import interpolation as interp
 class FootSwingTrajectory:
     def __init__(self):
         # vec3 (3,1)
-        self._p0 = np.zeros((3,1))
-        self._pf = np.zeros((3,1))
-        self._p = np.zeros((3,1))
-        self._v = np.zeros((3,1))
-        self._a = np.zeros((3,1))
+        self._p0 = np.zeros((3,1), dtype=np.float32)
+        self._pf = np.zeros((3,1), dtype=np.float32)
+        self._p = np.zeros((3,1), dtype=np.float32)
+        self._v = np.zeros((3,1), dtype=np.float32)
+        self._a = np.zeros((3,1), dtype=np.float32)
         # float or int
         self._height = 0.0
 

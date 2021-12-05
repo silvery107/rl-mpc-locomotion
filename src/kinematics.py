@@ -21,7 +21,7 @@ def computeLegJacobianAndPosition(quad: Quadruped, q, leg: int):
     c23 = c2 * c3 - s2 * s3
     s23 = s2 * c3 + c2 * s3
 
-    J = np.zeros((3,3))
+    J = np.zeros((3,3), dtype=np.double)
     J[0, 0] = 0
     J[0, 1] = l3 * c23 + l2 * c2
     J[0, 2] = l3 * c23
@@ -32,7 +32,7 @@ def computeLegJacobianAndPosition(quad: Quadruped, q, leg: int):
     J[2, 1] = l3 * c1 * s23 + l2 * c1 * s2
     J[2, 2] = l3 * c1 * s23
 
-    p = np.zeros((3,1))
+    p = np.zeros((3,1), dtype=np.double)
     p[0] = l3 * s23 + l2 * s2
     p[1] = (l1+l4) * sideSign * c1 + l3 * (s1 * c23) + l2 * c2 * s1
     p[2] = (l1+l4) * sideSign * s1 - l3 * (c1 * c23) - l2 * c1 * c2

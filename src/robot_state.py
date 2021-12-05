@@ -4,12 +4,12 @@ import quaternion
 class RobotState:
 
     def __init__(self) -> None:
-        self.p = np.zeros((3, 1))
-        self.v = np.zeros((3, 1))
-        self.w = np.zeros((3, 1))
-        self.r_feet = np.zeros((3, 4))
-        self.R = np.zeros((3, 3))
-        self.R_yaw = np.zeros((3, 3))
+        self.p = np.zeros((3, 1), dtype=np.float32)
+        self.v = np.zeros((3, 1), dtype=np.float32)
+        self.w = np.zeros((3, 1), dtype=np.float32)
+        self.r_feet = np.zeros((3, 4), dtype=np.float32)
+        self.R = np.zeros((3, 3), dtype=np.float32)
+        self.R_yaw = np.zeros((3, 3), dtype=np.float32)
         # self.I_body = np.zeros((3, 3))
         self.q = np.quaternion(0, 0, 0, 0)
         self.yaw = 0.0
