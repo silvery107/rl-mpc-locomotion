@@ -89,7 +89,7 @@ for i in range(num_envs):
 #* control DOF
 num_dofs = 12
 
-# pos control
+#* pos control
 props = gym.get_actor_dof_properties(envs[0], actor_handles[0])
 props["driveMode"].fill(gymapi.DOF_MODE_POS)
 props["stiffness"].fill(1000.0)
@@ -98,7 +98,7 @@ gym.set_actor_dof_properties(envs[0], actor_handles[0], props)
 pos_targets = np.zeros(num_dofs).astype(np.float32)
 gym.set_actor_dof_position_targets(envs[0], actor_handles[0], pos_targets)
 
-# vel control
+#* vel control
 props = gym.get_actor_dof_properties(envs[1], actor_handles[1])
 props["driveMode"].fill(gymapi.DOF_MODE_VEL)
 props["stiffness"].fill(0.0)
@@ -107,7 +107,7 @@ gym.set_actor_dof_properties(envs[1], actor_handles[1], props)
 vel_targets = np.random.uniform(-math.pi, math.pi, num_dofs).astype('f')
 gym.set_actor_dof_velocity_targets(envs[1], actor_handles[1], vel_targets)
 
-# force control
+#* force control
 # configure the joints for effort control mode (set only once)
 props = gym.get_actor_dof_properties(envs[2], actor_handles[2])
 props["driveMode"].fill(gymapi.DOF_MODE_EFFORT)
@@ -138,14 +138,14 @@ while not gym.query_viewer_has_closed(viewer):
     gym.step_graphics(sim);
     gym.draw_viewer(viewer, sim, True)
 
-    # #* read force sensors
-    # sensor_data = force_sensors[0].get_forces()
-    # print("Force:")
-    # print(sensor_data.force)   # force as Vec3
-    # print("Torque:")
-    # print(sensor_data.torque)  # torque as Vec3
+    #* read force sensors
+    sensor_data = force_sensors[0].get_forces()
+    print("Force:")
+    print(sensor_data.force)   # force as Vec3
+    print("Torque:")
+    print(sensor_data.torque)  # torque as Vec3
 
-    # #* read joint states
+    #* read joint states
     body_states = gym.get_actor_rigid_body_states(envs[0], actor_handles[0], gymapi.STATE_ALL)
     print("Pose:")
     print(body_states["pose"])

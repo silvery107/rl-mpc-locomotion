@@ -89,7 +89,7 @@ for i in range(num_envs):
 cam_props = gymapi.CameraProperties()
 viewer = gym.create_viewer(sim, cam_props)
 # Look at the first env
-cam_pos = gymapi.Vec3(1.5, 1, 3)
+cam_pos = gymapi.Vec3(1.5, 1, 1)
 cam_target = gymapi.Vec3(0, 1, 1)
 gym.viewer_camera_look_at(viewer, envs[1], cam_pos, cam_target)
 
@@ -99,7 +99,7 @@ Ah = 40
 Ak = 80
 t = 0
 
-leg_const = 20
+leg_const = 26
 FL_hip_pos = 0
 FL_thigh_pos = 0+leg_const
 FL_calf_pos = 0+leg_const
@@ -112,6 +112,14 @@ RL_calf_pos = 0+leg_const
 RR_hip_pos = 0
 RR_thigh_pos = 0+leg_const
 RR_calf_pos = 0+leg_const
+
+for idx in range(num_envs):
+    props = gym.get_actor_dof_properties(envs[idx], actor_handles[idx])
+    props["driveMode"].fill(gymapi.DOF_MODE_POS)
+    props["stiffness"].fill(1000.0)
+    props["damping"].fill(100.0)
+    gym.set_actor_dof_properties(envs[idx], actor_handles[idx], props)
+
 # basic simulation loop
 while not gym.query_viewer_has_closed(viewer):
 
@@ -122,6 +130,7 @@ while not gym.query_viewer_has_closed(viewer):
     # update the viewer
     gym.step_graphics(sim);
     gym.draw_viewer(viewer, sim, True)
+
     # trot control
     t = gym.get_sim_time(sim) # /1000 
     # hip -> 0
@@ -143,18 +152,12 @@ while not gym.query_viewer_has_closed(viewer):
         RR_calf_pos = Ak *np.sin(2 *np.pi / T * t -np.pi) +leg_const
 
     # pos control
-    num_dofs = 12
     for idx in range(num_envs):
-        props = gym.get_actor_dof_properties(envs[idx], actor_handles[idx])
-        props["driveMode"].fill(gymapi.DOF_MODE_POS)
-        props["stiffness"].fill(1000.0)
-        props["damping"].fill(200.0)
-        gym.set_actor_dof_properties(envs[idx], actor_handles[idx], props)
         pos_targets = np.deg2rad(
             np.array([FL_hip_pos, FL_thigh_pos, FL_calf_pos,
-                FR_hip_pos,FR_thigh_pos,FR_calf_pos,
-                RL_hip_pos,RL_thigh_pos,RL_calf_pos,
-                RR_hip_pos,RR_thigh_pos,RR_calf_pos], dtype=np.float32))
+                      FR_hip_pos, FR_thigh_pos, FR_calf_pos,
+                      RL_hip_pos, RL_thigh_pos, RL_calf_pos,
+                      RR_hip_pos, RR_thigh_pos, RR_calf_pos], dtype=np.float32))
         gym.set_actor_dof_position_targets(envs[idx], actor_handles[idx], pos_targets)
 
     # Wait for dt to elapse in real time.
