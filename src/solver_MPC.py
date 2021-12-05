@@ -77,7 +77,6 @@ class SolverMPC():
         self.A_ct = np.zeros((13,13), dtype=DTYPE)
         self.B_ct_r = np.zeros((13,12), dtype=DTYPE)
 
-
     # continuous time state space matrices.  
     def ct_ss_mats(self, m:float, r_feet, R_yaw, x_drag:float):
         self.A_ct[3,9] = 1.0
@@ -164,3 +163,4 @@ class SolverMPC():
         qg = 2*self.B_qp.T*self.S*(self.A_qp*self.x_0 - self.X_d)
         
         # TODO solve this QP using cvxopt
+        

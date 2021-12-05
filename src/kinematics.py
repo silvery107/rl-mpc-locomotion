@@ -4,6 +4,9 @@ from quadruped import*
 # q = np.zeros((3,1))
 
 def computeLegJacobianAndPosition(quad: Quadruped, q, leg: int):
+    """
+    return J and p
+    """
     l1 = quad._abadLinkLength
     l2 = quad._hipLinkLength
     l3 = quad._kneeLinkLength
