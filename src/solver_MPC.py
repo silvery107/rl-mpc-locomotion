@@ -8,10 +8,11 @@ K_MAX_GAIT_SEGMENTS = 36
 BIG_NUMBER = 5e10
 
 class ProblemSetup:
-    dt = 0.0
-    mu = 0.0
-    f_max = 0.0
-    horizon = 0
+    def __init__(self, dt:float, horizon:int, mu:float, fmax:float):
+        self.dt = dt
+        self.mu = mu
+        self.f_max = fmax
+        self.horizon = horizon
 
 class UpdateData:
     p = [0.0 for _ in range(3)]
@@ -51,6 +52,8 @@ def quat_to_rpy(q, rpy):
     rpy[1] = np.asin(as_)
     rpy[2] = np.atan2(2.*(q.y*q.z+q.w*q.x),q.w*q.w - q.x*q.x - q.y*q.y + q.z*q.z)
 
+def setup_problem(dt, horizon, mu, fmax):
+    return ProblemSetup (dt, horizon, mu, fmax)
 
 class SolverMPC():
 
