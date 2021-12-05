@@ -41,7 +41,7 @@ anymal = "urdf/anymal_c/urdf/anymal.urdf"
 asset_root = "/home/silvery/isaacgym/assets"
 asset_file = aliengo
 asset_options = gymapi.AssetOptions()
-asset_options.fix_base_link = True
+asset_options.fix_base_link = False
 asset_options.use_mesh_materials = True
 asset_options.flip_visual_attachments = False if asset_file==xiaotian else True
 asset_options.armature = 0.01   # added to the diagonal elements of inertia tensors
@@ -71,7 +71,7 @@ for i in range(num_envs):
     env = gym.create_env(sim, env_lower, env_upper, envs_per_row)
     envs.append(env)
 
-    height = 0.2
+    height = 0.45
     pose = gymapi.Transform()
     pose.p = gymapi.Vec3(0.0, 0.0, height)
     # pose.r = gymapi.Quat(-0.707107, 0.0, 0.0, 0.707107) # rotate -90deg about x
@@ -85,47 +85,40 @@ for i in range(num_envs):
 
     actor_handles.append(actor_handle)
 
-######################################################################
-#* control DOF
-num_dofs = 12
-
-#* pos control
-props = gym.get_actor_dof_properties(envs[0], actor_handles[0])
-props["driveMode"].fill(gymapi.DOF_MODE_POS)
-props["stiffness"].fill(1000.0)
-props["damping"].fill(200.0)
-gym.set_actor_dof_properties(envs[0], actor_handles[0], props)
-pos_targets = np.zeros(num_dofs).astype(np.float32)
-gym.set_actor_dof_position_targets(envs[0], actor_handles[0], pos_targets)
-
-#* vel control
-props = gym.get_actor_dof_properties(envs[1], actor_handles[1])
-props["driveMode"].fill(gymapi.DOF_MODE_VEL)
-props["stiffness"].fill(0.0)
-props["damping"].fill(600.0)
-gym.set_actor_dof_properties(envs[1], actor_handles[1], props)
-vel_targets = np.random.uniform(-math.pi, math.pi, num_dofs).astype('f')
-gym.set_actor_dof_velocity_targets(envs[1], actor_handles[1], vel_targets)
-
-#* force control
-# configure the joints for effort control mode (set only once)
-props = gym.get_actor_dof_properties(envs[2], actor_handles[2])
-props["driveMode"].fill(gymapi.DOF_MODE_EFFORT)
-props["stiffness"].fill(0.0)
-props["damping"].fill(0.0)
-gym.set_actor_dof_properties(envs[2], actor_handles[2], props)
-#* apply efforts (every frame)
-efforts = np.full(num_dofs, 100.0).astype(np.float32)
-gym.apply_actor_dof_efforts(envs[2], actor_handles[2], efforts)
-######################################################################
-
 # add viewer
 cam_props = gymapi.CameraProperties()
 viewer = gym.create_viewer(sim, cam_props)
 # Look at the first env
-cam_pos = gymapi.Vec3(1.5, 1, 3)
+cam_pos = gymapi.Vec3(1.5, 1, 1)
 cam_target = gymapi.Vec3(0, 1, 1)
 gym.viewer_camera_look_at(viewer, envs[1], cam_pos, cam_target)
+
+
+T = 0.2
+Ah = 40
+Ak = 80
+t = 0
+
+leg_const = 26
+FL_hip_pos = 0
+FL_thigh_pos = 0+leg_const
+FL_calf_pos = 0+leg_const
+FR_hip_pos = 0
+FR_thigh_pos = 0+leg_const
+FR_calf_pos = 0+leg_const
+RL_hip_pos = 0
+RL_thigh_pos = 0+leg_const
+RL_calf_pos = 0+leg_const
+RR_hip_pos = 0
+RR_thigh_pos = 0+leg_const
+RR_calf_pos = 0+leg_const
+
+for idx in range(num_envs):
+    props = gym.get_actor_dof_properties(envs[idx], actor_handles[idx])
+    props["driveMode"].fill(gymapi.DOF_MODE_POS)
+    props["stiffness"].fill(1000.0)
+    props["damping"].fill(100.0)
+    gym.set_actor_dof_properties(envs[idx], actor_handles[idx], props)
 
 # basic simulation loop
 while not gym.query_viewer_has_closed(viewer):
@@ -138,19 +131,34 @@ while not gym.query_viewer_has_closed(viewer):
     gym.step_graphics(sim);
     gym.draw_viewer(viewer, sim, True)
 
-    #* read force sensors
-    sensor_data = force_sensors[0].get_forces()
-    print("Force:")
-    print(sensor_data.force)   # force as Vec3
-    print("Torque:")
-    print(sensor_data.torque)  # torque as Vec3
+    # trot control
+    t = gym.get_sim_time(sim) # /1000 
+    # hip -> 0
+    # thigh -> hip
+    # calf -> knee
+    hip_pos = 10
+    FL_hip_pos = hip_pos
+    FR_hip_pos = -hip_pos
+    RL_hip_pos = hip_pos
+    RR_hip_pos = -hip_pos
+    if(t>1):
+        FL_thigh_pos = Ah *np.sin(2 *np.pi / T * t +np.pi / 2) +leg_const
+        FL_calf_pos = Ak *np.sin(2 *np.pi / T * t -np.pi)+leg_const
+        FR_thigh_pos = Ah *np.sin(2 *np.pi / T * t -np.pi / 2)+leg_const
+        FR_calf_pos = Ak *np.sin(2 *np.pi / T * t +np.pi) +leg_const
+        RL_thigh_pos =  Ah *np.sin(2 *np.pi / T * t -np.pi / 2)+leg_const
+        RL_calf_pos = Ak *np.sin(2 *np.pi / T * t +np.pi) +leg_const
+        RR_thigh_pos =  Ah *np.sin(2 *np.pi / T * t +np.pi / 2)+leg_const
+        RR_calf_pos = Ak *np.sin(2 *np.pi / T * t -np.pi) +leg_const
 
-    #* read joint states
-    body_states = gym.get_actor_rigid_body_states(envs[0], actor_handles[0], gymapi.STATE_ALL)
-    print("Pose:")
-    print(body_states["pose"])
-    print("Vel:")
-    print(body_states["vel"])
+    # pos control
+    for idx in range(num_envs):
+        pos_targets = np.deg2rad(
+            np.array([FL_hip_pos, FL_thigh_pos, FL_calf_pos,
+                      FR_hip_pos, FR_thigh_pos, FR_calf_pos,
+                      RL_hip_pos, RL_thigh_pos, RL_calf_pos,
+                      RR_hip_pos, RR_thigh_pos, RR_calf_pos], dtype=np.float32))
+        gym.set_actor_dof_position_targets(envs[idx], actor_handles[idx], pos_targets)
 
     # Wait for dt to elapse in real time.
     # This synchronizes the physics simulation with the rendering rate.
