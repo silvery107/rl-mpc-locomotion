@@ -1,9 +1,10 @@
 from isaacgym import gymapi
 import numpy as np
 import math
+from quadruped import Quadruped
 from kinematics import computeLegJacobianAndPosition
 
-
+quad = Quadruped()
 
 if __name__ == "__main__":
     from util_isaac import *
@@ -43,11 +44,27 @@ if __name__ == "__main__":
         gym.step_graphics(sim);
         gym.draw_viewer(viewer, sim, True)
 
+        t = gym.get_sim_time(sim)
+        if t>1:
+            # read joint states
+            body_states = gym.get_actor_dof_states(envs[0], actor_handles[0], gymapi.STATE_POS)
+            ps = []
+            for idx in range(4):
+                q = np.asarray(body_states["pos"][3*idx:3*idx+3], dtype=np.float32)
+                J, p = computeLegJacobianAndPosition(quad, q, idx)
+                ps.append(p)
+            pos_targets = np.asarray(ps).reshape(-1).astype(np.float32)
+            gym.set_actor_dof_position_targets(envs[0], actor_handles[0], pos_targets)
+        # print("Pose:")
+        # print(body_states["pose"])
+        # print("Vel:")
+        # print(body_states["vel"])
+
         # pos control
-        for idx in range(num_envs):
-            num_dofs = 12
-            pos_targets = np.zeros(num_dofs).astype(np.float32)
-            gym.set_actor_dof_position_targets(envs[idx], actor_handles[idx], pos_targets)
+        # for idx in range(num_envs):
+        #     num_dofs = 12
+        #     pos_targets = np.zeros(num_dofs).astype(np.float32)
+        #     gym.set_actor_dof_position_targets(envs[idx], actor_handles[idx], pos_targets)
 
         # Wait for dt to elapse in real time.
         # This synchronizes the physics simulation with the rendering rate.

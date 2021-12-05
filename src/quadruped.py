@@ -20,10 +20,11 @@ class Quadruped:
     HL_abd = 1  # Hind Left Abduction
     
     def __init__(self) -> None:
-        self._abadLinkLength = 0
-        self._hipLinkLength = 0
-        self._kneeLinkLength = 0
-        self._kneeLinkY_offset = 0
+        # mini cheetah
+        self._abadLinkLength = 0.062
+        self._hipLinkLength = 0.209
+        self._kneeLinkLength = 0.195
+        self._kneeLinkY_offset = 0.004
 
     def getSideSign(self, leg):
         sideSigns= [-1, 1, -1, 1]
