@@ -1,6 +1,7 @@
 import numpy as np
 import quaternion
 
+# ! update I_body val
 class RobotState:
 
     def __init__(self) -> None:
@@ -10,7 +11,7 @@ class RobotState:
         self.r_feet = np.zeros((3, 4), dtype=np.float32)
         self.R = np.zeros((3, 3), dtype=np.float32)
         self.R_yaw = np.zeros((3, 3), dtype=np.float32)
-        # self.I_body = np.zeros((3, 3))
+        self.I_body = np.zeros((3, 3))
         self.q = np.quaternion(0, 0, 0, 0)
         self.yaw = 0.0
         self.m = 9.0
@@ -35,7 +36,8 @@ class RobotState:
         self.R_yaw = np.array([[yc,  -ys,   0],
                                [ys,  yc,   0],
                                [0,   0,   1]])
-        # np.fill_diagonal(self.I_body, [0.07, 0.26, 0.242])
+        # ! update I_body
+        np.fill_diagonal(self.I_body, [0.07, 0.26, 0.242])
 
 
     def printState(self):
