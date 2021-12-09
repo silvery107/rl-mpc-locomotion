@@ -1,0 +1,118 @@
+from abc import abstractmethod
+import numpy as np
+
+class Gait:
+
+    def __init__(self):
+        self.__name = ""
+    @abstractmethod
+    def getContactState(self):
+        pass
+    @abstractmethod
+    def getSwingState(self):
+        pass
+    @abstractmethod
+    def getMpcTable(self):
+        pass
+    @abstractmethod
+    def setIterations(self, iterationsPerMPC:int, currentIteration:int):
+        pass
+    @abstractmethod
+    def getCurrentStanceTime(self, dtMPC:float, leg:int):
+        pass
+    @abstractmethod
+    def getCurrentSwingTime(self, dtMPC:float, leg:int):
+        pass
+    @abstractmethod
+    def getCurrentGaitPhase(self):
+        pass
+
+class OffsetDurationGait(Gait):
+    """
+    trotting, bounding, pronking
+    jumping, galloping, standing
+    trotRunning, walking, walking2
+    pacing
+    """
+    def __init__(self, nSegment:int, offset, durations, name:str):
+        super().__init__()
+        # offset in mpc segments
+        self.__offsets = offset
+        # duration of step in mpc segments
+        self.__durations = durations
+        # offsets in phase (0 to 1)
+        self.__offsetsFloat = offset/float(nSegment)
+        # durations in phase (0 to 1)
+        self.__durationsFloat = durations/float(nSegment)
+        self.__nIterations = nSegment
+        self.__name = name
+        self.__stance = durations[0]
+        self.__swing = nSegment-durations[0]
+        self.__mpc_table = [0 for _ in range(nSegment*4)]
+
+    def setIterations(self, iterationsPerMPC: int, currentIteration: int):
+        self.__iteration = (currentIteration / iterationsPerMPC) % self.__nIterations
+        self.__phase = (float)(currentIteration % (iterationsPerMPC * self.__nIterations)) / (float) (iterationsPerMPC * self.__nIterations)
+
+    def getContactState(self):
+        progress = self.__phase - self.__offsetsFloat
+
+        for i in range(4):
+            if progress[i] < 0:
+             progress[i] += 1.0
+            if progress[i] > self.__durationsFloat[i]:
+                progress[i] = 0.0
+            else:
+                progress[i] = progress[i] / self.__durationsFloat[i]
+            
+        
+        # print("contact state: %.3f %.3f %.3f %.3f\n"%(progress[0], progress[1], progress[2], progress[3]))
+        return progress
+
+    def getSwingState(self):
+        swing_offset = self.__offsetsFloat + self.__durationsFloat
+        for i in range(4):
+            if swing_offset[i] > 1:
+                swing_offset[i] -= 1.0
+        swing_duration = 1.0 - self.__durationsFloat
+
+        progress = self.__phase - swing_offset
+
+        for i in range(4):
+            if progress[i] < 0:
+                progress[i] += 1.0
+
+            if progress[i] > swing_duration[i]:
+                progress[i] = 0.0
+            else:
+                progress[i] = progress[i] / swing_duration[i]
+
+        # print("swing state: %.3f %.3f %.3f %.3f\n"%(progress[0], progress[1], progress[2], progress[3]))
+        return progress
+
+    def getMpcTable(self):
+        # print("MPC table:\n")
+        for i in range(self.__nIterations):
+    
+            iter = (i + self.__iteration + 1) % self.__nIterations
+            progress = iter - self.__offsets
+            for j in range(4):
+                if progress[j] < 0:
+                    progress[j] += self.__nIterations
+                if progress[j] < self.__durations[j]:
+                    self.__mpc_table[i*4 + j] = 1
+                else:
+                    self.__mpc_table[i*4 + j] = 0
+            # print("%d "% _mpc_table[i*4 + j])
+            # print("\n")
+        
+        return self.__mpc_table
+
+    def getCurrentGaitPhase(self):
+        return self.__iteration
+
+    def getCurrentSwingTime(self, dtMPC: float, leg: int):
+        return dtMPC*self.__swing
+
+    def getCurrentStanceTime(self, dtMPC: float, leg: int):
+        return dtMPC*self.__stance
