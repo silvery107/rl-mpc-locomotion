@@ -53,6 +53,8 @@ if __name__ == "__main__":
                 q = np.asarray(body_states["pos"][3*idx:3*idx+3], dtype=np.float32)
                 J, p = computeLegJacobianAndPosition(quad, q, idx)
                 ps.append(p)
+
+            # ! pos targets 有问题 p 是足端笛卡尔坐标
             pos_targets = np.asarray(ps).reshape(-1).astype(np.float32)
             gym.set_actor_dof_position_targets(envs[0], actor_handles[0], pos_targets)
         # print("Pose:")

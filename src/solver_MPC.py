@@ -2,36 +2,32 @@ import numpy as np
 import quaternion
 import cvxopt
 from robot_state import RobotState
+from convexMPC_interface import ProblemSetup, UpdateData
 
 DTYPE = np.float32
-K_MAX_GAIT_SEGMENTS = 36
 BIG_NUMBER = 5e10
 
-class ProblemSetup:
-    def __init__(self, dt:float, horizon:int, mu:float, fmax:float):
-        self.dt = dt
-        self.mu = mu
-        self.f_max = fmax
-        self.horizon = horizon
+rs = RobotState()
+Adt = np.zeros((13,13), dtype=DTYPE)
+Bdt = np.zeros((13,12), dtype=DTYPE)
+ABc = np.zeros((25,25), dtype=DTYPE)
+expmm = np.zeros((25,25), dtype=DTYPE)
+x_0 = np.zeros((13,1), dtype=DTYPE)
+I_world = np.zeros((3,3), dtype=DTYPE)
+A_ct = np.zeros((13,13), dtype=DTYPE)
+B_ct_r = np.zeros((13,12), dtype=DTYPE)
 
-class UpdateData:
-    p = [0.0 for _ in range(3)]
-    v = [0.0 for _ in range(3)]
-    q = [0.0 for _ in range(4)]
-    w = [0.0 for _ in range(3)]
-    r = [0.0 for _ in range(12)]
-    weights = [0.0 for _ in range(12)]
-    traj = [0.0 for _ in range(12*K_MAX_GAIT_SEGMENTS)]
-    traj = ""
-    gait = ""
-    yaw = 0.0
-    alpha = 0.0
-    rho = 0.0
-    sigma = 0.0
-    solver_alpha = 0.0
-    terminate = 0.0
-    x_drag = 0.0
-    max_iterations = 0
+A_qp = np.empty([])
+B_qp = np.empty([])
+S = np.empty([])
+X_d = np.empty([])
+U_b = np.empty([])
+fmat = np.empty([])
+qH = np.empty([])
+qg = np.empty([])
+eye_12h = np.empty([])
+
+q_soln = 0.0
 
 def near_zero(a:float):
     return (a < 0.01 and a > -.01)
@@ -52,118 +48,111 @@ def quat_to_rpy(q, rpy):
     rpy[1] = np.asin(as_)
     rpy[2] = np.atan2(2.*(q.y*q.z+q.w*q.x),q.w*q.w - q.x*q.x - q.y*q.y + q.z*q.z)
 
-def setup_problem(dt, horizon, mu, fmax):
-    return ProblemSetup (dt, horizon, mu, fmax)
+# continuous time state space matrices.  
+def ct_ss_mats(I_world, m:float, r_feet, R_yaw, A, B, x_drag:float):
+    A.fill(0)
+    A[3,9] = 1.0
+    A[11,9] = x_drag
+    A[4,10] = 1.0
+    A[5,11] = 1.0
 
-class SolverMPC():
+    A[11,12] = 1.0
+    A[0:3, 6:9] = R_yaw.T
 
-    def __init__(self, setup:ProblemSetup):
-        self.setup = setup
-        self.rs = RobotState()
-        horizon = setup.horizon
-        DTYPE = np.float32
-        self.A_qp = np.zeros((13*horizon, 13), dtype=DTYPE)
-        self.B_qp = np.zeros((13*horizon, 12*horizon), dtype=DTYPE)
-        self.S = np.zeros((13*horizon, 13*horizon), dtype=DTYPE)
-        self.X_d = np.zeros((13*horizon, 1), dtype=DTYPE)
-        self.U_b = np.zeros((20*horizon, 1), dtype=DTYPE)
-        self.fmat = np.zeros((20*horizon, 12*horizon), dtype=DTYPE)
-        self.qH = np.zeros((12*horizon, 12*horizon), dtype=DTYPE)
-        self.qg = np.zeros((12*horizon, 1), dtype=DTYPE)
-        self.eye_12h = np.identity(12*horizon, dtype=DTYPE)
-        self.Adt = np.zeros((13,13), dtype=DTYPE)
-        self.Bdt = np.zeros((13,12), dtype=DTYPE)
-        self.ABc = np.zeros((25,25), dtype=DTYPE)
-        self.expmm = np.zeros((25,25), dtype=DTYPE)
-        self.x_0 = np.zeros((13,1), dtype=DTYPE)
-        self.I_world = np.zeros((3,3), dtype=DTYPE)
-        self.A_ct = np.zeros((13,13), dtype=DTYPE)
-        self.B_ct_r = np.zeros((13,12), dtype=DTYPE)
+    B.fill(0)
+    I_inv = np.linalg.inv(I_world)
 
-    # continuous time state space matrices.  
-    def ct_ss_mats(self, m:float, r_feet, R_yaw, x_drag:float):
-        self.A_ct[3,9] = 1.0
-        self.A_ct[11,9] = x_drag
-        self.A_ct[4,10] = 1.0
-        self.A_ct[5,11] = 1.0
+    for b in range(4):
+        B[6:9, b*3:b*3+3] = cross_mat(I_inv,r_feet[:, b])
+        B[9:12, b*3:b*3+3] = np.identity(3) / m
 
-        self.A_ct[11,12] = 1.0
-        self.A_ct[0:3, 6:9] = R_yaw.T
+def resize_qp_mats(horizon):
+    global A_qp, B_qp, S, X_d, U_b, fmat, qH, qg, eye_12h
+    A_qp = np.zeros((13*horizon, 13), dtype=DTYPE)
+    B_qp = np.zeros((13*horizon, 12*horizon), dtype=DTYPE)
+    S = np.zeros((13*horizon, 13*horizon), dtype=DTYPE)
+    X_d = np.zeros((13*horizon, 1), dtype=DTYPE)
+    U_b = np.zeros((20*horizon, 1), dtype=DTYPE)
+    fmat = np.zeros((20*horizon, 12*horizon), dtype=DTYPE)
+    qH = np.zeros((12*horizon, 12*horizon), dtype=DTYPE)
+    qg = np.zeros((12*horizon, 1), dtype=DTYPE)
+    eye_12h = np.identity(12*horizon, dtype=DTYPE)
 
-        I_inv = np.linalg.inv(self.I_world)
+def c2qp(Ac, Bc, dt:float, horizon:int):
+    global ABc
+    ABc.fill(0)
+    ABc[0:13,0:13] = Ac
+    ABc[0:13,13:25] = Bc
+    ABc = dt * ABc
+    expmm = np.exp(ABc)
+    Adt = expmm[0:13,0:13]
+    Bdt = expmm[0:13,13:25]
+    if horizon > 19:
+        raise "horizon is too long!"
 
-        for b in range(4):
-            self.B_ct_r[6:9, b*3:b*3+3] = cross_mat(I_inv,r_feet[:, b])
-            self.B_ct_r[9:12, b*3:b*3+3] = np.identity(3) / m
+    powerMats = [np.zeros((13,13), dtype=DTYPE) for _ in range(20)]
+    powerMats[0] = np.identity(13, dtype=DTYPE)
+    for i in range(1, horizon+1):
+        powerMats[i] = Adt * powerMats[i-1]
+    
+    for r in range(horizon):
+        A_qp[13*r:13*r+13, 0:13] = powerMats[r+1]
+        for c in range(horizon):
+            if r>=c:
+                a_num = r-c
+                B_qp[13*r:13*r+13, 12*c:12*c+12] = powerMats[a_num] * Bdt
 
-    def c2qp(self, dt:float,horizon:int):
-        self.ABc[0:13,0:13] = self.A_ct
-        self.ABc[0:13,13:25] = self.B_ct_r
-        ABc = dt * self.ABc
-        expmm = ABc.exp()
-        Adt = expmm[0:13,0:13]
-        Bdt = expmm[0:13,13:25]
-        if horizon > 19:
-            raise "horizon is too long!"
+def solve_mpc(update:UpdateData, setup:ProblemSetup):
+    global A_qp, B_qp, S, X_d, U_b, fmat, qH, qg, eye_12h
+    global rs, x_0, I_world, A_ct, B_ct_r, q_soln
+    rs.set(update.p, update.v, update.q, update.w, update.r, update.yaw)
 
-        powerMats = [np.zeros((13,13), dtype=DTYPE) for x in range(20)]
-        powerMats[0] = np.identity(13, dtype=DTYPE)
-        for i in range(1, horizon+1):
-            powerMats[i] = Adt * powerMats[i-1]
-        
-        for r in range(horizon):
-            self.A_qp[13*r:13*r+13, 0:13] = powerMats[r+1]
-            for c in range(horizon):
-                if r>=c:
-                    a_num = r-c
-                    self.B_qp[13*r:13*r+13, 12*c:12*c+12] = powerMats[a_num] * Bdt
+    # roll pitch yaw
+    rpy = np.zeros((3,1), dtype=DTYPE)
+    quat_to_rpy(rs.q, rpy)
 
-    def solve_mpc(self, update:UpdateData, setup:ProblemSetup):
-        self.rs.set(update.p, update.v, update.q, update.w, update.r, update.yaw)
+    # initial state (13 state representation)
+    x_0 = np.array([rpy[2], rpy[1], rpy[0], rs.p, rs.w, rs.v, -9.81])
+    I_world = rs.R_yaw*rs.I_body*rs.R_yaw.T
+    # state space models
+    ct_ss_mats(I_world, rs.m, rs.r_feet,rs.R_yaw,A_ct, B_ct_r, update.x_drag)
+    # QP matrices
+    c2qp(A_ct, B_ct_r, setup.dt, setup.horizon)
 
-        # roll pitch yaw
-        rpy = np.zeros((3,1), dtype=DTYPE)
-        quat_to_rpy(self.rs.q, rpy)
+    full_weight = np.asarray(update.weights, dtype=DTYPE)
+    full_weight[12] = 0.0
+    np.fill_diagonal(S, np.tile(full_weight,(setup.horizon,1)))
 
-        # initial state (13 state representation)
-        self.x_0 = np.array([rpy[2], rpy[1], rpy[0], self.rs.p, self.rs.w, self.rs.v, -9.81])
-        self.I_world = self.rs.R_yaw*self.rs.I_body*self.rs.R_yaw.T
-        # state space models
-        self.ct_ss_mats(self.rs.m,self.rs.r_feet,self.rs.R_yaw,update.x_drag)
-        # QP matrices
-        self.c2qp(setup.dt,setup.horizon)
+    # trajectory
+    for i in range(setup.horizon):
+        for j in range(12):
+            X_d[13*i+j,0] = update.traj[12*i+j]
+    
+    k = 0
+    for i in range(setup.horizon):
+        for j in range(4):
+            U_b[5*k + 0] = BIG_NUMBER
+            U_b[5*k + 1] = BIG_NUMBER
+            U_b[5*k + 2] = BIG_NUMBER
+            U_b[5*k + 3] = BIG_NUMBER
+            U_b[5*k + 4] = update.gait[i*4 + j] * setup.f_max
+            k += 1
 
-        full_weight = np.asarray(update.weights, dtype=DTYPE)
-        full_weight[12] = 0.0
-        np.fill_diagonal(self.S, np.tile(full_weight,(setup.horizon,1)))
+    mu = 1.0/setup.mu
+    f_block = np.array([[mu, 0,  1.0,
+                        -mu, 0,  1.0,
+                        0,  mu, 1.0,
+                        0, -mu, 1.0,
+                        0,   0, 1.0]], 
+                        dtype=DTYPE)
+    for i in range(setup.horizon*4):
+        fmat[i*5:i*5+5, i*3:i*3+3] = f_block
 
-        # trajectory
-        for i in range(setup.horizon):
-            for j in range(12):
-                self.X_d[13*i+j,0] = update.traj[12*i+j]
-        
-        k = 0
-        for i in range(setup.horizon):
-            for j in range(4):
-                self.U_b[5*k + 0] = BIG_NUMBER
-                self.U_b[5*k + 1] = BIG_NUMBER
-                self.U_b[5*k + 2] = BIG_NUMBER
-                self.U_b[5*k + 3] = BIG_NUMBER
-                self.U_b[5*k + 4] = update.gait[i*4 + j] * setup.f_max
-                k += 1
+    qH = 2*(B_qp.T*S*B_qp + update.alpha*eye_12h)
+    qg = 2*B_qp.T*S*(A_qp*x_0 - X_d)
+    
+    # TODO solve this QP using cvxopt
+    q_soln = cvxopt.solvers.qp(qH, qg, fmat, U_b, solver=None) # "mosek"
 
-        mu = 1.0/setup.mu
-        f_block = np.array([[mu, 0,  1.0,
-                            -mu, 0,  1.0,
-                            0,  mu, 1.0,
-                            0, -mu, 1.0,
-                            0,   0, 1.0]], 
-                            dtype=DTYPE)
-        for i in range(setup.horizon*4):
-            self.fmat[i*5:i*5+5, i*3:i*3+3] = f_block
-
-        qH = 2*(self.B_qp.T*self.S*self.B_qp + update.alpha*self.eye_12h)
-        qg = 2*self.B_qp.T*self.S*(self.A_qp*self.x_0 - self.X_d)
-        
-        # TODO solve this QP using cvxopt
-        
+def get_q_soln():
+    return q_soln
