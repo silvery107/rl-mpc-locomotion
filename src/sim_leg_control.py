@@ -57,16 +57,6 @@ if __name__ == "__main__":
             # ! pos targets 有问题 p 是足端笛卡尔坐标
             pos_targets = np.asarray(ps).reshape(-1).astype(np.float32)
             gym.set_actor_dof_position_targets(envs[0], actor_handles[0], pos_targets)
-        # print("Pose:")
-        # print(body_states["pose"])
-        # print("Vel:")
-        # print(body_states["vel"])
-
-        # pos control
-        # for idx in range(num_envs):
-        #     num_dofs = 12
-        #     pos_targets = np.zeros(num_dofs).astype(np.float32)
-        #     gym.set_actor_dof_position_targets(envs[idx], actor_handles[idx], pos_targets)
 
         # Wait for dt to elapse in real time.
         # This synchronizes the physics simulation with the rendering rate.
