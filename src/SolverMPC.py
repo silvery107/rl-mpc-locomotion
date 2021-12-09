@@ -1,7 +1,7 @@
 import numpy as np
 import quaternion
 import cvxopt
-from robot_state import RobotState
+from RobotState import RobotState
 from convexMPC_interface import ProblemSetup, UpdateData
 
 DTYPE = np.float32

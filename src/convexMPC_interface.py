@@ -1,7 +1,7 @@
 import numpy as np
 from numpy.core.fromnumeric import resize
 
-from solver_MPC import *
+from SolverMPC import *
 
 
 K_NUM_LEGS = 4

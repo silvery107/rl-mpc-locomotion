@@ -2,7 +2,7 @@
 # phase : How far along we are in the swing (0 to 1)
 # swingTime : How long the swing should take (seconds)
 import numpy as np
-import interpolation as interp
+import Interpolation as interp
 
 class FootSwingTrajectory:
     def __init__(self):

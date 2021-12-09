@@ -1,8 +1,8 @@
 from isaacgym import gymapi
 import numpy as np
 import math
-from quadruped import Quadruped
-from kinematics import computeLegJacobianAndPosition
+from Quadruped import Quadruped
+from LegController import computeLegJacobianAndPosition
 
 quad = Quadruped()
 
