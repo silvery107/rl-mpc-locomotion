@@ -1,6 +1,7 @@
 import numpy as np
-from Quadruped import*
+from Quadruped import Quadruped, RobotType
 from SolverMPC import DTYPE
+
 
 # q = np.zeros((3,1))
 DTYPE = np.float64
@@ -41,9 +42,12 @@ class LegControllerData:
 
 class LegController:
 
-    def __init__(self, quad: Quadruped):
+    def __init__(self) -> None:
+        pass
+
+    def __init__(self, quad:Quadruped):
         self.commands = [LegControllerCommand() for _ in range(4)]
-        self.datas = [LegControllerData for _ in range(4)]
+        self.datas = [LegControllerData() for _ in range(4)]
         self._legsEnabled = False
         self._maxTorque = 0.0
 
@@ -61,17 +65,17 @@ class LegController:
             cmd.zero()
         self._legsEnabled = False
 
-    def setMaxTorque(self, tau):
+    def setMaxTorque(self, tau:float):
         self._maxTorque = tau
     
-    def edampCommand(self, robot, gain):
+    def edampCommand(self, robot:RobotType, gain:float):
         """
         emergency damp command
         """
         # TODO assign gain to kdCartesian or kdJoint ?
 
         self.zeroCommand()
-        if robot == "aliengo":
+        if robot == RobotType.ALIENGO:
             for leg in range(4):
                 for axis in range(3):
                     # self.commands[leg].kdCartesian[axis, axis] = gain
@@ -94,7 +98,7 @@ class LegController:
         pass
 
 
-def computeLegJacobianAndPosition(quad: Quadruped, q, leg: int):
+def computeLegJacobianAndPosition(quad:Quadruped, q:np.ndarray, leg:int):
     """
     return J and p
     """

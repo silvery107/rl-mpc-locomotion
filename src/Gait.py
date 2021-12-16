@@ -34,7 +34,7 @@ class OffsetDurationGait(Gait):
     trotRunning, walking, walking2
     pacing
     """
-    def __init__(self, nSegment:int, offset, durations, name:str):
+    def __init__(self, nSegment:int, offset:np.ndarray, durations:np.ndarray, name:str):
         super().__init__()
         # offset in mpc segments
         self.__offsets = offset
@@ -50,7 +50,7 @@ class OffsetDurationGait(Gait):
         self.__swing = nSegment-durations[0]
         self.__mpc_table = [0 for _ in range(nSegment*4)]
 
-    def setIterations(self, iterationsPerMPC: int, currentIteration: int):
+    def setIterations(self, iterationsPerMPC:int, currentIteration:int):
         self.__iteration = (currentIteration / iterationsPerMPC) % self.__nIterations
         self.__phase = (float)(currentIteration % (iterationsPerMPC * self.__nIterations)) / (float) (iterationsPerMPC * self.__nIterations)
 
@@ -111,8 +111,8 @@ class OffsetDurationGait(Gait):
     def getCurrentGaitPhase(self):
         return self.__iteration
 
-    def getCurrentSwingTime(self, dtMPC: float, leg: int):
+    def getCurrentSwingTime(self, dtMPC:float, leg:int):
         return dtMPC*self.__swing
 
-    def getCurrentStanceTime(self, dtMPC: float, leg: int):
+    def getCurrentStanceTime(self, dtMPC:float, leg:int):
         return dtMPC*self.__stance

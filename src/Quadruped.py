@@ -1,4 +1,12 @@
+from enum import Enum, auto
+import numpy as np
+
+DTYPE = np.float32
+
 # Data structure containing parameters for quadruped robot
+class RobotType(Enum):
+    ALIENGO = auto()
+    MINI_CHEETAH = auto()
 
 class Quadruped:
 
@@ -19,16 +27,35 @@ class Quadruped:
     HR_abd = 3  # Hind Right Abduction
     HL_abd = 1  # Hind Left Abduction
     
-    def __init__(self) -> None:
-        # mini cheetah
+    _robotType = RobotType.ALIENGO
+
+    def __init__(self):
+        #! mini cheetah
         self._abadLinkLength = 0.062
         self._hipLinkLength = 0.209
         self._kneeLinkLength = 0.195
         self._kneeLinkY_offset = 0.004
+        self._abadLocation = np.zeros((3,1), dtype=DTYPE)
 
-    def getSideSign(self, leg):
+    def getSideSign(self, leg:int):
+        """
+        Get if the i-th leg is on the left (+) or right (-) of the robot
+        """
         sideSigns= [-1, 1, -1, 1]
         assert leg >= 0 and leg < 4
         return sideSigns[leg]
+
+    def getHipLocation(self, leg:int):
+        """
+        Get location of the hip for the given leg in robot frame
+        """
+        assert leg >= 0 and leg < 4
+        pHip = np.array([
+            self._abadLocation[0] if (leg == 0 or leg == 1) else -self._abadLocation[0],
+            self._abadLocation[1] if (leg == 1 or leg == 3) else -self._abadLocation[1],
+            self._abadLocation[2]
+        ])
+
+        return pHip
 
     

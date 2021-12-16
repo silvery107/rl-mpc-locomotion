@@ -21,7 +21,7 @@ def cubicBezierFirstDerivative(y0, yf, x:float):
     return bezier * yDiff
 
 # Cubic bezier interpolation derivative between y0 and yf.  x is between 0 and 1
-def cubicBezierSecondDerivative(y0, yf, x):
+def cubicBezierSecondDerivative(y0, yf, x:float):
     """x must use floating point value"""
     assert(x >= 0 and x <= 1)
     yDiff = yf - y0

@@ -15,13 +15,13 @@ class FootSwingTrajectory:
         # float or int
         self._height = 0.0
 
-    def setInitialPosition(self, p0):
+    def setInitialPosition(self, p0:np.ndarray):
         self._p0 = p0
     
-    def setFinalPosition(self, pf):
+    def setFinalPosition(self, pf:np.ndarray):
         self.pf = pf
 
-    def setHeight(self, h):
+    def setHeight(self, h:float):
         self._height = h
 
     def getPosition(self):
