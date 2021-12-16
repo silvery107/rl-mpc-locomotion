@@ -7,7 +7,7 @@ from LegController import computeLegJacobianAndPosition
 quad = Quadruped()
 
 if __name__ == "__main__":
-    from util_isaac import *
+    from isaac.util_isaac import *
     xiaotian = "urdf/Xiaotian-ROS/urdf/xiaotian_description.urdf"
     aliengo = "urdf/aliengo_description/xacro/aliengo.urdf"
     anymal = "urdf/anymal_c/urdf/anymal.urdf"
