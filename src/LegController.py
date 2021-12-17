@@ -42,9 +42,6 @@ class LegControllerData:
 
 class LegController:
 
-    def __init__(self) -> None:
-        pass
-
     def __init__(self, quad:Quadruped):
         self.commands = [LegControllerCommand() for _ in range(4)]
         self.datas = [LegControllerData() for _ in range(4)]

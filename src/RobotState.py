@@ -1,22 +1,24 @@
 import numpy as np
 import quaternion
 
+DTYPE = np.float32
+
 # ! update I_body val
 class RobotState:
 
     def __init__(self) -> None:
-        self.p = np.zeros((3, 1), dtype=np.float32)
-        self.v = np.zeros((3, 1), dtype=np.float32)
-        self.w = np.zeros((3, 1), dtype=np.float32)
-        self.r_feet = np.zeros((3, 4), dtype=np.float32)
-        self.R = np.zeros((3, 3), dtype=np.float32)
-        self.R_yaw = np.zeros((3, 3), dtype=np.float32)
+        self.p = np.zeros((3, 1), dtype=DTYPE)
+        self.v = np.zeros((3, 1), dtype=DTYPE)
+        self.w = np.zeros((3, 1), dtype=DTYPE)
+        self.r_feet = np.zeros((3, 4), dtype=DTYPE)
+        self.R = np.zeros((3, 3), dtype=DTYPE)
+        self.R_yaw = np.zeros((3, 3), dtype=DTYPE)
         self.I_body = np.zeros((3, 3))
         self.q = np.quaternion(0, 0, 0, 0)
         self.yaw = 0.0
         self.m = 9.0
 
-    def set(self, p_, v_, q_, w_, r_, yaw_):
+    def set(self, p_, v_, q_, w_, r_, yaw_:float):
         
         self.p = np.copy(p_)
         self.v = np.copy(v_)

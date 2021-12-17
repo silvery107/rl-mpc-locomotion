@@ -22,10 +22,6 @@ class StateEstimate:
 
 class StateEstimatorContainer:
 
-    def __init__(self) -> None:
-        pass
-    
-
     def __init__(self, stateEstimate:StateEstimate):
         self.result = stateEstimate
         self._phase = np.zeros((4,1), dtype=DTYPE)

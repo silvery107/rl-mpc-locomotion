@@ -1,33 +1,6 @@
-from abc import abstractmethod
 import numpy as np
 
-class Gait:
-
-    def __init__(self):
-        self.__name = ""
-    @abstractmethod
-    def getContactState(self):
-        pass
-    @abstractmethod
-    def getSwingState(self):
-        pass
-    @abstractmethod
-    def getMpcTable(self):
-        pass
-    @abstractmethod
-    def setIterations(self, iterationsPerMPC:int, currentIteration:int):
-        pass
-    @abstractmethod
-    def getCurrentStanceTime(self, dtMPC:float, leg:int):
-        pass
-    @abstractmethod
-    def getCurrentSwingTime(self, dtMPC:float, leg:int):
-        pass
-    @abstractmethod
-    def getCurrentGaitPhase(self):
-        pass
-
-class OffsetDurationGait(Gait):
+class OffsetDurationGait():
     """
     trotting, bounding, pronking
     jumping, galloping, standing
@@ -35,7 +8,7 @@ class OffsetDurationGait(Gait):
     pacing
     """
     def __init__(self, nSegment:int, offset:np.ndarray, durations:np.ndarray, name:str):
-        super().__init__()
+
         # offset in mpc segments
         self.__offsets = offset
         # duration of step in mpc segments
@@ -104,7 +77,6 @@ class OffsetDurationGait(Gait):
                 else:
                     self.__mpc_table[i*4 + j] = 0
             # print("%d "% _mpc_table[i*4 + j])
-            # print("\n")
         
         return self.__mpc_table
 

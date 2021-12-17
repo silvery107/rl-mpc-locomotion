@@ -70,6 +70,7 @@ class ConvexMPCLocomotion:
         self.current_gait = 0
         self._roll_des = 0.0
         self._pitch_des = 0.0
+
         self.stand_traj = [0.0 for _ in range(6)]
         self.world_position_desired = np.zeros((3,1), dtype=DTYPE)
         self._yaw_des = 0.0
@@ -96,14 +97,24 @@ class ConvexMPCLocomotion:
         elif data._quadruped._robotType == RobotType.MINI_CHEETAH:
             self.__body_height = 0.29
         else:
-            assert False
+            raise "Invalid RobotType"
         
         x_vel_cmd = 0.0
         y_vel_cmd = 0.0
         filter = 0.1
 
         # TODO
-        pass
+        # ! Add cmd input from isaac here
+        # self._yaw_turn_rate = 
+        # x_vel_cmd = 
+        # y_vel_cmd = 
+
+        self._x_vel_des = self._x_vel_des*(1-filter) + x_vel_cmd*filter
+        self._y_vel_des = self._y_vel_des*(1-filter) + y_vel_cmd*filter
+
+        self._yaw_des = data._stateEstimator.getResult().rpy[2] + self.dt*self._yaw_turn_rate
+        self._roll_des = 0.0
+        self._pitch_des = 0.0
 
     def solveDenseMPC(self, mpcTable:list, data:ControlFSMData):
         seResult = data._stateEstimator.getResult()

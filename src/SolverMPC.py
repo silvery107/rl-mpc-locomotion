@@ -35,21 +35,21 @@ def near_zero(a:float):
 def near_one(a:float):
     return near_zero(a-1)
 
-def cross_mat(I_inv, r):
+def cross_mat(I_inv:np.ndarray, r:np.ndarray):
     cm = np.array([[0.0, -r[2], r[1]],
                   [r[2], 0.0, -r[0]],
                   [-r[1], r[0], 0.0]])
 
     return I_inv * cm
 
-def quat_to_rpy(q, rpy):
+def quat_to_rpy(q, rpy:np.ndarray):
     as_ = np.min(-2.*(q.x*q.z-q.w*q.y),.99999)
     rpy[0] = np.atan2(2.*(q.x*q.y+q.w*q.z),q.w*q.w + q.x*q.x - q.y*q.y - q.z*q.z)
     rpy[1] = np.asin(as_)
     rpy[2] = np.atan2(2.*(q.y*q.z+q.w*q.x),q.w*q.w - q.x*q.x - q.y*q.y + q.z*q.z)
 
 # continuous time state space matrices.  
-def ct_ss_mats(I_world, m:float, r_feet, R_yaw, A, B, x_drag:float):
+def ct_ss_mats(I_world:np.ndarray, m:float, r_feet:np.ndarray, R_yaw:np.ndarray, A:np.ndarray, B:np.ndarray, x_drag:float):
     A.fill(0)
     A[3,9] = 1.0
     A[11,9] = x_drag
@@ -66,7 +66,7 @@ def ct_ss_mats(I_world, m:float, r_feet, R_yaw, A, B, x_drag:float):
         B[6:9, b*3:b*3+3] = cross_mat(I_inv,r_feet[:, b])
         B[9:12, b*3:b*3+3] = np.identity(3) / m
 
-def resize_qp_mats(horizon):
+def resize_qp_mats(horizon:int):
     global A_qp, B_qp, S, X_d, U_b, fmat, qH, qg, eye_12h
     A_qp = np.zeros((13*horizon, 13), dtype=DTYPE)
     B_qp = np.zeros((13*horizon, 12*horizon), dtype=DTYPE)
@@ -78,7 +78,7 @@ def resize_qp_mats(horizon):
     qg = np.zeros((12*horizon, 1), dtype=DTYPE)
     eye_12h = np.identity(12*horizon, dtype=DTYPE)
 
-def c2qp(Ac, Bc, dt:float, horizon:int):
+def c2qp(Ac:np.ndarray, Bc:np.ndarray, dt:float, horizon:int):
     global ABc
     ABc.fill(0)
     ABc[0:13,0:13] = Ac
