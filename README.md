@@ -9,6 +9,21 @@
 
 - python模仿结构体必须放在__init__()里面，否则无法实例化
 
+### Structure
+```
+main_helper() -> 
+    SimulationBridge -> 
+        RobotRunner -> 
+            Quadruped, 
+            StateEstimatorContainer, 
+            LegController, 
+            MIT_Controller -> 
+                ControlFSM -> 
+                    FSM_State_Locomotion -> 
+                        ConvexMPCLocomotion -> 
+                            convexMPC_interface -> 
+                                SolverMPC
+```
 ## Notes
 
 - [Model Import](docs/0-model_import.md)
