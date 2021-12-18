@@ -104,7 +104,7 @@ class ConvexMPCLocomotion:
         filter = 0.1
 
         # TODO
-        # ! Add cmd input from isaac here
+        # ! Add user command input here
         # self._yaw_turn_rate = 
         # x_vel_cmd = 
         # y_vel_cmd = 

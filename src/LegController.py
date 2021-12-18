@@ -4,7 +4,7 @@ from SolverMPC import DTYPE
 
 
 # q = np.zeros((3,1))
-DTYPE = np.float64
+DTYPE = np.float32
 
 class LegControllerCommand:
     def __init__(self):
@@ -63,35 +63,22 @@ class LegController:
         self._legsEnabled = False
 
     def setMaxTorque(self, tau:float):
-        self._maxTorque = tau
-    
-    def edampCommand(self, robot:RobotType, gain:float):
-        """
-        emergency damp command
-        """
-        # TODO assign gain to kdCartesian or kdJoint ?
+        self._maxTorque = tau     
 
-        self.zeroCommand()
-        if robot == RobotType.ALIENGO:
-            for leg in range(4):
-                for axis in range(3):
-                    # self.commands[leg].kdCartesian[axis, axis] = gain
-                    # self.commands[leg].kdJoint[axis, axis] = gain
-                    pass
-        
-
-    def updateData(self, data):
+    def updateData(self, targetData):
         """
-        update the leg data
+        send data to robot
         """
-        # TODO update q qd J p and v here
+        # TODO 
+        # ! update q qd J p and v here
         pass
 
-    def updateCommand(self, command):
+    def updateCommand(self, targetCommand):
         """
-        update the leg command
+        update commands to robot
         """
-        # TODO update PD feedforward torque and force
+        # TODO
+        # ! update PD feedforward torque and force
         pass
 
 
