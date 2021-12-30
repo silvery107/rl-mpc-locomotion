@@ -11,17 +11,17 @@
 
 ### Structure
 ```
-main_helper() -> 
-    SimulationBridge -> 
-        RobotRunner -> 
-            Quadruped, 
-            StateEstimatorContainer, 
-            LegController, 
-            MIT_Controller -> 
-                ControlFSM -> 
-                    FSM_State_Locomotion -> 
-                        ConvexMPCLocomotion -> 
-                            convexMPC_interface -> 
+main_helper() ->
+    SimulationBridge ->
+        RobotRunner ->
+            Quadruped,
+            StateEstimatorContainer,
+            LegController,
+            MIT_Controller ->
+                ControlFSM ->
+                    FSM_State_Locomotion ->
+                        ConvexMPCLocomotion ->
+                            convexMPC_interface ->
                                 SolverMPC
 ```
 ## Notes

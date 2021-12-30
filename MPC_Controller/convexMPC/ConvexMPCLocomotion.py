@@ -1,9 +1,11 @@
+import sys
+sys.path.append("..")
 from enum import Enum, auto
 import numpy as np
-import LegController as legctl
-from Gait import Gait, OffsetDurationGait
-import convexMPC_interface as mpc
-from ControlFSMData import ControlFSMData
+from LegController import LegController
+from Gait import OffsetDurationGait
+import convexMPC.convexMPC_interface as mpc
+from FSM_States.ControlFSMData import ControlFSMData
 from Quadruped import RobotType
 from MIT_UserParameters import MIT_UserParameters
 from FootSwingTrajectory import FootSwingTrajectory
@@ -29,8 +31,9 @@ def coordinateRotation(axis:CoordinateAxis, theta:float):
     return R
 
 class CMPC_Result:
-    commands = [legctl.LegController() for _ in range(4)]
-    contactPhase = np.zeros((4,1), dtype=DTYPE)
+    def __init__(self) -> None:
+        self.commands = [LegController() for _ in range(4)]
+        self.contactPhase = np.zeros((4,1), dtype=DTYPE)
 
 class ConvexMPCLocomotion:
     def __init__(self, _dt:float, _iterationsBetweenMPC:int, parameters:MIT_UserParameters):

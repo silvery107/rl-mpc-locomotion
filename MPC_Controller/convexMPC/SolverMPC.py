@@ -1,8 +1,39 @@
 import numpy as np
 import quaternion
 import cvxopt
-from RobotState import RobotState
-from convexMPC_interface import ProblemSetup, UpdateData
+from convexMPC.RobotState import RobotState
+
+K_NUM_LEGS = 4
+K_MAX_GAIT_SEGMENTS = 36
+
+
+class ProblemSetup:
+    def __init__(self) -> None: 
+        self.dt = 0.0
+        self.mu = 0.0
+        self.f_max = 0.0
+        self.horizon = 0
+
+class UpdateData:
+    def __init__(self) -> None:
+        self.p = [0.0 for _ in range(3)]
+        self.v = [0.0 for _ in range(3)]
+        self.q = [0.0 for _ in range(4)]
+        self.w = [0.0 for _ in range(3)]
+        self.r = [0.0 for _ in range(12)]
+        self.weights = [0.0 for _ in range(12)]
+        self.traj = [0.0 for _ in range(12*K_MAX_GAIT_SEGMENTS)]
+        self.traj = ""
+        self.gait = ""
+        self.yaw = 0.0
+        self.alpha = 0.0
+        self.rho = 0.0
+        self.sigma = 0.0
+        self.solver_alpha = 0.0
+        self.terminate = 0.0
+        self.x_drag = 0.0
+        self.max_iterations = 0
+
 
 DTYPE = np.float32
 BIG_NUMBER = 5e10

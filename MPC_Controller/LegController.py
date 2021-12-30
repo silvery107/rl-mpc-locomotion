@@ -1,6 +1,5 @@
 import numpy as np
 from Quadruped import Quadruped, RobotType
-from SolverMPC import DTYPE
 
 
 # q = np.zeros((3,1))
