@@ -9,8 +9,10 @@ from RobotParameters import RobotControlParameters
 class ControlFSMData:
     def __init__(self):
         self._quadruped:Quadruped = None
-        self._legController:LegController = None
         self._stateEstimator:StateEstimatorContainer = None
+        self._legController:LegController = None
+        # self._gaitScheduler:GaitScheduler = None
+        # self._desiredStateCommand:DesiredStateCommand = None
         self.controlParameters:RobotControlParameters = None
         self.userParameters:MIT_UserParameters = None
 
