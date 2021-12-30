@@ -8,6 +8,7 @@
 ## Blog
 
 - python模仿结构体必须放在__init__()里面，否则无法实例化
+- class可以声明确定类型的值为None成员变量
 
 ### Structure
 ```
@@ -24,6 +25,22 @@ main_helper() ->
                             convexMPC_interface ->
                                 SolverMPC
 ```
+- Not implemented yet:
+  - main_helper
+  - SimulationBridge
+  - RobotRunner
+
+- Partially implemented:
+  - StateEstimatorContainer
+  - LegController
+  - ControlFSM
+  - FSM_State_Locomotion
+
+- Fully implemented:
+  - ConvexMPCLocomotion
+  - convexMPC_interface
+  - SolverMPC
+
 ## Notes
 
 - [Model Import](docs/0-model_import.md)
