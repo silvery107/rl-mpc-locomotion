@@ -1,36 +1,36 @@
 import numpy as np
 from numpy.core.fromnumeric import resize
-
 from SolverMPC import *
-
 
 K_NUM_LEGS = 4
 K_MAX_GAIT_SEGMENTS = 36
 
 class ProblemSetup:
-    dt = 0.0
-    mu = 0.0
-    f_max = 0.0
-    horizon = 0
+    def __init__(self) -> None: 
+        self.dt = 0.0
+        self.mu = 0.0
+        self.f_max = 0.0
+        self.horizon = 0
 
 class UpdateData:
-    p = [0.0 for _ in range(3)]
-    v = [0.0 for _ in range(3)]
-    q = [0.0 for _ in range(4)]
-    w = [0.0 for _ in range(3)]
-    r = [0.0 for _ in range(12)]
-    weights = [0.0 for _ in range(12)]
-    traj = [0.0 for _ in range(12*K_MAX_GAIT_SEGMENTS)]
-    traj = ""
-    gait = ""
-    yaw = 0.0
-    alpha = 0.0
-    rho = 0.0
-    sigma = 0.0
-    solver_alpha = 0.0
-    terminate = 0.0
-    x_drag = 0.0
-    max_iterations = 0
+    def __init__(self) -> None:
+        self.p = [0.0 for _ in range(3)]
+        self.v = [0.0 for _ in range(3)]
+        self.q = [0.0 for _ in range(4)]
+        self.w = [0.0 for _ in range(3)]
+        self.r = [0.0 for _ in range(12)]
+        self.weights = [0.0 for _ in range(12)]
+        self.traj = [0.0 for _ in range(12*K_MAX_GAIT_SEGMENTS)]
+        self.traj = ""
+        self.gait = ""
+        self.yaw = 0.0
+        self.alpha = 0.0
+        self.rho = 0.0
+        self.sigma = 0.0
+        self.solver_alpha = 0.0
+        self.terminate = 0.0
+        self.x_drag = 0.0
+        self.max_iterations = 0
 
 problem_configuration = ProblemSetup()
 update = UpdateData()

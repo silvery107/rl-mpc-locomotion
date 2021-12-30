@@ -1,5 +1,6 @@
 
 class RobotControlParameters:
-    controller_dt = 0.0
+    def __init__(self) -> None:
+        self.controller_dt = 0.0
 
     
