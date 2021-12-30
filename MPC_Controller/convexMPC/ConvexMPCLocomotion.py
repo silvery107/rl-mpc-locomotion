@@ -2,7 +2,7 @@ import sys
 sys.path.append("..")
 from enum import Enum, auto
 import numpy as np
-from LegController import LegController
+from LegController import LegController, LegControllerCommand
 from Gait import OffsetDurationGait
 import convexMPC.convexMPC_interface as mpc
 from FSM_States.ControlFSMData import ControlFSMData
@@ -32,7 +32,7 @@ def coordinateRotation(axis:CoordinateAxis, theta:float):
 
 class CMPC_Result:
     def __init__(self) -> None:
-        self.commands = [LegController() for _ in range(4)]
+        self.commands = [LegControllerCommand() for _ in range(4)]
         self.contactPhase = np.zeros((4,1), dtype=DTYPE)
 
 class ConvexMPCLocomotion:
