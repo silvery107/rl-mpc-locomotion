@@ -3,7 +3,7 @@ sys.path.append("..")
 import numpy as np
 from convexMPC.ConvexMPCLocomotion import *
 from FSM_States.ControlFSMData import ControlFSMData
-from Quadruped import RobotType
+from MPC_Controller.common.Quadruped import RobotType
 from RobotParameters import RobotControlParameters
 from FSM_States.FSM_State import FSM_State, FSM_StateName
 

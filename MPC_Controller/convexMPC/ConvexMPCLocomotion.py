@@ -2,13 +2,13 @@ import sys
 sys.path.append("..")
 from enum import Enum, auto
 import numpy as np
-from LegController import LegController, LegControllerCommand
+from MPC_Controller.common.LegController import LegController, LegControllerCommand
 from Gait import OffsetDurationGait
 import convexMPC.convexMPC_interface as mpc
 from FSM_States.ControlFSMData import ControlFSMData
-from MPC_Controller.robots.Quadruped import RobotType
+from MPC_Controller.common.Quadruped import RobotType
 from MIT_UserParameters import MIT_UserParameters
-from FootSwingTrajectory import FootSwingTrajectory
+from MPC_Controller.common.FootSwingTrajectory import FootSwingTrajectory
 
 DTYPE = np.float32
 
@@ -106,11 +106,9 @@ class ConvexMPCLocomotion:
         y_vel_cmd = 0.0
         filter = 0.1
 
-        # TODO
-        # ! Add user command input here
-        # self._yaw_turn_rate = 
-        # x_vel_cmd = 
-        # y_vel_cmd = 
+        self._yaw_turn_rate = data._desiredStateCommand.yaw_turn_rate
+        y_vel_cmd = data._desiredStateCommand.y_vel_cmd
+        x_vel_cmd = data._desiredStateCommand.x_vel_cmd
 
         self._x_vel_des = self._x_vel_des*(1-filter) + x_vel_cmd*filter
         self._y_vel_des = self._y_vel_des*(1-filter) + y_vel_cmd*filter

@@ -2,13 +2,14 @@ import sys
 sys.path.append("..")
 
 from FSM_States.FSM_State import FSM_State
-from Quadruped import Quadruped
+from MPC_Controller.common.Quadruped import Quadruped
 from StateEstimatorContainer import StateEstimatorContainer
-from LegController import LegController
+from MPC_Controller.common.LegController import LegController
 from RobotParameters import RobotControlParameters
 from MIT_UserParameters import MIT_UserParameters
 from FSM_States.ControlFSMData import ControlFSMData
 from FSM_States.FSM_State_Locomotion import FSM_State_Locomotion
+from DesiredStateCommand import DesiredStateCommand
 from enum import Enum, auto
 
 class FSM_OperatingMode(Enum):
@@ -28,6 +29,7 @@ class ControlFSM:
                  _quadruped:Quadruped,
                  _stateEstimator:StateEstimatorContainer,
                  _legController:LegController,
+                 _desiredStateCommand:DesiredStateCommand,
                  controlParameters:RobotControlParameters,
                  userParameters:MIT_UserParameters):
         self.data = ControlFSMData()
@@ -36,6 +38,7 @@ class ControlFSM:
         self.data._legController = _legController
         self.data.controlParameters = controlParameters
         self.data.userParameters = userParameters
+        self.data._desiredStateCommand = _desiredStateCommand
 
         self.statesList = FSM_StatesList()
         self.statesList.invalid = None
