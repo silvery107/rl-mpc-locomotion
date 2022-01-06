@@ -46,7 +46,8 @@ class Quadruped:
             self._abadLocation = np.zeros((3,1), dtype=DTYPE)
             
         else:
-            raise "Invalide RobotType"
+            raise "Invalid RobotType"
+            
         self._robotType = robotype
 
     def getSideSign(self, leg:int):
