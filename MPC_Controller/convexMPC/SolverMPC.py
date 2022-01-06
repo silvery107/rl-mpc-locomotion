@@ -71,7 +71,7 @@ def cross_mat(I_inv:np.ndarray, r:np.ndarray):
                   [r[2], 0.0, -r[0]],
                   [-r[1], r[0], 0.0]])
 
-    return I_inv * cm
+    return I_inv @ cm
 
 def quat_to_rpy(q, rpy:np.ndarray):
     as_ = np.min(-2.*(q.x*q.z-q.w*q.y),.99999)
@@ -94,7 +94,7 @@ def ct_ss_mats(I_world:np.ndarray, m:float, r_feet:np.ndarray, R_yaw:np.ndarray,
     I_inv = np.linalg.inv(I_world)
 
     for b in range(4):
-        B[6:9, b*3:b*3+3] = cross_mat(I_inv,r_feet[:, b])
+        B[6:9, b*3:b*3+3] = cross_mat(I_inv, r_feet[:, b])
         B[9:12, b*3:b*3+3] = np.identity(3) / m
 
 def resize_qp_mats(horizon:int):
@@ -124,14 +124,14 @@ def c2qp(Ac:np.ndarray, Bc:np.ndarray, dt:float, horizon:int):
     powerMats = [np.zeros((13,13), dtype=DTYPE) for _ in range(20)]
     powerMats[0] = np.identity(13, dtype=DTYPE)
     for i in range(1, horizon+1):
-        powerMats[i] = Adt * powerMats[i-1]
+        powerMats[i] = Adt @ powerMats[i-1]
     
     for r in range(horizon):
         A_qp[13*r:13*r+13, 0:13] = powerMats[r+1]
         for c in range(horizon):
             if r>=c:
                 a_num = r-c
-                B_qp[13*r:13*r+13, 12*c:12*c+12] = powerMats[a_num] * Bdt
+                B_qp[13*r:13*r+13, 12*c:12*c+12] = powerMats[a_num] @ Bdt
 
 def solve_mpc(update:UpdateData, setup:ProblemSetup):
     global A_qp, B_qp, S, X_d, U_b, fmat, qH, qg, eye_12h
@@ -144,7 +144,7 @@ def solve_mpc(update:UpdateData, setup:ProblemSetup):
 
     # initial state (13 state representation)
     x_0 = np.array([rpy[2], rpy[1], rpy[0], rs.p, rs.w, rs.v, -9.81])
-    I_world = rs.R_yaw*rs.I_body*rs.R_yaw.T
+    I_world = rs.R_yaw @ rs.I_body @ rs.R_yaw.T
     # state space models
     ct_ss_mats(I_world, rs.m, rs.r_feet,rs.R_yaw,A_ct, B_ct_r, update.x_drag)
     # QP matrices
@@ -179,8 +179,8 @@ def solve_mpc(update:UpdateData, setup:ProblemSetup):
     for i in range(setup.horizon*4):
         fmat[i*5:i*5+5, i*3:i*3+3] = f_block
 
-    qH = 2*(B_qp.T*S*B_qp + update.alpha*eye_12h)
-    qg = 2*B_qp.T*S*(A_qp*x_0 - X_d)
+    qH = 2 * (B_qp.T @ S @ B_qp + update.alpha*eye_12h)
+    qg = 2 * B_qp.T @ S @ (A_qp @ x_0 - X_d)
     
     # TODO solve this QP using cvxopt
     q_soln = cvxopt.solvers.qp(qH, qg, fmat, U_b, solver=None) # "mosek"
