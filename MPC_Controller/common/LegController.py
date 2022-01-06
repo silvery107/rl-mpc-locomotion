@@ -1,5 +1,5 @@
 import numpy as np
-from Quadruped import Quadruped, RobotType
+from MPC_Controller.common.Quadruped import Quadruped, RobotType
 
 
 # q = np.zeros((3,1))
