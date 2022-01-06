@@ -9,6 +9,11 @@
 
 - python模仿结构体必须放在__init__()里面，否则无法实例化
 - class可以声明确定类型的值为None成员变量
+- `*` 对mat做矩阵乘法, 对ndarray做点乘 
+- `@` 矩阵乘法
+- `.dot` 矩阵乘法 
+- `np.mutiply` 点乘
+- `self._quadruped:Quadruped = None` 类内类型声明
 
 ### Structure
 ```
