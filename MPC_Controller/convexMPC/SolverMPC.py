@@ -1,7 +1,7 @@
 import numpy as np
 import quaternion
 import cvxopt
-from convexMPC.RobotState import RobotState
+from MPC_Controller.convexMPC.RobotState import RobotState
 
 K_NUM_LEGS = 4
 K_MAX_GAIT_SEGMENTS = 36
