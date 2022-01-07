@@ -37,6 +37,7 @@ main() ->
 - SimulationBridge
 - RobotRunner
 - StateEstimatorContainer
+- DesiredStateCommand
 - LegController
 - ControlFSM
 - FSM_State_Locomotion
