@@ -9,7 +9,6 @@ class SimulatorMode(Enum):
     DO_NOTHING = auto()
     EXIT = auto()
 
-
 class SimulationBridge:
     def __init__(self, robot:RobotType, robot_ctrl:MIT_Controller) -> None:
         self._robot = robot
@@ -17,12 +16,15 @@ class SimulationBridge:
         self._userParams = robot_ctrl.getUserControlParameters()
         self._iterations = 0
         self._firstControllerRun = True
+        self._simMode = SimulatorMode.DO_NOTHING
+
+    def setSimMode(self, simMode:SimulatorMode):
+        self._simMode = simMode
 
     def run(self):
-        self._simMode = SimulatorMode.RUN_CONTROLLER
+        # self._simMode = SimulatorMode.RUN_CONTROLLER
 
         while True:
-            # ! update sim mode from user input
             # let the simulator tells us which mode to run in
             if self._simMode == SimulatorMode.RUN_CONTROL_PARAMETERS:
                 # handle control parameters
@@ -37,7 +39,6 @@ class SimulationBridge:
                 break
             else:
                 raise "Invalid SimulatorMode"
-
 
 
     def runRobotControl(self):
