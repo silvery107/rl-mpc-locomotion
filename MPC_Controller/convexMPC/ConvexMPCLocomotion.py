@@ -3,7 +3,7 @@ sys.path.append("..")
 from enum import Enum, auto
 import numpy as np
 from MPC_Controller.common.LegController import LegController, LegControllerCommand
-from Gait import OffsetDurationGait
+from MPC_Controller.convexMPC.Gait import OffsetDurationGait
 import convexMPC.convexMPC_interface as mpc
 from FSM_States.ControlFSMData import ControlFSMData
 from MPC_Controller.common.Quadruped import RobotType

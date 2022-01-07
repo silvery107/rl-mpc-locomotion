@@ -6,7 +6,6 @@
 
 
 ## Blog
-
 - python模仿结构体必须放在__init__()里面，否则无法实例化
 - class可以声明确定类型的值为None成员变量
 - `*` 对mat做矩阵乘法, 对ndarray做点乘 
@@ -30,12 +29,10 @@ main_helper() ->
                             convexMPC_interface ->
                                 SolverMPC
 ```
-- Not implemented yet:
-  - main_helper
-  - SimulationBridge
-  - RobotRunner
 
 - Partially implemented:
+  - SimulationBridge
+  - RobotRunner
   - StateEstimatorContainer
   - LegController
   - ControlFSM
