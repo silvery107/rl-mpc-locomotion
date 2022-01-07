@@ -1,5 +1,5 @@
 import numpy as np
-from Quadruped import Quadruped, RobotType
+from MPC_Controller.common.Quadruped import Quadruped
 
 
 # q = np.zeros((3,1))
@@ -50,7 +50,10 @@ class LegController:
         self._quadruped = quad
         for data in self.datas:
             data.setQuadruped(self._quadruped)
-    
+
+    def setEnable(self, enabled:bool):
+        self._legsEnabled = enabled
+
     def zeroCommand(self):
         """
         Zero all leg commands.  This should be run *before* any control code, so if
@@ -64,20 +67,20 @@ class LegController:
     def setMaxTorque(self, tau:float):
         self._maxTorque = tau     
 
-    def updateData(self, targetData):
+    def updateData(self):
         """
-        send data to robot
+        update leg data from simulator
         """
         # TODO 
-        # ! update q qd J p and v here
+        # ! update q, qd, J, p and v here
         pass
 
-    def updateCommand(self, targetCommand):
+    def updateCommand(self):
         """
-        update commands to robot
+        update leg commands for simulator
         """
         # TODO
-        # ! update PD feedforward torque and force
+        # ! update PD gain, leg enable, feedforward torque and force
         pass
 
 

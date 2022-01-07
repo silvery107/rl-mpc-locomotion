@@ -1,13 +1,14 @@
+import sys
+sys.path.append("..")
 from isaacgym import gymapi
 import numpy as np
-import math
-from Quadruped import Quadruped
-from LegController import computeLegJacobianAndPosition
+from MPC_Controller.common.Quadruped import Quadruped, RobotType
+from MPC_Controller.common.LegController import computeLegJacobianAndPosition
 
-quad = Quadruped()
+quad = Quadruped(RobotType.ALIENGO)
 
 if __name__ == "__main__":
-    from isaac.util_isaac import *
+    from Isaac_Sim.util_isaac import *
     xiaotian = "urdf/Xiaotian-ROS/urdf/xiaotian_description.urdf"
     aliengo = "urdf/aliengo_description/xacro/aliengo.urdf"
     anymal = "urdf/anymal_c/urdf/anymal.urdf"
@@ -40,9 +41,6 @@ if __name__ == "__main__":
         gym.simulate(sim)
         gym.fetch_results(sim, True)
 
-        # update the viewer
-        gym.step_graphics(sim);
-        gym.draw_viewer(viewer, sim, True)
 
         t = gym.get_sim_time(sim)
         if t>1:
@@ -58,6 +56,10 @@ if __name__ == "__main__":
             pos_targets = np.asarray(ps).reshape(-1).astype(np.float32)
             gym.set_actor_dof_position_targets(envs[0], actor_handles[0], pos_targets)
 
+        # update the viewer
+        gym.step_graphics(sim);
+        gym.draw_viewer(viewer, sim, True)
+        
         # Wait for dt to elapse in real time.
         # This synchronizes the physics simulation with the rendering rate.
         gym.sync_frame_time(sim)

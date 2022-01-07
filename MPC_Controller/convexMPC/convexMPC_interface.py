@@ -1,5 +1,5 @@
 import numpy as np
-from convexMPC.SolverMPC import *
+from MPC_Controller.convexMPC.SolverMPC import *
 
 
 problem_configuration = ProblemSetup()

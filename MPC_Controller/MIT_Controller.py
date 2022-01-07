@@ -1,9 +1,9 @@
-from FSM_States.ControlFSM import ControlFSM
-from Quadruped import Quadruped
-from StateEstimatorContainer import StateEstimatorContainer
-from LegController import LegController
-from RobotParameters import RobotControlParameters
-from MIT_UserParameters import MIT_UserParameters
+from MPC_Controller.common.Quadruped import Quadruped
+from MPC_Controller.common.LegController import LegController
+from MPC_Controller.FSM_States.ControlFSM import ControlFSM
+from MPC_Controller.Parameters import Parameters
+from MPC_Controller.StateEstimatorContainer import StateEstimatorContainer
+from MPC_Controller.DesiredStateCommand import DesiredStateCommand
 
 class MIT_Controller:
     def __init__(self, ) -> None:
@@ -13,16 +13,16 @@ class MIT_Controller:
                              _quadruped:Quadruped,
                              _stateEstimator:StateEstimatorContainer,
                              _legController:LegController,
-                             controlParameters:RobotControlParameters,
-                             userParameters:MIT_UserParameters):
+                             _desiredStateCommand:DesiredStateCommand,
+                             userParameters:Parameters):
         """Initializes the Control FSM"""
-
+        self.userParameters = userParameters
         # self._gaitScheduler = GaitScheduler()
 
         self._controlFSM = ControlFSM(_quadruped, 
                                       _stateEstimator, 
-                                      _legController, 
-                                      controlParameters, 
+                                      _legController,
+                                      _desiredStateCommand,
                                       userParameters)
 
     def runController(self):
@@ -36,4 +36,5 @@ class MIT_Controller:
         # Run the Control FSM code
         self._controlFSM.runFSM()
 
-
+    def getUserControlParameters(self):
+        return self.userParameters

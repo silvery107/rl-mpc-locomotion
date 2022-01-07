@@ -1,14 +1,14 @@
 import sys
 sys.path.append("..")
 
-from FSM_States.FSM_State import FSM_State
-from Quadruped import Quadruped
-from StateEstimatorContainer import StateEstimatorContainer
-from LegController import LegController
-from RobotParameters import RobotControlParameters
-from MIT_UserParameters import MIT_UserParameters
-from FSM_States.ControlFSMData import ControlFSMData
-from FSM_States.FSM_State_Locomotion import FSM_State_Locomotion
+from MPC_Controller.FSM_States.FSM_State import FSM_State
+from MPC_Controller.common.Quadruped import Quadruped
+from MPC_Controller.StateEstimatorContainer import StateEstimatorContainer
+from MPC_Controller.common.LegController import LegController
+from MPC_Controller.Parameters import Parameters
+from MPC_Controller.FSM_States.ControlFSMData import ControlFSMData
+from MPC_Controller.FSM_States.FSM_State_Locomotion import FSM_State_Locomotion
+from MPC_Controller.DesiredStateCommand import DesiredStateCommand
 from enum import Enum, auto
 
 class FSM_OperatingMode(Enum):
@@ -28,14 +28,14 @@ class ControlFSM:
                  _quadruped:Quadruped,
                  _stateEstimator:StateEstimatorContainer,
                  _legController:LegController,
-                 controlParameters:RobotControlParameters,
-                 userParameters:MIT_UserParameters):
+                 _desiredStateCommand:DesiredStateCommand,
+                 userParameters:Parameters):
         self.data = ControlFSMData()
         self.data._quadruped = _quadruped
         self.data._stateEstimator = _stateEstimator
         self.data._legController = _legController
-        self.data.controlParameters = controlParameters
         self.data.userParameters = userParameters
+        self.data._desiredStateCommand = _desiredStateCommand
 
         self.statesList = FSM_StatesList()
         self.statesList.invalid = None
