@@ -4,7 +4,6 @@ from MPC_Controller.common.Quadruped import Quadruped
 from MPC_Controller.common.LegController import LegController
 from Parameters import Parameters
 from StateEstimatorContainer import StateEstimatorContainer
-from RobotParameters import RobotControlParameters
 from DesiredStateCommand import DesiredStateCommand
 
 class ControlFSMData:
@@ -14,6 +13,5 @@ class ControlFSMData:
         self._legController:LegController = None
         # self._gaitScheduler:GaitScheduler = None
         self._desiredStateCommand:DesiredStateCommand = None
-        self.controlParameters:RobotControlParameters = None
         self.userParameters:Parameters = None
 

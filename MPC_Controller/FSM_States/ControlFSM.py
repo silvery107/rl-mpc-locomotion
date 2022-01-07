@@ -5,7 +5,6 @@ from FSM_States.FSM_State import FSM_State
 from MPC_Controller.common.Quadruped import Quadruped
 from StateEstimatorContainer import StateEstimatorContainer
 from MPC_Controller.common.LegController import LegController
-from RobotParameters import RobotControlParameters
 from Parameters import Parameters
 from FSM_States.ControlFSMData import ControlFSMData
 from FSM_States.FSM_State_Locomotion import FSM_State_Locomotion
@@ -30,13 +29,11 @@ class ControlFSM:
                  _stateEstimator:StateEstimatorContainer,
                  _legController:LegController,
                  _desiredStateCommand:DesiredStateCommand,
-                 controlParameters:RobotControlParameters,
                  userParameters:Parameters):
         self.data = ControlFSMData()
         self.data._quadruped = _quadruped
         self.data._stateEstimator = _stateEstimator
         self.data._legController = _legController
-        self.data.controlParameters = controlParameters
         self.data.userParameters = userParameters
         self.data._desiredStateCommand = _desiredStateCommand
 

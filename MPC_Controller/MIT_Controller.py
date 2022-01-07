@@ -2,7 +2,6 @@ from MPC_Controller.common.Quadruped import Quadruped
 from MPC_Controller.common.LegController import LegController
 from FSM_States.ControlFSM import ControlFSM
 from Parameters import Parameters
-from RobotParameters import RobotControlParameters
 from StateEstimatorContainer import StateEstimatorContainer
 from DesiredStateCommand import DesiredStateCommand
 
@@ -15,7 +14,6 @@ class MIT_Controller:
                              _stateEstimator:StateEstimatorContainer,
                              _legController:LegController,
                              _desiredStateCommand:DesiredStateCommand,
-                             controlParameters:RobotControlParameters,
                              userParameters:Parameters):
         """Initializes the Control FSM"""
         self.userParameters = userParameters
@@ -25,7 +23,6 @@ class MIT_Controller:
                                       _stateEstimator, 
                                       _legController,
                                       _desiredStateCommand,
-                                      controlParameters, 
                                       userParameters)
 
     def runController(self):

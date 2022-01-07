@@ -4,7 +4,6 @@ from MPC_Controller.common.LegController import LegController
 from StateEstimatorContainer import StateEstimatorContainer
 from DesiredStateCommand import DesiredStateCommand
 from Parameters import Parameters
-from RobotParameters import RobotControlParameters
 import numpy as np
 
 
@@ -44,7 +43,6 @@ class RobotRunner:
         self._desiredStateCommand = DesiredStateCommand()
 
         # init control and user params
-        self.controlParameters = RobotControlParameters()
         self.userControlParameters = Parameters()
         
         # Controller initializations
@@ -52,7 +50,6 @@ class RobotRunner:
                                               self._stateEstimator, 
                                               self._legController, 
                                               self._desiredStateCommand,
-                                              self.controlParameters,
                                               self.userControlParameters)
 
 

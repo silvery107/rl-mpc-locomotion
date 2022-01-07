@@ -22,7 +22,6 @@ main_helper() ->
             LegController,
             DesiredStateCommand,
             StateEstimatorContainer,
-            RobotControlParameters,
             MIT_UserParameters,
             MIT_Controller ->
                 ControlFSM ->
