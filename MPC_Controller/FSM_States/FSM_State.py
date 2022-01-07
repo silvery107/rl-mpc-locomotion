@@ -1,9 +1,9 @@
 import sys
 sys.path.append("..")
 from enum import Enum, auto
-from FSM_States.ControlFSMData import ControlFSMData
+from MPC_Controller.FSM_States.ControlFSMData import ControlFSMData
+from MPC_Controller.FSM_States.TransitionData import TransitionData
 from abc import abstractclassmethod
-from FSM_States.TransitionData import TransitionData
 
 class FSM_StateName(Enum):
     INVALID = auto()
@@ -27,7 +27,7 @@ class FSM_State:
         self.stateName = stateNameIn
         self.stateString = stateStringIn
         self.transitionData = TransitionData()
-        print("[FSM_State] Initialized FSM state:", self.stateStringIn)
+        print("[FSM_State] Initialized FSM state:", self.stateString)
 
     @abstractclassmethod
     def onEnter(self):

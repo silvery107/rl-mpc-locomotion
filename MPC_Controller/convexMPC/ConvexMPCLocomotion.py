@@ -4,10 +4,10 @@ from enum import Enum, auto
 import numpy as np
 from MPC_Controller.common.LegController import LegController, LegControllerCommand
 from MPC_Controller.convexMPC.Gait import OffsetDurationGait
-import convexMPC.convexMPC_interface as mpc
-from FSM_States.ControlFSMData import ControlFSMData
+import MPC_Controller.convexMPC.convexMPC_interface as mpc
+from MPC_Controller.FSM_States.ControlFSMData import ControlFSMData
 from MPC_Controller.common.Quadruped import RobotType
-from Parameters import Parameters
+from MPC_Controller.Parameters import Parameters
 from MPC_Controller.common.FootSwingTrajectory import FootSwingTrajectory
 
 DTYPE = np.float32

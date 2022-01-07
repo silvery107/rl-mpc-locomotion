@@ -1,9 +1,9 @@
-from MIT_Controller import MIT_Controller
+from MPC_Controller.MIT_Controller import MIT_Controller
 from MPC_Controller.common.Quadruped import Quadruped, RobotType
 from MPC_Controller.common.LegController import LegController
-from StateEstimatorContainer import StateEstimatorContainer
-from DesiredStateCommand import DesiredStateCommand
-from Parameters import Parameters
+from MPC_Controller.StateEstimatorContainer import StateEstimatorContainer
+from MPC_Controller.DesiredStateCommand import DesiredStateCommand
+from MPC_Controller.Parameters import Parameters
 import numpy as np
 
 

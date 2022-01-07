@@ -1,14 +1,14 @@
 import sys
 sys.path.append("..")
 
-from FSM_States.FSM_State import FSM_State
+from MPC_Controller.FSM_States.FSM_State import FSM_State
 from MPC_Controller.common.Quadruped import Quadruped
-from StateEstimatorContainer import StateEstimatorContainer
+from MPC_Controller.StateEstimatorContainer import StateEstimatorContainer
 from MPC_Controller.common.LegController import LegController
-from Parameters import Parameters
-from FSM_States.ControlFSMData import ControlFSMData
-from FSM_States.FSM_State_Locomotion import FSM_State_Locomotion
-from DesiredStateCommand import DesiredStateCommand
+from MPC_Controller.Parameters import Parameters
+from MPC_Controller.FSM_States.ControlFSMData import ControlFSMData
+from MPC_Controller.FSM_States.FSM_State_Locomotion import FSM_State_Locomotion
+from MPC_Controller.DesiredStateCommand import DesiredStateCommand
 from enum import Enum, auto
 
 class FSM_OperatingMode(Enum):

@@ -2,9 +2,9 @@ import sys
 sys.path.append("..")
 from MPC_Controller.common.Quadruped import Quadruped
 from MPC_Controller.common.LegController import LegController
-from Parameters import Parameters
-from StateEstimatorContainer import StateEstimatorContainer
-from DesiredStateCommand import DesiredStateCommand
+from MPC_Controller.Parameters import Parameters
+from MPC_Controller.StateEstimatorContainer import StateEstimatorContainer
+from MPC_Controller.DesiredStateCommand import DesiredStateCommand
 
 class ControlFSMData:
     def __init__(self):
