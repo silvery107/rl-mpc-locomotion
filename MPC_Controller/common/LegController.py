@@ -63,8 +63,8 @@ class LegController:
 
     def setMaxTorque(self, tau:float):
         self._maxTorque = tau     
-
-    def updateData(self, targetData):
+    
+    def updateData(self, legData:LegControllerData):
         """
         send data to robot
         """
@@ -72,7 +72,7 @@ class LegController:
         # ! update q qd J p and v here
         pass
 
-    def updateCommand(self, targetCommand):
+    def updateCommand(self, legCommand:LegControllerCommand):
         """
         update commands to robot
         """

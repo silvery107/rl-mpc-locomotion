@@ -4,7 +4,6 @@
 
 <img src="images/controller_blocks.png" width=500>
 
-
 ## Blog
 - python模仿结构体必须放在__init__()里面，否则无法实例化
 - class可以声明确定类型的值为None成员变量

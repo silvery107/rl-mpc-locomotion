@@ -1,0 +1,78 @@
+from MIT_Controller import MIT_Controller
+from MPC_Controller.common.Quadruped import Quadruped, RobotType
+from MPC_Controller.common.LegController import LegController
+from StateEstimatorContainer import StateEstimatorContainer
+from DesiredStateCommand import DesiredStateCommand
+from MIT_UserParameters import MIT_UserParameters
+from RobotParameters import RobotControlParameters
+import numpy as np
+
+
+class RobotRunner:
+    def __init__(self, robot_ctrl:MIT_Controller) -> None:
+        self._robot_ctrl = robot_ctrl
+        self._iterations = 0
+
+
+    def init(self, robotType:RobotType, controlParameters:RobotControlParameters, userControlParameters:MIT_UserParameters):
+        """
+        Initializes the robot model, state estimator, leg controller,
+        robot data, and any control logic specific data.
+        """
+        self.robotType = robotType
+        self.controlParameters = controlParameters
+        self.userControlParameters = userControlParameters
+
+        print("[RobotRunner] initialize")
+
+        # init quadruped
+        if self.robotType == RobotType.MINI_CHEETAH:
+            # initial directly instead of buildMiniCheetah()
+            self._quadruped = Quadruped(RobotType.MINI_CHEETAH)
+
+        elif self.robotType == RobotType.ALIENGO:
+            self._quadruped = Quadruped(RobotType.ALIENGO)
+            
+        else:
+            raise "Invalid RobotType"
+
+        # init leg controller
+        self._legController = LegController(self._quadruped)
+
+        # init state estimator
+        self._stateEstimator = StateEstimatorContainer()
+
+        # init desired state command
+        self._desiredStateCommand = DesiredStateCommand()
+        
+        # Controller initializations
+        self._robot_ctrl.initializeController(self._quadruped, 
+                                              self._stateEstimator, 
+                                              self._legController, 
+                                              self._desiredStateCommand,
+                                              self.controlParameters,
+                                              self.userControlParameters)
+
+
+
+    def run(self):
+        """
+        Runs the overall robot control system by calling each of the major components
+        to run each of their respective steps.
+        """
+        # Update the data from the robot
+        # ! TODO update legData
+        # self._legController.updateData(legData)
+        self._legController.zeroCommand()
+        self._legController.setMaxTorque(100)
+        
+        # Run Control user code
+        self._robot_ctrl.runController()
+
+        # Sets the leg controller commands for the robot appropriate commands
+        # ! TODO update legCommand
+        # self._legController.updateCommand(legCommand)
+        self._iterations += 1
+
+
+
