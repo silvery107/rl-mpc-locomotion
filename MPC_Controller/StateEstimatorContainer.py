@@ -24,7 +24,7 @@ class StateEstimate:
 class StateEstimatorContainer:
 
     def __init__(self):
-        self.result = None
+        self.result:StateEstimate = None
         self._phase = np.zeros((4,1), dtype=DTYPE)
         self.contactPhase = self._phase
 

@@ -12,6 +12,7 @@
 - `.dot` 矩阵乘法 
 - `np.mutiply` 点乘
 - `self._quadruped:Quadruped = None` 类内类型声明
+- Successfully bridge Isaac Gym and MPC Controller
 
 ### Architecture
 ```c
