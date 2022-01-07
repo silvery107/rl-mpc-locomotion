@@ -9,19 +9,17 @@ import numpy as np
 
 
 class RobotRunner:
-    def __init__(self, robot_ctrl:MIT_Controller) -> None:
+    def __init__(self, robot_ctrl:MIT_Controller):
         self._robot_ctrl = robot_ctrl
         self._iterations = 0
 
 
-    def init(self, robotType:RobotType, controlParameters:RobotControlParameters, userControlParameters:MIT_UserParameters):
+    def init(self, robotType:RobotType):
         """
         Initializes the robot model, state estimator, leg controller,
         robot data, and any control logic specific data.
         """
         self.robotType = robotType
-        self.controlParameters = controlParameters
-        self.userControlParameters = userControlParameters
 
         print("[RobotRunner] initialize")
 
@@ -44,6 +42,10 @@ class RobotRunner:
 
         # init desired state command
         self._desiredStateCommand = DesiredStateCommand()
+
+        # init control and user params
+        self.controlParameters = RobotControlParameters()
+        self.userControlParameters = MIT_UserParameters()
         
         # Controller initializations
         self._robot_ctrl.initializeController(self._quadruped, 
@@ -54,25 +56,21 @@ class RobotRunner:
                                               self.userControlParameters)
 
 
-
     def run(self):
         """
         Runs the overall robot control system by calling each of the major components
         to run each of their respective steps.
         """
         # Update the data from the robot
-        # ! TODO update legData
-        # self._legController.updateData(legData)
+        self._legController.updateData()
         self._legController.zeroCommand()
+        self._legController.setEnable(True)
         self._legController.setMaxTorque(100)
         
         # Run Control user code
         self._robot_ctrl.runController()
 
-        # Sets the leg controller commands for the robot appropriate commands
-        # ! TODO update legCommand
-        # self._legController.updateCommand(legCommand)
+        # Sets the leg controller commands for the robot
+        self._legController.updateCommand()
         self._iterations += 1
-
-
 
