@@ -2,9 +2,9 @@
 
 ## Control Blocks
 
-<img src="images/controller_blocks.png" width=500>
+<img src="images/controller_blocks.png" width=600>
 
-## Blog
+## Development Log
 - python模仿结构体必须放在__init__()里面，否则无法实例化
 - class可以声明确定类型的值为None成员变量
 - `*` 对mat做矩阵乘法, 对ndarray做点乘 
@@ -13,14 +13,15 @@
 - `np.mutiply` 点乘
 - `self._quadruped:Quadruped = None` 类内类型声明
 
-### Structure
+### Architecture
 ```
 main_helper() ->
     SimulationBridge ->
+        Quadruped,
         RobotRunner ->
-            Quadruped,
-            StateEstimatorContainer,
             LegController,
+            DesiredStateCommand,
+            StateEstimatorContainer,
             MIT_Controller ->
                 ControlFSM ->
                     FSM_State_Locomotion ->
@@ -29,7 +30,7 @@ main_helper() ->
                                 SolverMPC
 ```
 
-- Partially implemented:
+### Partially implemented:
   - SimulationBridge
   - RobotRunner
   - StateEstimatorContainer
@@ -37,12 +38,12 @@ main_helper() ->
   - ControlFSM
   - FSM_State_Locomotion
 
-- Fully implemented:
+### Fully implemented:
   - ConvexMPCLocomotion
   - convexMPC_interface
   - SolverMPC
 
-## Notes
+## User Notes
 
 - [Model Import](docs/0-model_import.md)
 - [MIT Cheetah Installation](docs/1-MIT_cheetah_installation.md)
