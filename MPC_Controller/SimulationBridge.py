@@ -39,6 +39,8 @@ class SimulationBridge:
             elif self._simMode == SimulatorMode.EXIT:
                 print("[Simulation Driver] Transitioned to exit mode")
                 break
+            else:
+                raise "Invalid SimulatorMode"
 
 
 
@@ -46,20 +48,7 @@ class SimulationBridge:
         if self._firstControllerRun:
             self._firstControllerRun = False
             print("[Simulator Driver] First run of robot controller...")
-
-            # ! initialize control parameters here
-            print("No control parameters are initialized.")
-            
-            # ! initialize user parameters here
-            print("No user parameters are initialized.")
-
-            # ! update data and command for legController here
-
-
-
-            # self._robotRunner.init(robotType, 
-            #                        controlParameters, 
-            #                        userControlParameters)
+            self._robotRunner.init(self._robot)
 
         self._robotRunner.run()
 
