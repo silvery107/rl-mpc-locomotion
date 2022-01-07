@@ -1,9 +1,6 @@
-from typing_extensions import TypeVarTuple
 from MPC_Controller.RobotRunner import RobotRunner
 from MPC_Controller.common.Quadruped import RobotType
 from MIT_Controller import MIT_Controller
-from MIT_UserParameters import MIT_UserParameters
-from RobotParameters import RobotControlParameters
 from enum import Enum, auto
 
 class SimulatorMode(Enum):
@@ -22,7 +19,6 @@ class SimulationBridge:
         self._firstControllerRun = True
 
     def run(self):
-        # ! init shared data here
         self._simMode = SimulatorMode.RUN_CONTROLLER
 
         while True:

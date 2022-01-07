@@ -7,7 +7,7 @@ from MPC_Controller.convexMPC.Gait import OffsetDurationGait
 import convexMPC.convexMPC_interface as mpc
 from FSM_States.ControlFSMData import ControlFSMData
 from MPC_Controller.common.Quadruped import RobotType
-from MIT_UserParameters import MIT_UserParameters
+from Parameters import Parameters
 from MPC_Controller.common.FootSwingTrajectory import FootSwingTrajectory
 
 DTYPE = np.float32
@@ -36,7 +36,7 @@ class CMPC_Result:
         self.contactPhase = np.zeros((4,1), dtype=DTYPE)
 
 class ConvexMPCLocomotion:
-    def __init__(self, _dt:float, _iterationsBetweenMPC:int, parameters:MIT_UserParameters):
+    def __init__(self, _dt:float, _iterationsBetweenMPC:int, parameters:Parameters):
         self.iterationsBetweenMPC = _iterationsBetweenMPC
         self.horizonLength = 10
         self.dt = _dt

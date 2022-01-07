@@ -14,7 +14,7 @@
 - `self._quadruped:Quadruped = None` 类内类型声明
 
 ### Architecture
-```
+```c
 main_helper() ->
     SimulationBridge ->
         Quadruped,
@@ -22,6 +22,8 @@ main_helper() ->
             LegController,
             DesiredStateCommand,
             StateEstimatorContainer,
+            RobotControlParameters,
+            MIT_UserParameters,
             MIT_Controller ->
                 ControlFSM ->
                     FSM_State_Locomotion ->
@@ -31,17 +33,17 @@ main_helper() ->
 ```
 
 ### Partially implemented:
-  - SimulationBridge
-  - RobotRunner
-  - StateEstimatorContainer
-  - LegController
-  - ControlFSM
-  - FSM_State_Locomotion
+- SimulationBridge
+- RobotRunner
+- StateEstimatorContainer
+- LegController
+- ControlFSM
+- FSM_State_Locomotion
 
 ### Fully implemented:
-  - ConvexMPCLocomotion
-  - convexMPC_interface
-  - SolverMPC
+- ConvexMPCLocomotion
+- convexMPC_interface
+- SolverMPC
 
 ## User Notes
 

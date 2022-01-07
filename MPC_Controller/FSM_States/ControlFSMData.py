@@ -2,7 +2,7 @@ import sys
 sys.path.append("..")
 from MPC_Controller.common.Quadruped import Quadruped
 from MPC_Controller.common.LegController import LegController
-from MIT_UserParameters import MIT_UserParameters
+from Parameters import Parameters
 from StateEstimatorContainer import StateEstimatorContainer
 from RobotParameters import RobotControlParameters
 from DesiredStateCommand import DesiredStateCommand
@@ -15,5 +15,5 @@ class ControlFSMData:
         # self._gaitScheduler:GaitScheduler = None
         self._desiredStateCommand:DesiredStateCommand = None
         self.controlParameters:RobotControlParameters = None
-        self.userParameters:MIT_UserParameters = None
+        self.userParameters:Parameters = None
 

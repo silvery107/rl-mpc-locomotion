@@ -3,7 +3,7 @@ from MPC_Controller.common.Quadruped import Quadruped, RobotType
 from MPC_Controller.common.LegController import LegController
 from StateEstimatorContainer import StateEstimatorContainer
 from DesiredStateCommand import DesiredStateCommand
-from MIT_UserParameters import MIT_UserParameters
+from Parameters import Parameters
 from RobotParameters import RobotControlParameters
 import numpy as np
 
@@ -45,7 +45,7 @@ class RobotRunner:
 
         # init control and user params
         self.controlParameters = RobotControlParameters()
-        self.userControlParameters = MIT_UserParameters()
+        self.userControlParameters = Parameters()
         
         # Controller initializations
         self._robot_ctrl.initializeController(self._quadruped, 
