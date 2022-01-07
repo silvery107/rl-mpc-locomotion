@@ -1,5 +1,5 @@
 # RL MPC Locomotion
-
+<img src="images/Isaac.png" width=300>
 ## Control Blocks
 
 <img src="images/controller_blocks.png" width=600>
@@ -16,20 +16,19 @@
 
 ### Architecture
 ```c
-main_helper() ->
-    SimulationBridge ->
-        Quadruped,
-        RobotRunner ->
-            LegController,
-            DesiredStateCommand,
-            StateEstimatorContainer,
-            MIT_UserParameters,
-            MIT_Controller ->
-                ControlFSM ->
-                    FSM_State_Locomotion ->
-                        ConvexMPCLocomotion ->
-                            convexMPC_interface ->
-                                SolverMPC
+main() ->
+    Quadruped,
+    RobotRunner ->
+        LegController,
+        DesiredStateCommand,
+        StateEstimatorContainer,
+        MIT_UserParameters,
+        MIT_Controller ->
+            ControlFSM ->
+                FSM_State_Locomotion ->
+                    ConvexMPCLocomotion ->
+                        convexMPC_interface ->
+                            SolverMPC
 ```
 
 ### Partially implemented:
