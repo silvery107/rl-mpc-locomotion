@@ -1,9 +1,11 @@
 import numpy as np
-from isaacgym import gymapi
-from MPC_Controller.common.Quadruped import Quadruped, RobotType
-from MPC_Controller.RobotRunner import RobotRunner
-from MPC_Controller.MIT_Controller import MIT_Controller
 from enum import Enum, auto
+
+from MPC_Controller.RobotRunner import RobotRunner
+from MPC_Controller.common.Quadruped import RobotType
+from MPC_Controller.MIT_Controller import MIT_Controller
+
+from isaacgym import gymapi
 from Isaac_Sim.util_isaac import *
 
 class SimulatorMode(Enum):

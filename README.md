@@ -1,5 +1,7 @@
 # RL MPC Locomotion
+
 <img src="images/Isaac.png" width=300>
+
 ## Control Blocks
 
 <img src="images/controller_blocks.png" width=600>
@@ -46,8 +48,8 @@ main() ->
 
 ## User Notes
 
-- [Model Import](docs/0-model_import.md)
-- [MIT Cheetah Installation](docs/1-MIT_cheetah_installation.md)
+- [Import URDF model in ISAAC](docs/0-model_import.md)
+- [Install MIT Cheetah Software](docs/1-MIT_cheetah_installation.md)
 
 ## Gallery
 
