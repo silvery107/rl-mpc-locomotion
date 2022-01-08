@@ -1,6 +1,8 @@
 import numpy as np
+from copy import copy, deepcopy
+from math import sin, cos
 import quaternion
-
+CASTING = "same_kind"
 DTYPE = np.float32
 
 # ! update I_body val
@@ -14,27 +16,24 @@ class RobotState:
         self.R = np.zeros((3, 3), dtype=DTYPE)
         self.R_yaw = np.zeros((3, 3), dtype=DTYPE)
         self.I_body = np.zeros((3, 3))
-        self.q = np.quaternion(0, 0, 0, 0)
+        self.q = np.quaternion(1, 0, 0, 0)
         self.yaw = 0.0
         self.m = 9.0
 
     def set(self, p_, v_, q_, w_, r_, yaw_:float):
         
-        self.p = np.copy(p_)
-        self.v = np.copy(v_)
-        self.w = np.copy(w_)
-        self.q.w = q_[0]
-        self.q.x = q_[1]
-        self.q.y = q_[2]
-        self.q.z = q_[3]
+        np.copyto(self.p, p_, casting=CASTING)
+        np.copyto(self.v, v_, casting=CASTING)
+        np.copyto(self.w, w_, casting=CASTING)
+        self.q = copy(q_)
         self.yaw = yaw_
-        for rs in range(4):
-            for c in range(5):
+        for rs in range(3):
+            for c in range(4):
                 self.r_feet[rs, c] = r_[rs*4+c]
 
         self.R = quaternion.as_rotation_matrix(self.q)
-        yc = np.cos(yaw_)
-        ys = np.sin(yaw_)
+        yc = cos(yaw_)
+        ys = sin(yaw_)
         self.R_yaw = np.array([[yc,  -ys,   0],
                                [ys,  yc,   0],
                                [0,   0,   1]])

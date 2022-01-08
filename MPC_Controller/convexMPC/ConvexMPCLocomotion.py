@@ -121,14 +121,14 @@ class ConvexMPCLocomotion:
         seResult = data._stateEstimator.getResult()
         Q = [0.25, 0.25, 10, 2, 2, 50, 0, 0, 0.3, 0.2, 0.2, 0.1]
         yaw = seResult.rpy[2]
-        weights = Q
+        weights = np.asarray(Q, dtype=DTYPE).reshape((12,1))
         alpha = 4e-5
         p = seResult.position
         v = seResult.vWorld
         w = seResult.omegaWorld
         q = seResult.orientation
 
-        r = [self.pFoot[i%4][int(i/4)] - seResult.position[i/4] for i in range(12)]
+        r = [self.pFoot[i%4][int(i/4)] - seResult.position[int(i/4)] for i in range(12)]
         if alpha > 1e-4:
             print("Alpha was set too high (" + str(alpha) + ") adjust to 1e-5\n")
             alpha = 1e-5
@@ -267,8 +267,8 @@ class ConvexMPCLocomotion:
         if np.abs(v_robot[1]>0.1): # avoid dividing by zero
             self.rpy_int[0] += self.dt*(self._roll_des-seResult.rpy[0])/v_robot[1]
 
-        self.rpy_int[0] = np.min(np.max(self.rpy_int[0], -0.25), 0.25)
-        self.rpy_int[1] = np.min(np.max(self.rpy_int[1], -0.25), 0.25)
+        self.rpy_int[0] = np.min([np.max([self.rpy_int[0], -0.25]), 0.25])
+        self.rpy_int[1] = np.min([np.max([self.rpy_int[1], -0.25]), 0.25])
 
         self.rpy_comp[0] = v_robot[1]*self.rpy_int[0]
         self.rpy_comp[1] = v_robot[0]*self.rpy_int[1]
@@ -279,7 +279,7 @@ class ConvexMPCLocomotion:
                             data._legController.datas[i].p)
         
         if gait is not self.standing:
-            self.world_position_desired += self.dt*np.array([v_des_world[0], v_des_world[1], 0])
+            self.world_position_desired += self.dt*np.array([v_des_world[0], v_des_world[1], 0]).reshape((3,1))
         
         # first time initialization
         if self.firstRun:
@@ -311,17 +311,16 @@ class ConvexMPCLocomotion:
 
             self.footSwingTrajectories[i].setHeight(0.06)
 
-            offset = np.array((0, side_sign[i]*0.065, 0))
+            offset = np.array([0, side_sign[i]*0.065, 0]).reshape((3,1))
             pRobotFrame = data._quadruped.getHipLocation(i)+offset
             pRobotFrame[1] += interleave_y[i]*v_abs*interleave_gain
 
             stance_time = gait.getCurrentSwingTime(self.dtMPC, i)
-            pYawCorrected = coordinateRotation(CoordinateAxis.Z, -self._yaw_turn_rate*stance_time/2) * pRobotFrame
+            pYawCorrected = coordinateRotation(CoordinateAxis.Z, -self._yaw_turn_rate*stance_time/2) @ pRobotFrame
 
-            des_vel = np.array([self._x_vel_des, self._y_vel_des, 0.0], dtype=DTYPE)
+            des_vel = np.array([self._x_vel_des, self._y_vel_des, 0.0], dtype=DTYPE).reshape((3,1))
 
-            Pf = np.array([seResult.position + seResult.rBody.T @ 
-                (pYawCorrected + des_vel*self.swingTimeRemaining[i])], dtype=DTYPE)
+            Pf = seResult.position + seResult.rBody.T @ (pYawCorrected + des_vel @ self.swingTimeRemaining[i])
 
             p_rel_max = 0.3
             pfx_rel = seResult.vWorld[0] * (0.5 + self._parameters.cmpc_bonus_swing) * stance_time + \
@@ -332,8 +331,8 @@ class ConvexMPCLocomotion:
                 0.03*(seResult.vWorld[1]-v_des_world[1]) + \
                 (0.5*seResult.position[2]/9.81) * (-seResult.vWorld[0]*self._yaw_turn_rate)
             
-            pfx_rel = np.min(np.max(pfx_rel, -p_rel_max), p_rel_max)
-            pfy_rel = np.min(np.max(pfy_rel, -p_rel_max), p_rel_max)
+            pfx_rel = np.min([np.max([pfx_rel, -p_rel_max]), p_rel_max])
+            pfy_rel = np.min([np.max([pfy_rel, -p_rel_max]), p_rel_max])
             Pf[0] += pfx_rel
             Pf[1] += pfy_rel
             Pf[2] = -0.003

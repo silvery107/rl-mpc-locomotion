@@ -6,7 +6,7 @@ DTYPE = np.float32
 
 class StateEstimate:
     def __init__(self) -> None:
-        self.orientation = np.quaternion(0.0, 0.0, 0.0, 0.0)
+        self.orientation = np.quaternion(1, 0.0, 0.0, 0.0)
         self.position = np.zeros((3,1), dtype=DTYPE)
         self.omegaBody = np.zeros((3,1), dtype=DTYPE)
         self.vBody = np.zeros((3,1), dtype=DTYPE)
@@ -24,7 +24,7 @@ class StateEstimate:
 class StateEstimatorContainer:
 
     def __init__(self):
-        self.result:StateEstimate = None
+        self.result = StateEstimate()
         self._phase = np.zeros((4,1), dtype=DTYPE)
         self.contactPhase = self._phase
 
