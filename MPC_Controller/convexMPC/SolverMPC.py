@@ -2,6 +2,7 @@ import numpy as np
 import scipy
 import quaternion
 import cvxopt
+import mosek
 from MPC_Controller.convexMPC.RobotState import RobotState
 
 K_NUM_LEGS = 4
@@ -186,6 +187,10 @@ def solve_mpc(update:UpdateData, setup:ProblemSetup):
     qg = 2 * B_qp.T @ S @ (A_qp @ x_0 - X_d)
     
     # solve this QP using cvxopt
+    # cvxopt.solvers.options['show_progress'] = False
+    cvxopt.solvers.options['mosek'] = {mosek.iparam.log: 0, 
+                                       mosek.iparam.max_num_warnings:2}
+                                       
     qp_solution = cvxopt.solvers.qp(cvxopt.matrix(qH.astype(np.double)), 
                                cvxopt.matrix(qg.astype(np.double)), 
                                cvxopt.matrix(fmat.astype(np.double)), 
