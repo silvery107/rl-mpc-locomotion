@@ -29,7 +29,7 @@ class RobotState:
         self.yaw = yaw_
         for rs in range(3):
             for c in range(4):
-                self.r_feet[rs, c] = r_[rs*4+c]
+                self.r_feet[rs, c] = r_[rs * 4 + c]
 
         self.R = quaternion.as_rotation_matrix(self.q)
         yc = cos(yaw_)
