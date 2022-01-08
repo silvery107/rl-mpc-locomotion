@@ -19,6 +19,7 @@
 - solver exp存在指数爆炸
 - `np.copyto()` numpy ndarray copy
 - `copy.copy()` for non-nested list copy
+- `scipy.linalg.expm` Compute the matrix exponential using Pade approximation.
 
 ### Architecture
 ```c

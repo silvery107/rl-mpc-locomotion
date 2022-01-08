@@ -1,4 +1,5 @@
 import numpy as np
+import scipy
 import quaternion
 import cvxopt
 from MPC_Controller.convexMPC.RobotState import RobotState
@@ -117,7 +118,7 @@ def c2qp(Ac:np.ndarray, Bc:np.ndarray, dt:float, horizon:int):
     ABc[0:13,0:13] = Ac
     ABc[0:13,13:25] = Bc
     ABc = dt * ABc
-    expmm = np.exp(ABc)
+    expmm = scipy.linalg.expm(ABc) # matrix exponential
     Adt = expmm[0:13,0:13]
     Bdt = expmm[0:13,13:25]
     if horizon > 19:
@@ -185,11 +186,15 @@ def solve_mpc(update:UpdateData, setup:ProblemSetup):
     qg = 2 * B_qp.T @ S @ (A_qp @ x_0 - X_d)
     
     # solve this QP using cvxopt
-    q_soln = cvxopt.solvers.qp(cvxopt.matrix(qH.astype(np.double)), 
+    qp_solution = cvxopt.solvers.qp(cvxopt.matrix(qH.astype(np.double)), 
                                cvxopt.matrix(qg.astype(np.double)), 
                                cvxopt.matrix(fmat.astype(np.double)), 
                                cvxopt.matrix(U_b.astype(np.double)), 
                                solver="mosek") # "mosek"
+                               
+    if qp_solution["x"] is not None:
+        q_soln = qp_solution
+
 
 def get_q_soln():
-    return q_soln
+    return q_soln["x"]

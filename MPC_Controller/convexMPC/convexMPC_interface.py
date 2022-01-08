@@ -1,4 +1,3 @@
-from typing import cast
 import numpy as np
 from copy import deepcopy, copy
 from MPC_Controller.convexMPC.SolverMPC import *
