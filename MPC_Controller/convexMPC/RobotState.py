@@ -27,6 +27,7 @@ class RobotState:
         np.copyto(self.w, w_, casting=CASTING)
         self.q = copy(q_)
         self.yaw = yaw_
+        # ! a redundant encode-decode process here
         for rs in range(3):
             for c in range(4):
                 self.r_feet[rs, c] = r_[rs * 4 + c]
@@ -36,7 +37,7 @@ class RobotState:
         ys = sin(yaw_)
         self.R_yaw = np.array([[yc,  -ys,   0],
                                [ys,  yc,   0],
-                               [0,   0,   1]])
+                               [0,   0,   1]], dtype=DTYPE)
         # ! update I_body
         np.fill_diagonal(self.I_body, [0.07, 0.26, 0.242])
 

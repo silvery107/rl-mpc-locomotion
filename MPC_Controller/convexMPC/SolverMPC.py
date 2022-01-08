@@ -140,6 +140,8 @@ def c2qp(Ac:np.ndarray, Bc:np.ndarray, dt:float, horizon:int):
 def solve_mpc(update:UpdateData, setup:ProblemSetup):
     global A_qp, B_qp, S, X_d, U_b, fmat, qH, qg, eye_12h
     global rs, x_0, I_world, A_ct, B_ct_r, q_soln
+    
+    # ! maybe a redundant copying here
     rs.set(update.p, update.v, update.q, update.w, update.r, update.yaw)
 
     # roll pitch yaw
@@ -189,8 +191,8 @@ def solve_mpc(update:UpdateData, setup:ProblemSetup):
     # solve this QP using cvxopt
     # cvxopt.solvers.options['show_progress'] = False
     cvxopt.solvers.options['mosek'] = {mosek.iparam.log: 0, 
-                                       mosek.iparam.max_num_warnings:2}
-                                       
+                                       mosek.iparam.max_num_warnings:0}
+
     qp_solution = cvxopt.solvers.qp(cvxopt.matrix(qH.astype(np.double)), 
                                cvxopt.matrix(qg.astype(np.double)), 
                                cvxopt.matrix(fmat.astype(np.double)), 
