@@ -12,11 +12,13 @@
 - `*` 对mat做矩阵乘法, 对ndarray做点乘 
 - `@` 矩阵乘法
 - `.dot` 矩阵乘法 
-- `np.mutiply` 点乘
+- `np.mutiply()` 点乘
 - `self._quadruped:Quadruped = None` 类内类型声明
 - Successfully bridge Isaac Gym and MPC Controller on 1.7.2022, it took me 1 month coding blindly.
 - 矩阵和列表的等号赋值是不安全的
 - solver exp存在指数爆炸
+- `np.copyto()` numpy ndarray copy
+- `copy.copy()` for non-nested list copy
 
 ### Architecture
 ```c
