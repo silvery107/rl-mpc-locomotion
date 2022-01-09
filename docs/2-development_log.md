@@ -28,17 +28,17 @@ In this way, variables in  `RobotState` are all belong to the class, not its ins
 ```python
 class RobotState:
     def __init__(self):
-        pos = np.zeros((3,1), dtype=np.float32)
-        vel = np.zeros((3,1), dtype=np.float32)
-        omega = np.zeros((3,1), dtype=np.float32)
-        R = np.zeros((3,3), dtype=np.float32)
-        data = RobotData()
+        self.pos = np.zeros((3,1), dtype=np.float32)
+        self.vel = np.zeros((3,1), dtype=np.float32)
+        self.omega = np.zeros((3,1), dtype=np.float32)
+        self.R = np.zeros((3,3), dtype=np.float32)
+        self.data = RobotData()
 ```
 
 What about the `data` atribute? It is a pointer in struct but an instance in python class now. We may not want `RobotData()` to be called inside `__init__()` in `RobotState` class, so just declear its type ahead with `:` before `=`.
 
 ```python
-data:RobotData = None
+self.data:RobotData = None
 ```
 Note that this type hints will not initialize `data` but can help IDE auto-complete engine like `data.m -> float`.
 
