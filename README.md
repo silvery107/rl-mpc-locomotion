@@ -58,6 +58,7 @@ main() ->
 
 - [Import URDF model in ISAAC](docs/0-model_import.md)
 - [Install MIT Cheetah Software](docs/1-MIT_cheetah_installation.md)
+- [Development Log](docs/2-development_log.md)
 
 ## Gallery
 
