@@ -84,7 +84,8 @@ def quat_to_rpy(q, rpy:np.ndarray):
     rpy[2] = np.arctan2(2.*(q.x*q.y+q.w*q.z), q.w*q.w + q.x*q.x - q.y*q.y - q.z*q.z)
 
 # continuous time state space matrices.  
-def ct_ss_mats(I_world:np.ndarray, m:float, r_feet:np.ndarray, R_yaw:np.ndarray, A:np.ndarray, B:np.ndarray, x_drag:float):
+def ct_ss_mats(I_world:np.ndarray, m:float, r_feet:np.ndarray, 
+               R_yaw:np.ndarray, A:np.ndarray, B:np.ndarray, x_drag:float):
     A.fill(0)
     A[3,9] = 1.0
     A[11,9] = x_drag
@@ -191,7 +192,7 @@ def solve_mpc(update:UpdateData, setup:ProblemSetup):
     # solve this QP using cvxopt
     # cvxopt.solvers.options['show_progress'] = False
     cvxopt.solvers.options['mosek'] = {mosek.iparam.log: 0, 
-                                       mosek.iparam.max_num_warnings:0}
+                                       mosek.iparam.max_num_warnings: 1}
 
     qp_solution = cvxopt.solvers.qp(cvxopt.matrix(qH.astype(np.double)), 
                                cvxopt.matrix(qg.astype(np.double)), 

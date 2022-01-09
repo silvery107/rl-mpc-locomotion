@@ -1,5 +1,6 @@
 import sys
 sys.path.append("..")
+from math import sin, cos
 from enum import Enum, auto
 import numpy as np
 from MPC_Controller.common.LegController import LegController, LegControllerCommand
@@ -18,8 +19,8 @@ class CoordinateAxis(Enum):
     Z = auto()
 
 def coordinateRotation(axis:CoordinateAxis, theta:float):
-    s = np.sin(theta)
-    c = np.cos(theta)
+    s = sin(theta)
+    c = cos(theta)
     R = None
     if axis == CoordinateAxis.X:
         R = np.array([1, 0, 0, 0, c, s, 0, -s, c], dtype=DTYPE).reshape((3,3))
@@ -29,11 +30,6 @@ def coordinateRotation(axis:CoordinateAxis, theta:float):
         R = np.array([c, s, 0, -s, c, 0, 0, 0, 1], dtype=DTYPE).reshape((3,3))
 
     return R
-
-class CMPC_Result:
-    def __init__(self) -> None:
-        self.commands = [LegControllerCommand() for _ in range(4)]
-        self.contactPhase = np.zeros((4,1), dtype=DTYPE)
 
 class ConvexMPCLocomotion:
     def __init__(self, _dt:float, _iterationsBetweenMPC:int, parameters:Parameters):
@@ -53,7 +49,6 @@ class ConvexMPCLocomotion:
         self.rpy_int = np.zeros((3,1),dtype=DTYPE)
         self.firstSwing = [True for _ in range(4)]
         
-        # self.initSparseMPC()
 
         # self.pBody_des = np.zeros((3,1), dtype=DTYPE)
         # self.vBody_des = np.zeros((3,1), dtype=DTYPE)
@@ -61,7 +56,6 @@ class ConvexMPCLocomotion:
 
 
         self.firstRun = True
-        self.result = CMPC_Result()
         self.pFoot = [np.zeros((3,1)) for _ in range(4)]
         self.x_comp_integral = 0.0
         self.trajAll = [0.0 for _ in range(12*36)]

@@ -6,8 +6,6 @@ CASTING = "same_kind"
 
 problem_configuration = ProblemSetup()
 update = UpdateData()
-gait_data = np.zeros(K_MAX_GAIT_SEGMENTS, dtype=np.uint8)
-first_run = 1
 has_solved = 0
 
 def setup_problem(dt:float, horizon:int, mu:float, fmax:float):
@@ -33,16 +31,6 @@ def update_problem_data(p:np.ndarray, v:np.ndarray, q:np.quaternion, w:np.ndarra
     update.gait = copy(gait)
     solve_mpc(update, problem_configuration)
     has_solved = 1
-
-# def update_solver_settings(max_iter:int, rho:float, sigma:float, solver_alpha:float, terminate:float):
-#     """
-#     This is for jcqp only, which means useless
-#     """
-#     update.max_iterations = max_iter
-#     update.rho = rho
-#     update.sigma = sigma
-#     update.solver_alpha = solver_alpha
-#     update.terminate = terminate
 
 def update_x_drag(x_drag:float):
     update.x_drag = x_drag
