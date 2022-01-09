@@ -16,10 +16,12 @@
 - `self._quadruped:Quadruped = None` 类内类型声明
 - Successfully bridge Isaac Gym and MPC Controller on 1.7.2022, it took me 1 month coding blindly.
 - 矩阵和列表的等号赋值是不安全的
-- solver exp存在指数爆炸
+- solver exp存在指数爆炸 1.8
 - `np.copyto()` numpy ndarray copy
-- `copy.copy()` for non-nested list copy
+- `copy.copy()` for shallow copy
+- `copied_list[:] = original_list` shallow copy for list with out a new `id`
 - `scipy.linalg.expm` Compute the matrix exponential using Pade approximation.
+- 目前CPU跑满了,可能还有不少优化空间 1.9
 
 ### Architecture
 ```c

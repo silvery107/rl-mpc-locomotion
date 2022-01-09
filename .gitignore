@@ -134,4 +134,3 @@ dmypy.json
 .vscode/
 .tmp.*
 *.ini
-*.ipynb
