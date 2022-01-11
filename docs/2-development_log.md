@@ -1,4 +1,11 @@
 # Development Log: Cheetah Software in Python
+- [Development Log: Cheetah Software in Python](#development-log-cheetah-software-in-python)
+  - [How to imitate a C/C++ STRUCT in Python?](#how-to-imitate-a-cc-struct-in-python)
+  - [How to copy data from list or ndarray into a Python struct?](#how-to-copy-data-from-list-or-ndarray-into-a-python-struct)
+  - [Matrix multiplication and exponential](#matrix-multiplication-and-exponential)
+    - [Product](#product)
+    - [Exponential](#exponential)
+  - [Quadratic programming with CVXOPT](#quadratic-programming-with-cvxopt)
 
 ## How to imitate a C/C++ STRUCT in Python?
 
