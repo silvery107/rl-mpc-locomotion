@@ -7,6 +7,8 @@ DTYPE = np.float32
 class RobotType(Enum):
     ALIENGO = auto()
     MINI_CHEETAH = auto()
+    XIAOTIAN = auto()
+    ANYMAL = auto()
 
 class Quadruped:
 

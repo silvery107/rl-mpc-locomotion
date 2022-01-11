@@ -1,9 +1,11 @@
 from isaacgym import gymapi
+from MPC_Controller.common.Quadruped import RobotType
 
-asset_root = "/home/silvery/isaacgym/assets"
-xiaotian = "urdf/Xiaotian-ROS/urdf/xiaotian_description.urdf"
-aliengo = "urdf/aliengo_description/xacro/aliengo.urdf"
-anymal = "urdf/anymal_c/urdf/anymal.urdf"
+ASSET_ROOT = "/home/silvery/isaacgym/assets"
+MINI_CHEETAH = "urdf/mini_cheetah/mini_cheetah.urdf"
+XIAOTIAN = "urdf/Xiaotian-ROS/urdf/xiaotian_description.urdf"
+ALIENGO = "urdf/aliengo_description/xacro/aliengo.urdf"
+ANYMAL = "urdf/anymal_c/urdf/anymal.urdf"
 
 def start_sim(gym):
     # get default set of parameters
@@ -38,16 +40,24 @@ def start_sim(gym):
     return sim
 
 def load_asset(gym, sim, robot, fix_base_link):
-    asset_file = robot
+    if robot == RobotType.ALIENGO:
+        asset_file = ALIENGO
+    elif robot == RobotType.MINI_CHEETAH:
+        asset_file = MINI_CHEETAH
+    elif robot == RobotType.XIAOTIAN:
+        asset_file = XIAOTIAN
+    elif robot == RobotType.ANYMAL:
+        asset_file = ANYMAL
+    
     asset_options = gymapi.AssetOptions()
     asset_options.fix_base_link = fix_base_link
     asset_options.use_mesh_materials = True
-    asset_options.flip_visual_attachments = False if asset_file==xiaotian else True
+    asset_options.flip_visual_attachments = False if asset_file==XIAOTIAN or asset_file==MINI_CHEETAH else True
     asset_options.armature = 0.01   # added to the diagonal elements of inertia tensors
                                     # for all of the asset’s rigid bodies/links. 
                                     # Could improve simulation stability
-    print("Loading asset '%s' from '%s'" % (asset_file, asset_root))
-    asset = gym.load_asset(sim, asset_root, asset_file, asset_options) # or load_asset_urdf
+    print("Loading asset '%s' from '%s'" % (asset_file, ASSET_ROOT))
+    asset = gym.load_asset(sim, ASSET_ROOT, asset_file, asset_options) # or load_asset_urdf
     return asset
 
 def add_viewer(gym, sim, env, cam_pos):
@@ -88,6 +98,7 @@ def create_envs(gym, sim, asset, num_envs, envs_per_row, env_spacing):
 def add_force_sensor(gym, num_envs, envs, actor_handles):
     # add force sensors
     sensor_pose = gymapi.Transform(gymapi.Vec3(0.0, 0.0, 0.0))
+    # ! attention here, foot ids are not static for each robot
     foot_ids = [5, 9, 13, 17]
     # cache some common handles for later use
     force_sensors = []

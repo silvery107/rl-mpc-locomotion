@@ -20,12 +20,12 @@ class OffsetDurationGait():
         self.__nIterations = nSegment
         self.__name = name
         self.__stance = durations[0]
-        self.__swing = nSegment-durations[0]
+        self.__swing = nSegment - durations[0]
         self.__mpc_table = [0 for _ in range(nSegment*4)]
 
     def setIterations(self, iterationsPerMPC:int, currentIteration:int):
         self.__iteration = (currentIteration / iterationsPerMPC) % self.__nIterations
-        self.__phase = (float)(currentIteration % (iterationsPerMPC * self.__nIterations)) / (float) (iterationsPerMPC * self.__nIterations)
+        self.__phase = float(currentIteration % (iterationsPerMPC * self.__nIterations)) / float(iterationsPerMPC * self.__nIterations)
 
     def getContactState(self):
         progress = self.__phase - self.__offsetsFloat
@@ -38,7 +38,6 @@ class OffsetDurationGait():
             else:
                 progress[i] = progress[i] / self.__durationsFloat[i]
             
-        
         # print("contact state: %.3f %.3f %.3f %.3f\n"%(progress[0], progress[1], progress[2], progress[3]))
         return progress
 

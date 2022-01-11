@@ -9,13 +9,13 @@ quad = Quadruped(RobotType.ALIENGO)
 
 if __name__ == "__main__":
     from Isaac_Sim.util_isaac import *
-    xiaotian = "urdf/Xiaotian-ROS/urdf/xiaotian_description.urdf"
-    aliengo = "urdf/aliengo_description/xacro/aliengo.urdf"
-    anymal = "urdf/anymal_c/urdf/anymal.urdf"
+    XIAOTIAN = "urdf/Xiaotian-ROS/urdf/xiaotian_description.urdf"
+    ALIENGO = "urdf/aliengo_description/xacro/aliengo.urdf"
+    ANYMAL = "urdf/anymal_c/urdf/anymal.urdf"
 
     gym = gymapi.acquire_gym()
     sim = start_sim(gym)
-    asset = load_asset(gym, sim, robot=aliengo, fix_base_link=True)
+    asset = load_asset(gym, sim, robot=ALIENGO, fix_base_link=True)
 
     # set up the env grid
     num_envs = 4

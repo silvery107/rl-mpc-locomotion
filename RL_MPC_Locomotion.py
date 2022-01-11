@@ -14,14 +14,9 @@ class SimulatorMode(Enum):
     DO_NOTHING = auto()
     EXIT = auto()
 
-
-xiaotian = "urdf/Xiaotian-ROS/urdf/xiaotian_description.urdf"
-aliengo = "urdf/aliengo_description/xacro/aliengo.urdf"
-anymal = "urdf/anymal_c/urdf/anymal.urdf"
-
 gym = gymapi.acquire_gym()
 sim = start_sim(gym)
-asset = load_asset(gym, sim, robot=aliengo, fix_base_link=True)
+asset = load_asset(gym, sim, robot=RobotType.MINI_CHEETAH, fix_base_link=True)
 
 # set up the env grid
 num_envs = 4
