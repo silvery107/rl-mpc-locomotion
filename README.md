@@ -22,23 +22,22 @@
 - `copied_list[:] = original_list` shallow copy for list with out a new `id`
 - `scipy.linalg.expm` Compute the matrix exponential using Pade approximation.
 - 目前CPU跑满了,可能还有不少优化空间 1.9
+- 注意控制器死循环延时导致cpu跑满
 
-### Architecture
-```c
-main() ->
-    Quadruped,
-    RobotRunner ->
-        LegController,
-        DesiredStateCommand,
-        StateEstimatorContainer,
-        Parameters,
-        RobotController ->
-            ControlFSM ->
-                FSM_State_Locomotion ->
-                    ConvexMPCLocomotion ->
-                        convexMPC_interface ->
-                            SolverMPC
-```
+### Roadmap
+
+- [Quadruped](MPC_Controller/common/Quadruped.py),
+- [RobotRunner](MPC_Controller/RobotRunner.py) ->
+    - [LegController](MPC_Controller/common/LegController.py),
+    - [DesiredStateCommand](MPC_Controller/DesiredStateCommand.py),
+    - [StateEstimatorContainer](MPC_Controller/StateEstimatorContainer.py),
+    - [Parameters](MPC_Controller/Parameters.py),
+    - [RobotController](MPC_Controller/RobotRunner.py) ->
+        - [ControlFSM](MPC_Controller/FSM_States/ControlFSM.py) ->
+            - [FSM_State_Locomotion](MPC_Controller/FSM_States/FSM_State_Locomotion.py) ->
+                - [ConvexMPCLocomotion](MPC_Controller/convexMPC/ConvexMPCLocomotion.py) ->
+                    - [convexMPC_interface](MPC_Controller/convexMPC/convexMPC_interface.py) ->
+                        - [SolverMPC](MPC_Controller/convexMPC/SolverMPC.py)
 
 ### Partially implemented:
 - SimulationBridge
