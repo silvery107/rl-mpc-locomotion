@@ -4,7 +4,7 @@
 
 ## Control Blocks
 
-<img src="images/controller_blocks.png" width=600>
+<img src="images/controller_blocks.png" width=700>
 
 ## Development Log
 - python模仿结构体必须放在__init__()里面，否则无法实例化
