@@ -1,6 +1,6 @@
 from MPC_Controller.RobotRunner import RobotRunner
 from MPC_Controller.common.Quadruped import RobotType
-from MIT_Controller import MIT_Controller
+from MPC_Controller.RobotController import RobotController
 from enum import Enum, auto
 
 class SimulatorMode(Enum):
@@ -10,7 +10,7 @@ class SimulatorMode(Enum):
     EXIT = auto()
 
 class SimulationBridge:
-    def __init__(self, robot:RobotType, robot_ctrl:MIT_Controller) -> None:
+    def __init__(self, robot:RobotType, robot_ctrl:RobotController) -> None:
         self._robot = robot
         self._robotRunner = RobotRunner(robot_ctrl)
         self._userParams = robot_ctrl.getUserControlParameters()

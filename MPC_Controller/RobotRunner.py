@@ -1,4 +1,4 @@
-from MPC_Controller.MIT_Controller import MIT_Controller
+from MPC_Controller.RobotController import RobotController
 from MPC_Controller.common.Quadruped import Quadruped, RobotType
 from MPC_Controller.common.LegController import LegController
 from MPC_Controller.StateEstimatorContainer import StateEstimatorContainer
@@ -8,7 +8,7 @@ import numpy as np
 
 
 class RobotRunner:
-    def __init__(self, robot_ctrl:MIT_Controller):
+    def __init__(self, robot_ctrl:RobotController):
         self._robot_ctrl = robot_ctrl
         self._iterations = 0
 

@@ -2,7 +2,7 @@ import numpy as np
 from enum import Enum, auto
 from MPC_Controller.RobotRunner import RobotRunner
 from MPC_Controller.common.Quadruped import RobotType
-from MPC_Controller.MIT_Controller import MIT_Controller
+from MPC_Controller.RobotController import RobotController
 
 class SimulatorMode(Enum):
     RUN_CONTROL_PARAMETERS = auto()
@@ -12,7 +12,7 @@ class SimulatorMode(Enum):
 
 # Setup MPC Controller
 robotType = RobotType.ALIENGO
-robotController = MIT_Controller()
+robotController = RobotController()
 robotRunner = RobotRunner(robotController)
 
 iterations = 0

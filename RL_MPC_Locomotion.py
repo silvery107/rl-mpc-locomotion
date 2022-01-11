@@ -3,7 +3,7 @@ from enum import Enum, auto
 
 from MPC_Controller.RobotRunner import RobotRunner
 from MPC_Controller.common.Quadruped import RobotType
-from MPC_Controller.MIT_Controller import MIT_Controller
+from MPC_Controller.RobotController import RobotController
 
 from isaacgym import gymapi
 from Isaac_Sim.util_isaac import *
@@ -39,7 +39,7 @@ for idx in range(num_envs):
 
 # Setup MPC Controller
 robotType = RobotType.ALIENGO
-robotController = MIT_Controller()
+robotController = RobotController()
 robotRunner = RobotRunner(robotController)
 
 iterations = 0

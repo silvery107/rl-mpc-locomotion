@@ -31,7 +31,7 @@ main() ->
         LegController,
         DesiredStateCommand,
         StateEstimatorContainer,
-        MIT_UserParameters,
+        Parameters,
         MIT_Controller ->
             ControlFSM ->
                 FSM_State_Locomotion ->

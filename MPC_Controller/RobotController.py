@@ -5,7 +5,7 @@ from MPC_Controller.Parameters import Parameters
 from MPC_Controller.StateEstimatorContainer import StateEstimatorContainer
 from MPC_Controller.DesiredStateCommand import DesiredStateCommand
 
-class MIT_Controller:
+class RobotController:
     def __init__(self, ) -> None:
         pass
 
