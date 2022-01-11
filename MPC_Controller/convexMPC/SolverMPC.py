@@ -8,6 +8,7 @@ from MPC_Controller.convexMPC.RobotState import RobotState
 K_NUM_LEGS = 4
 K_MAX_GAIT_SEGMENTS = 36
 DTYPE = np.float32
+BIG_NUMBER = 9e7 # A numerically large upper bound value  1.0e+08
 
 class ProblemSetup:
     def __init__(self) -> None: 
@@ -22,7 +23,8 @@ class UpdateData:
         self.v = np.zeros((3, 1), dtype=DTYPE)
         self.q = np.quaternion(1, 0, 0, 0)
         self.w = np.zeros((3, 1), dtype=DTYPE)
-        self.r = [0.0 for _ in range(12)]
+        # self.r = [0.0 for _ in range(12)]
+        self.r_feet = np.zeros((3,4), dtype=DTYPE)
         self.weights = np.zeros((12, 1), dtype=DTYPE)
         self.traj = [0.0 for _ in range(12*K_MAX_GAIT_SEGMENTS)]
         self.gait = [0 for _ in range(K_MAX_GAIT_SEGMENTS)]
@@ -36,15 +38,13 @@ class UpdateData:
         self.max_iterations = 0
 
 
-DTYPE = np.float32
-BIG_NUMBER = 5e10
 
 rs = RobotState()
-Adt = np.zeros((13,13), dtype=DTYPE)
-Bdt = np.zeros((13,12), dtype=DTYPE)
+# Adt = np.zeros((13,13), dtype=DTYPE)
+# Bdt = np.zeros((13,12), dtype=DTYPE)
 ABc = np.zeros((25,25), dtype=DTYPE)
-expmm = np.zeros((25,25), dtype=DTYPE)
-x_0 = np.zeros((13,1), dtype=DTYPE)
+# expmm = np.zeros((25,25), dtype=DTYPE)
+# x_0 = np.zeros((13,1), dtype=DTYPE)
 I_world = np.zeros((3,3), dtype=DTYPE)
 A_ct = np.zeros((13,13), dtype=DTYPE)
 B_ct_r = np.zeros((13,12), dtype=DTYPE)
@@ -62,7 +62,7 @@ eye_12h = np.empty([])
 q_soln = 0.0
 
 def near_zero(a:float):
-    return (a < 0.01 and a > -.01)
+    return a < 0.01 and a > -0.01
 
 def near_one(a:float):
     return near_zero(a-1)
@@ -76,8 +76,10 @@ def cross_mat(I_inv:np.ndarray, r:np.ndarray):
 
 def quat_to_rpy(q, rpy:np.ndarray):
     as_ = np.min([-2.*(q.x*q.z-q.w*q.y),.99999])
+    # sinr_cosp = 2 * (q.w * q.x + q.y * q.z)
+    # cosr_cosp = 1 - 2 * (q.x * q.x + q.y * q.y)
     # roll
-    rpy[0] = np.arctan2(2.*(q.y*q.z+q.w*q.x),q.w*q.w - q.x*q.x - q.y*q.y + q.z*q.z)
+    rpy[0] = np.arctan2(2.*(q.y*q.z+q.w*q.x), q.w*q.w - q.x*q.x - q.y*q.y + q.z*q.z)
     # pitch
     rpy[1] = np.arcsin(as_)
     # yaw
@@ -119,17 +121,21 @@ def c2qp(Ac:np.ndarray, Bc:np.ndarray, dt:float, horizon:int):
     ABc.fill(0)
     ABc[0:13,0:13] = Ac
     ABc[0:13,13:25] = Bc
-    ABc = dt * ABc
+    # ABc = dt * ABc
+    ABc *= dt
     expmm = scipy.linalg.expm(ABc) # matrix exponential
     Adt = expmm[0:13,0:13]
     Bdt = expmm[0:13,13:25]
     if horizon > 19:
         raise "horizon is too long!"
 
-    powerMats = [np.zeros((13,13), dtype=DTYPE) for _ in range(20)]
-    powerMats[0] = np.identity(13, dtype=DTYPE)
+    # powerMats = [np.zeros((13,13), dtype=DTYPE) for _ in range(20)]
+    # powerMats[0] = np.identity(13, dtype=DTYPE)
+    powerMats = []
+    powerMats.append(np.identity(13, dtype=DTYPE))
     for i in range(1, horizon+1):
-        powerMats[i] = Adt @ powerMats[i-1]
+        # powerMats[i] = Adt @ powerMats[i-1]
+        powerMats.append(Adt @ powerMats[i-1])
     
     for r in range(horizon):
         A_qp[13*r:13*r+13, 0:13] = powerMats[r+1]
@@ -140,19 +146,18 @@ def c2qp(Ac:np.ndarray, Bc:np.ndarray, dt:float, horizon:int):
 
 def solve_mpc(update:UpdateData, setup:ProblemSetup):
     global A_qp, B_qp, S, X_d, U_b, fmat, qH, qg, eye_12h
-    global rs, x_0, I_world, A_ct, B_ct_r, q_soln
+    global rs, I_world, A_ct, B_ct_r, q_soln
     
-    # ! maybe a redundant copying here
-    rs.set(update.p, update.v, update.q, update.w, update.r, update.yaw)
+    rs.set(update.p, update.v, update.q, update.w, update.r_feet, update.yaw)
 
     # roll pitch yaw
     rpy = np.zeros((3,1), dtype=DTYPE)
     quat_to_rpy(rs.q, rpy)
 
     # initial state (13 state representation)
-    x_0 = np.concatenate((rpy, rs.p, rs.w, rs.v, np.array([-9.81])[None]), axis=0)
-    np.copyto(I_world, rs.R_yaw @ rs.I_body @ rs.R_yaw.T)
+    x_0 = np.concatenate((rpy, rs.p, rs.w, rs.v, np.array([[-9.81]])), axis=0)
     # I_world = rs.R_yaw @ rs.I_body @ rs.R_yaw.T
+    np.copyto(I_world, rs.R_yaw @ rs.I_body @ rs.R_yaw.T)
 
     # state space models
     ct_ss_mats(I_world, rs.m, rs.r_feet,rs.R_yaw,A_ct, B_ct_r, update.x_drag)
@@ -183,10 +188,11 @@ def solve_mpc(update:UpdateData, setup:ProblemSetup):
                         0, -mu, 1.0,
                         0,   0, 1.0], 
                         dtype=DTYPE).reshape((5,3))
+
     for i in range(setup.horizon*4):
         fmat[i*5:i*5+5, i*3:i*3+3] = f_block
 
-    qH = 2 * (B_qp.T @ S @ B_qp + update.alpha*eye_12h)
+    qH = 2 * (B_qp.T @ S @ B_qp + update.alpha * eye_12h)
     qg = 2 * B_qp.T @ S @ (A_qp @ x_0 - X_d)
     
     # solve this QP using cvxopt
@@ -201,8 +207,8 @@ def solve_mpc(update:UpdateData, setup:ProblemSetup):
                                solver="mosek") # "mosek"
                                
     if qp_solution["x"] is not None:
-        q_soln = qp_solution
+        q_soln = qp_solution["x"]
 
 
 def get_q_soln():
-    return q_soln["x"]
+    return q_soln

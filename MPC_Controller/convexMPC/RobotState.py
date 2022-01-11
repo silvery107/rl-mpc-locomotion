@@ -5,32 +5,27 @@ import quaternion
 CASTING = "same_kind"
 DTYPE = np.float32
 
-# ! update I_body val
 class RobotState:
 
-    def __init__(self) -> None:
-        self.p = np.zeros((3, 1), dtype=DTYPE)
-        self.v = np.zeros((3, 1), dtype=DTYPE)
-        self.w = np.zeros((3, 1), dtype=DTYPE)
-        self.r_feet = np.zeros((3, 4), dtype=DTYPE)
-        self.R = np.zeros((3, 3), dtype=DTYPE)
-        self.R_yaw = np.zeros((3, 3), dtype=DTYPE)
-        self.I_body = np.zeros((3, 3))
-        self.q = np.quaternion(1, 0, 0, 0)
+    def __init__(self):
+        self.p:np.ndarray = None # (3,1)
+        self.v:np.ndarray = None # (3,1)
+        self.w:np.ndarray = None # (3,1)
+        self.r_feet:np.ndarray = None # (3,4)
+        self.R:np.ndarray = None # (3,3)
+        self.R_yaw:np.ndarray = None # (3,3)
+        self.I_body:np.ndarray = np.zeros((3, 3))
+        self.q:np.quaternion = None
         self.yaw = 0.0
         self.m = 9.0
 
-    def set(self, p_, v_, q_, w_, r_, yaw_:float):
-        
-        np.copyto(self.p, p_, casting=CASTING)
-        np.copyto(self.v, v_, casting=CASTING)
-        np.copyto(self.w, w_, casting=CASTING)
-        self.q = copy(q_)
+    def set(self, p_, v_, q_, w_, r_feet_, yaw_:float):
+        self.p = p_
+        self.v = v_
+        self.q = q_
+        self.w = w_
         self.yaw = yaw_
-        # ! a redundant encode-decode process here
-        for rs in range(3):
-            for c in range(4):
-                self.r_feet[rs, c] = r_[rs * 4 + c]
+        self.r_feet = r_feet_
 
         self.R = quaternion.as_rotation_matrix(self.q)
         yc = cos(yaw_)

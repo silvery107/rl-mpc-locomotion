@@ -113,16 +113,21 @@ class ConvexMPCLocomotion:
 
     def solveDenseMPC(self, mpcTable:list, data:ControlFSMData):
         seResult = data._stateEstimator.getResult()
+        
+        # ! parameters here
         Q = [0.25, 0.25, 10, 2, 2, 50, 0, 0, 0.3, 0.2, 0.2, 0.1]
-        yaw = seResult.rpy[2]
-        weights = np.asarray(Q, dtype=DTYPE).reshape((12,1))
         alpha = 4e-5
+
         p = seResult.position
         v = seResult.vWorld
         w = seResult.omegaWorld
         q = seResult.orientation
 
-        r = [self.pFoot[i%4][int(i/4)] - seResult.position[int(i/4)] for i in range(12)]
+        # r = [self.pFoot[i%4][int(i/4)] - seResult.position[int(i/4)] for i in range(12)]
+        r_feet = np.array([self.pFoot[i] - seResult.position for i in range(4)], dtype=DTYPE).reshape((3,4))
+        yaw = float(seResult.rpy[2])
+        weights = np.asarray(Q, dtype=DTYPE).reshape((12,1))
+
         if alpha > 1e-4:
             print("Alpha was set too high (" + str(alpha) + ") adjust to 1e-5\n")
             alpha = 1e-5
@@ -136,7 +141,7 @@ class ConvexMPCLocomotion:
             self.x_comp_integral += self._parameters.cmpc_x_drag * pz_err * self.dtMPC / vxy[0]
 
         # mpc.update_solver_settings()
-        mpc.update_problem_data(p, v, q, w, r, yaw, weights, self.trajAll, alpha, gait=mpcTable)
+        mpc.update_problem_data(p, v, q, w, r_feet, yaw, weights, self.trajAll, alpha, gait=mpcTable)
 
         f = np.zeros((3,1), dtype=DTYPE)
         for leg in range(4):
