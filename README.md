@@ -1,6 +1,6 @@
 # RL MPC Locomotion
 
-<img src="images/Isaac.png" width=300>
+<img src="images/Isaac.png" width=200>
 
 ## Control Blocks
 
