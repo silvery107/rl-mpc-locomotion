@@ -23,6 +23,7 @@
 - `scipy.linalg.expm` Compute the matrix exponential using Pade approximation.
 - 目前CPU跑满了,可能还有不少优化空间 1.9
 - 注意控制器死循环延时导致cpu跑满
+- 改写了legController Commands的更新, 全部换成`np.copyto`后不延时cpu占用也能维持~20%
 
 ### Roadmap
 
