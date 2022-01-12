@@ -23,7 +23,6 @@ class UpdateData:
         self.v = np.zeros((3, 1), dtype=DTYPE)
         self.q = np.quaternion(1, 0, 0, 0)
         self.w = np.zeros((3, 1), dtype=DTYPE)
-        # self.r = [0.0 for _ in range(12)]
         self.r_feet = np.zeros((3,4), dtype=DTYPE)
         self.weights = np.zeros((12, 1), dtype=DTYPE)
         self.traj = [0.0 for _ in range(12*K_MAX_GAIT_SEGMENTS)]
