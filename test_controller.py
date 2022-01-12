@@ -1,5 +1,6 @@
 import numpy as np
 from enum import Enum, auto
+from time import sleep
 from MPC_Controller.RobotRunner import RobotRunner
 from MPC_Controller.common.Quadruped import RobotType
 from MPC_Controller.RobotController import RobotController
@@ -39,3 +40,5 @@ while True:
         break
     else:
         raise "Invalid SimulatorMode"
+    
+    sleep(0.005)

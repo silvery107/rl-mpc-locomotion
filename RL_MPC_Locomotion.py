@@ -16,7 +16,7 @@ class SimulatorMode(Enum):
 
 gym = gymapi.acquire_gym()
 sim = start_sim(gym)
-asset = load_asset(gym, sim, robot=RobotType.MINI_CHEETAH, fix_base_link=True)
+asset = load_asset(gym, sim, robot=RobotType.ALIENGO, fix_base_link=True)
 
 # set up the env grid
 num_envs = 4

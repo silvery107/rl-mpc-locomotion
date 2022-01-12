@@ -196,7 +196,6 @@ def solve_mpc(update:UpdateData, setup:ProblemSetup):
     qg = 2 * B_qp.T @ S @ (A_qp @ x_0 - X_d)
     
     # solve this QP using cvxopt
-    # cvxopt.solvers.options['show_progress'] = False
     cvxopt.solvers.options['mosek'] = {mosek.iparam.log: 0, 
                                        mosek.iparam.max_num_warnings: 1}
 
@@ -208,6 +207,8 @@ def solve_mpc(update:UpdateData, setup:ProblemSetup):
                                
     if qp_solution["x"] is not None:
         q_soln = qp_solution["x"]
+    
+    # q_soln = np.zeros((12 * setup.horizon,1), dtype=DTYPE)
 
 
 def get_q_soln():

@@ -75,10 +75,10 @@ class ConvexMPCLocomotion:
         self.footSwingTrajectories = [FootSwingTrajectory() for _ in range(4)]
         self.swingTimes = np.zeros((4,1), dtype=DTYPE)
         self.swingTimeRemaining = [0.0 for _ in range(4)]
-        self.Kp = None
-        self.Kp_stance = None
-        self.Kd = None
-        self.Kd_stance = None
+        self.Kp:np.ndarray = None
+        self.Kp_stance:np.ndarray = None
+        self.Kd:np.ndarray = None
+        self.Kd_stance:np.ndarray = None
 
     def initialize(self):
         self.firstSwing = [True for _ in range(4)]
