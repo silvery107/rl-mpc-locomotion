@@ -12,6 +12,7 @@ from MPC_Controller.Parameters import Parameters
 from MPC_Controller.common.FootSwingTrajectory import FootSwingTrajectory
 
 DTYPE = np.float32
+CASTING = "same_kind"
 
 class CoordinateAxis(Enum):
     X = auto()
@@ -304,7 +305,7 @@ class ConvexMPCLocomotion:
 
         for i in range(4):
             if self.firstSwing[i]:
-                self.swingTimeRemaining[i] = self.swingTimes[i]
+                self.swingTimeRemaining[i] = self.swingTimes[i].item()
             else:
                 self.swingTimeRemaining[i] -= self.dt
 
@@ -319,7 +320,7 @@ class ConvexMPCLocomotion:
 
             des_vel = np.array([self._x_vel_des, self._y_vel_des, 0.0], dtype=DTYPE).reshape((3,1))
 
-            Pf = seResult.position + seResult.rBody.T @ (pYawCorrected + des_vel @ self.swingTimeRemaining[i])
+            Pf = seResult.position + seResult.rBody.T @ (pYawCorrected + des_vel * self.swingTimeRemaining[i])
 
             p_rel_max = 0.3
             pfx_rel = seResult.vWorld[0] * (0.5 + self._parameters.cmpc_bonus_swing) * stance_time + \
@@ -332,8 +333,8 @@ class ConvexMPCLocomotion:
             
             pfx_rel = np.min([np.max([pfx_rel, -p_rel_max]), p_rel_max])
             pfy_rel = np.min([np.max([pfy_rel, -p_rel_max]), p_rel_max])
-            Pf[0] += pfx_rel
-            Pf[1] += pfy_rel
+            Pf[0] += pfx_rel.item()
+            Pf[1] += pfy_rel.item()
             Pf[2] = -0.003
             self.footSwingTrajectories[i].setFinalPosition(Pf)
 
@@ -361,17 +362,23 @@ class ConvexMPCLocomotion:
                     self.firstSwing[foot] = False
                     self.footSwingTrajectories[foot].setInitialPosition(self.pFoot[foot])
 
-                self.footSwingTrajectories[foot].computeSwingTrajectoryBezier(swingState, self.swingTimes[foot])
+                self.footSwingTrajectories[foot].computeSwingTrajectoryBezier(swingState, self.swingTimes[foot].item())
                 pDesFootWorld = self.footSwingTrajectories[foot].getPosition()
                 vDesFootWorld = self.footSwingTrajectories[foot].getVelocity()
                 pDesLeg = seResult.rBody @ (pDesFootWorld - seResult.position) \
                     - data._quadruped.getHipLocation(foot)
                 vDesLeg = seResult.rBody @ (vDesFootWorld - seResult.vWorld)
 
-                data._legController.commands[foot].pDes = pDesLeg
-                data._legController.commands[foot].vDes = vDesLeg
-                data._legController.commands[foot].kpCartesian = self.Kp
-                data._legController.commands[foot].kdCartesian = self.Kd
+                np.copyto(data._legController.commands[foot].pDes, pDesLeg, casting=CASTING)
+                np.copyto(data._legController.commands[foot].vDes, vDesLeg, casting=CASTING)
+
+                np.copyto(data._legController.commands[foot].kpCartesian, self.Kp, casting=CASTING)
+                np.copyto(data._legController.commands[foot].kdCartesian, self.Kd, casting=CASTING)
+
+                # data._legController.commands[foot].pDes = pDesLeg
+                # data._legController.commands[foot].vDes = vDesLeg
+                # data._legController.commands[foot].kpCartesian = self.Kp
+                # data._legController.commands[foot].kdCartesian = self.Kd
 
             else: # foot is in stance
                 pDesFootWorld = self.footSwingTrajectories[foot].getPosition()
@@ -380,16 +387,25 @@ class ConvexMPCLocomotion:
                     - data._quadruped.getHipLocation(foot)
                 vDesLeg = seResult.rBody @ (vDesFootWorld - seResult.vWorld)
                 
-                data._legController.commands[foot].pDes = pDesLeg
-                data._legController.commands[foot].vDes = vDesLeg
-                data._legController.commands[foot].kpCartesian = self.Kp_stance
-                data._legController.commands[foot].kdCartesian = self.Kd_stance
+                np.copyto(data._legController.commands[foot].pDes, pDesLeg, casting=CASTING)
+                np.copyto(data._legController.commands[foot].vDes, vDesLeg, casting=CASTING)
 
-                data._legController.commands[foot].forceFeedForward = self.f_ff[foot]
-                data._legController.commands[foot].kdJoint = np.identity(3) * 0.2
+                np.copyto(data._legController.commands[foot].kpCartesian, self.Kp_stance, casting=CASTING)
+                np.copyto(data._legController.commands[foot].kdCartesian, self.Kd_stance, casting=CASTING)
+
+                np.copyto(data._legController.commands[foot].forceFeedForward, self.f_ff[foot], casting=CASTING)
+                np.copyto(data._legController.commands[foot].kdJoint, np.identity(3) * 0.2, casting=CASTING)
+
+                # data._legController.commands[foot].pDes = pDesLeg
+                # data._legController.commands[foot].vDes = vDesLeg
+                # data._legController.commands[foot].kpCartesian = self.Kp_stance
+                # data._legController.commands[foot].kdCartesian = self.Kd_stance
+
+                # data._legController.commands[foot].forceFeedForward = self.f_ff[foot]
+                # data._legController.commands[foot].kdJoint = np.identity(3) * 0.2
 
                 se_contactState[foot] = contactState
-            
+
         data._stateEstimator.setContactPhase(se_contactState)
         
 

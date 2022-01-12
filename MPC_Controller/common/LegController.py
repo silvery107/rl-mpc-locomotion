@@ -2,8 +2,6 @@ import numpy as np
 from math import sin, cos
 from MPC_Controller.common.Quadruped import Quadruped
 
-
-# q = np.zeros((3,1))
 DTYPE = np.float32
 
 class LegControllerCommand:

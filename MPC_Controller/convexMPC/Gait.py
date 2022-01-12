@@ -14,9 +14,9 @@ class OffsetDurationGait():
         # duration of step in mpc segments
         self.__durations = durations
         # offsets in phase (0 to 1)
-        self.__offsetsFloat = offset/float(nSegment)
+        self.__offsetsFloat = offset / float(nSegment)
         # durations in phase (0 to 1)
-        self.__durationsFloat = durations/float(nSegment)
+        self.__durationsFloat = durations / float(nSegment)
         self.__nIterations = nSegment
         self.__name = name
         self.__stance = durations[0]
@@ -72,9 +72,9 @@ class OffsetDurationGait():
                 if progress[j] < 0:
                     progress[j] += self.__nIterations
                 if progress[j] < self.__durations[j]:
-                    self.__mpc_table[i*4 + j] = 1
+                    self.__mpc_table[i * 4 + j] = 1
                 else:
-                    self.__mpc_table[i*4 + j] = 0
+                    self.__mpc_table[i * 4 + j] = 0
             # print("%d "% _mpc_table[i*4 + j])
         
         return self.__mpc_table

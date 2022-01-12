@@ -38,14 +38,14 @@ class Quadruped:
             self._hipLinkLength = 0.209
             self._kneeLinkLength = 0.195
             self._kneeLinkY_offset = 0.004
-            self._abadLocation = np.zeros((3,1), dtype=DTYPE)
+            self._abadLocation = np.array([0.19, 0.049, 0], dtype=DTYPE).reshape((3,1))
 
         elif robotype == RobotType.MINI_CHEETAH:
             self._abadLinkLength = 0.062
             self._hipLinkLength = 0.209
             self._kneeLinkLength = 0.195
             self._kneeLinkY_offset = 0.004
-            self._abadLocation = np.zeros((3,1), dtype=DTYPE)
+            self._abadLocation = np.array([0.19, 0.049, 0], dtype=DTYPE).reshape((3,1))
             
         else:
             raise "Invalid RobotType"
@@ -69,7 +69,7 @@ class Quadruped:
             self._abadLocation[0] if (leg == 0 or leg == 1) else -self._abadLocation[0],
             self._abadLocation[1] if (leg == 1 or leg == 3) else -self._abadLocation[1],
             self._abadLocation[2]
-        ])
+            ]).reshape((3,1))
 
         return pHip
 

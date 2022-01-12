@@ -1,6 +1,6 @@
 # RL MPC Locomotion
 
-<img src="images/Isaac.png" width=300>
+<img src="images/Isaac.png" width=200>
 
 ## Control Blocks
 
@@ -11,7 +11,7 @@
 - class可以声明确定类型的值为None成员变量
 - `*` 对mat做矩阵乘法, 对ndarray做点乘 
 - `@` 矩阵乘法
-- `.dot` 矩阵乘法 
+- `ndarray..dot` 矩阵乘法 
 - `np.mutiply()` 点乘
 - `self._quadruped:Quadruped = None` 类内类型声明
 - Successfully bridge Isaac Gym and MPC Controller on 1.7.2022, it took me 1 month coding blindly.
@@ -24,6 +24,8 @@
 - 目前CPU跑满了,可能还有不少优化空间 1.9
 - 注意控制器无延时死循环导致cpu跑满 1.11
 - 在ISAAC中控制器频率受到仿真器限制(软实时), 500Hz只消耗20%CPU 1.12
+- 改写了legController Commands的更新, 全部换成`np.copyto`后不延时cpu占用也能维持~20%
+- `ndarray.item()`
 
 ### Roadmap
 
