@@ -22,7 +22,8 @@
 - `copied_list[:] = original_list` shallow copy for list with out a new `id`
 - `scipy.linalg.expm` Compute the matrix exponential using Pade approximation.
 - 目前CPU跑满了,可能还有不少优化空间 1.9
-- 注意控制器死循环延时导致cpu跑满
+- 注意控制器无延时死循环导致cpu跑满 1.11
+- 在ISAAC中控制器频率受到仿真器限制(软实时), 500Hz只消耗20%CPU 1.12
 
 ### Roadmap
 
