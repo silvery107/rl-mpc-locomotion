@@ -27,6 +27,7 @@
 - 改写了legController Commands的更新, 全部换成`np.copyto`
 - `ndarray.item()`
 - 腿部控制器需要按照`SpineBoard.cpp`改写`legController.command`到12自由度的torque
+- bridged legController, stateEstimator and simulator 1.13
 
 ### Roadmap
 

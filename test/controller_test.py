@@ -1,3 +1,6 @@
+import sys
+sys.path.append("..")
+
 import numpy as np
 from enum import Enum, auto
 from time import sleep
