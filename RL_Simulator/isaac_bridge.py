@@ -1,1 +1,0 @@
-from isaacgym import gymapi

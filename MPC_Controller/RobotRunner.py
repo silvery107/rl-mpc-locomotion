@@ -53,13 +53,13 @@ class RobotRunner:
                                               self.userControlParameters)
 
 
-    def run(self):
+    def run(self, gym, env, actor):
         """
         Runs the overall robot control system by calling each of the major components
         to run each of their respective steps.
         """
         # Update the data from the robot
-        self._legController.updateData()
+        self._legController.updateData(gym, env, actor)
         self._legController.zeroCommand()
         self._legController.setEnable(True)
         self._legController.setMaxTorque(100)
@@ -68,6 +68,6 @@ class RobotRunner:
         self._robot_ctrl.runController()
 
         # Sets the leg controller commands for the robot
-        self._legController.updateCommand()
+        self._legController.updateCommand(gym, env, actor)
         self._iterations += 1
 
