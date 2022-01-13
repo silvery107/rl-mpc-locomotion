@@ -63,6 +63,8 @@ class RobotRunner:
         self._legController.zeroCommand()
         self._legController.setEnable(True)
         self._legController.setMaxTorque(100)
+
+        self._stateEstimator.update(gym, env, actor, self._quadruped.bodyName)
         
         # Run Control user code
         self._robot_ctrl.runController()

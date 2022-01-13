@@ -144,7 +144,7 @@ class LegController:
                 legTorques[leg * 3 + 1] = legTorque[1].item()
                 legTorques[leg * 3 + 2] = legTorque[2].item()
         
-        # TODO Check legTorques order
+        # ! TODO Check legTorques order
         gym.apply_actor_dof_efforts(env, actor, legTorques)       
 
 

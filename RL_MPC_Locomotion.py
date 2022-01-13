@@ -19,8 +19,9 @@ class SimulatorMode(Enum):
     EXIT = auto()
 
 robot = RobotType.ALIENGO
+dt = 1/60
 gym = gymapi.acquire_gym()
-sim = acquire_sim(gym)
+sim = acquire_sim(gym, dt)
 asset = load_asset(gym, sim, robot=robot, fix_base_link=True)
 
 # set up the env grid

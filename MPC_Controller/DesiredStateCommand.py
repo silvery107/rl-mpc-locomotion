@@ -3,7 +3,7 @@
 class DesiredStateCommand:
     def __init__(self) -> None:
         self.yaw_turn_rate = 0.0
-        self.x_vel_cmd = 0.0
+        self.x_vel_cmd = 1.0
         self.y_vel_cmd = 0.0
 
     def update(self, command):

@@ -7,12 +7,12 @@ XIAOTIAN = "urdf/Xiaotian-ROS/urdf/xiaotian_description.urdf"
 ALIENGO = "urdf/aliengo_description/xacro/aliengo.urdf"
 ANYMAL = "urdf/anymal_c/urdf/anymal.urdf"
 
-def acquire_sim(gym):
+def acquire_sim(gym, dt):
     # get default set of parameters
     sim_params = gymapi.SimParams()
 
     # set common parameters
-    sim_params.dt = 0.002 # 1 / 60 # control timestep
+    sim_params.dt = dt # control timestep
     sim_params.substeps = 2 # physics simulation timestep
     sim_params.up_axis = gymapi.UP_AXIS_Z
     sim_params.gravity = gymapi.Vec3(0.0, 0.0, -9.8)
@@ -78,7 +78,7 @@ def create_envs(gym, sim, asset, num_envs, envs_per_row, env_spacing):
     # cache some common handles for later use
     envs = []
     actor_handles = []
-    height = 0.5
+    height = 0.4
 
     # create and populate the environments
     for i in range(num_envs):
