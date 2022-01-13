@@ -22,10 +22,11 @@
 - `copied_list[:] = original_list` shallow copy for list with out a new `id`
 - `scipy.linalg.expm` Compute the matrix exponential using Pade approximation.
 - 目前CPU跑满了,可能还有不少优化空间 1.9
-- 注意控制器无延时死循环导致cpu跑满 1.11
+- 控制器无延时死循环导致cpu跑满 1.11
 - 在ISAAC中控制器频率受到仿真器限制(软实时), 500Hz只消耗20%CPU 1.12
-- 改写了legController Commands的更新, 全部换成`np.copyto`后不延时cpu占用也能维持~20%
+- 改写了legController Commands的更新, 全部换成`np.copyto`
 - `ndarray.item()`
+- 腿部控制器需要按照`SpineBoard.cpp`改写`legController.command`到12自由度的torque
 
 ### Roadmap
 
