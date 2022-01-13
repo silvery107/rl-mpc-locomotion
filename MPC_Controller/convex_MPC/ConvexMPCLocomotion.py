@@ -4,9 +4,9 @@ from math import sin, cos
 from enum import Enum, auto
 import numpy as np
 from MPC_Controller.common.LegController import LegController, LegControllerCommand
-from MPC_Controller.convexMPC.Gait import OffsetDurationGait
-import MPC_Controller.convexMPC.convexMPC_interface as mpc
-from MPC_Controller.FSM_States.ControlFSMData import ControlFSMData
+from MPC_Controller.convex_MPC.Gait import OffsetDurationGait
+import MPC_Controller.convex_MPC.convexMPC_interface as mpc
+from MPC_Controller.FSM_states.ControlFSMData import ControlFSMData
 from MPC_Controller.common.Quadruped import RobotType
 from MPC_Controller.Parameters import Parameters
 from MPC_Controller.common.FootSwingTrajectory import FootSwingTrajectory

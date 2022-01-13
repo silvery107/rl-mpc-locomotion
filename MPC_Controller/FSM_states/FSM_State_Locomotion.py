@@ -1,10 +1,10 @@
 import sys
 sys.path.append("..")
 import numpy as np
-from MPC_Controller.convexMPC.ConvexMPCLocomotion import ConvexMPCLocomotion
-from MPC_Controller.FSM_States.ControlFSMData import ControlFSMData
+from MPC_Controller.convex_MPC.ConvexMPCLocomotion import ConvexMPCLocomotion
+from MPC_Controller.FSM_states.ControlFSMData import ControlFSMData
 from MPC_Controller.common.Quadruped import RobotType
-from MPC_Controller.FSM_States.FSM_State import FSM_State, FSM_StateName
+from MPC_Controller.FSM_states.FSM_State import FSM_State, FSM_StateName
 
 DTYPE = np.float32
 

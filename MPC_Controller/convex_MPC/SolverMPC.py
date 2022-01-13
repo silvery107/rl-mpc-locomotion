@@ -3,7 +3,7 @@ import scipy
 import quaternion
 import cvxopt
 import mosek
-from MPC_Controller.convexMPC.RobotState import RobotState
+from MPC_Controller.convex_MPC.RobotState import RobotState
 
 K_NUM_LEGS = 4
 K_MAX_GAIT_SEGMENTS = 36

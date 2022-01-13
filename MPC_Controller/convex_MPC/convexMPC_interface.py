@@ -1,6 +1,6 @@
 import numpy as np
 from copy import deepcopy, copy
-from MPC_Controller.convexMPC.SolverMPC import *
+from MPC_Controller.convex_MPC.SolverMPC import *
 
 CASTING = "same_kind"
 

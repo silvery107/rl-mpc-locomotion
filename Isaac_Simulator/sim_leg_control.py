@@ -8,7 +8,7 @@ from MPC_Controller.common.LegController import computeLegJacobianAndPosition
 quad = Quadruped(RobotType.ALIENGO)
 
 if __name__ == "__main__":
-    from Isaac_Sim.util_isaac import *
+    from Isaac_Simulator.util_isaac import *
     XIAOTIAN = "urdf/Xiaotian-ROS/urdf/xiaotian_description.urdf"
     ALIENGO = "urdf/aliengo_description/xacro/aliengo.urdf"
     ANYMAL = "urdf/anymal_c/urdf/anymal.urdf"

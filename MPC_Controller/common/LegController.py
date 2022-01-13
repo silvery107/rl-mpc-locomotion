@@ -1,5 +1,6 @@
 import numpy as np
 from math import sin, cos
+from isaacgym import gymapi
 from MPC_Controller.common.Quadruped import Quadruped
 
 DTYPE = np.float32

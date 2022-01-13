@@ -1,8 +1,8 @@
 import sys
 sys.path.append("..")
 from enum import Enum, auto
-from MPC_Controller.FSM_States.ControlFSMData import ControlFSMData
-from MPC_Controller.FSM_States.TransitionData import TransitionData
+from MPC_Controller.FSM_states.ControlFSMData import ControlFSMData
+from MPC_Controller.FSM_states.TransitionData import TransitionData
 from abc import abstractclassmethod
 
 class FSM_StateName(Enum):

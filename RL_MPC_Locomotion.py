@@ -6,7 +6,7 @@ from MPC_Controller.common.Quadruped import RobotType
 from MPC_Controller.RobotController import RobotController
 
 from isaacgym import gymapi
-from Isaac_Sim.util_isaac import *
+from Isaac_Simulator.util_isaac import *
 
 class SimulatorMode(Enum):
     RUN_CONTROL_PARAMETERS = auto()
@@ -14,31 +14,32 @@ class SimulatorMode(Enum):
     DO_NOTHING = auto()
     EXIT = auto()
 
+robot = RobotType.ALIENGO
 gym = gymapi.acquire_gym()
 sim = start_sim(gym)
-asset = load_asset(gym, sim, robot=RobotType.ALIENGO, fix_base_link=True)
+asset = load_asset(gym, sim, robot=robot, fix_base_link=True)
 
 # set up the env grid
-num_envs = 4
-envs_per_row = 2
+num_envs = 1
+envs_per_row = 1
 env_spacing = 1.0
+# one actor per env 
 envs, actor_handles = create_envs(gym, sim, asset, num_envs, envs_per_row, env_spacing)
-force_sensors = add_force_sensor(gym, num_envs, envs, actor_handles)
+# force_sensors = add_force_sensor(gym, num_envs, envs, actor_handles)
 cam_pos = gymapi.Vec3(1, 1, 1) # w.r.t target env
 viewer = add_viewer(gym, sim, envs[0], cam_pos)
 
-# set actor properties
+# configure the joints for effort control mode (once)
 for idx in range(num_envs):
     props = gym.get_actor_dof_properties(envs[idx], actor_handles[idx])
-    props["driveMode"].fill(gymapi.DOF_MODE_POS)
-    props["stiffness"].fill(1000.0)
-    props["damping"].fill(100.0)
+    props["driveMode"].fill(gymapi.DOF_MODE_EFFORT)
+    props["stiffness"].fill(0.0)
+    props["damping"].fill(0.0)
     gym.set_actor_dof_properties(envs[idx], actor_handles[idx], props)
 
 
 
 # Setup MPC Controller
-robotType = RobotType.ALIENGO
 robotController = RobotController()
 robotRunner = RobotRunner(robotController)
 
@@ -62,7 +63,7 @@ while not gym.query_viewer_has_closed(viewer):
         if firstControllerRun:
             firstControllerRun = False
             print("[Simulator Driver] First run of robot controller...")
-            robotRunner.init(robotType)
+            robotRunner.init(robot)
 
         robotRunner.run()
     elif simMode == SimulatorMode.DO_NOTHING:

@@ -12,8 +12,8 @@ def start_sim(gym):
     sim_params = gymapi.SimParams()
 
     # set common parameters
-    sim_params.dt = 1 / 60
-    sim_params.substeps = 2
+    sim_params.dt = 0.002 # 1 / 60 # control timestep
+    sim_params.substeps = 2 # physics simulation timestep
     sim_params.up_axis = gymapi.UP_AXIS_Z
     sim_params.gravity = gymapi.Vec3(0.0, 0.0, -9.8)
 
