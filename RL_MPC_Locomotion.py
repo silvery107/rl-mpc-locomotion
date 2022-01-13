@@ -6,7 +6,7 @@ from MPC_Controller.common.Quadruped import RobotType
 from MPC_Controller.RobotController import RobotController
 
 from isaacgym import gymapi
-from Isaac_Simulator.util_isaac import *
+from RL_Simulator.util_isaac import *
 
 class SimulatorMode(Enum):
     RUN_CONTROL_PARAMETERS = auto()
