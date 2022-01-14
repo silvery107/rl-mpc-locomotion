@@ -39,8 +39,8 @@
     - [StateEstimatorContainer](MPC_Controller/StateEstimatorContainer.py),
     - [Parameters](MPC_Controller/Parameters.py),
     - [RobotController](MPC_Controller/RobotRunner.py) ->
-        - [ControlFSM](MPC_Controller/FSM_States/ControlFSM.py) ->
-            - [FSM_State_Locomotion](MPC_Controller/FSM_States/FSM_State_Locomotion.py) ->
+        - [ControlFSM](MPC_Controller/FSM_states/ControlFSM.py) ->
+            - [FSM_State_Locomotion](MPC_Controller/FSM_states/FSM_State_Locomotion.py) ->
                 - [ConvexMPCLocomotion](MPC_Controller/convex_MPC/ConvexMPCLocomotion.py) ->
                     - [convexMPC_interface](MPC_Controller/convex_MPC/convexMPC_interface.py) ->
                         - [SolverMPC](MPC_Controller/convex_MPC/SolverMPC.py)
