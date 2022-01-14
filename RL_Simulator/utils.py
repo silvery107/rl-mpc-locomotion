@@ -78,7 +78,7 @@ def create_envs(gym, sim, asset, num_envs, envs_per_row, env_spacing):
     # cache some common handles for later use
     envs = []
     actor_handles = []
-    height = 0.4
+    height = 0.5
 
     # create and populate the environments
     for i in range(num_envs):

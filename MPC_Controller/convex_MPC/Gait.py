@@ -1,6 +1,6 @@
 import numpy as np
 
-class OffsetDurationGait():
+class OffsetDurationGait:
     """
     trotting, bounding, pronking
     jumping, galloping, standing
@@ -14,9 +14,9 @@ class OffsetDurationGait():
         # duration of step in mpc segments
         self.__durations = durations
         # offsets in phase (0 to 1)
-        self.__offsetsFloat = offset / float(nSegment)
+        self.__offsetsFloat = offset / nSegment
         # durations in phase (0 to 1)
-        self.__durationsFloat = durations / float(nSegment)
+        self.__durationsFloat = durations / nSegment
         self.__nIterations = nSegment
         self.__name = name
         self.__stance = durations[0]

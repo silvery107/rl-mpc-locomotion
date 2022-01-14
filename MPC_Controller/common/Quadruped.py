@@ -71,7 +71,7 @@ class Quadruped:
             self._abadLocation[0] if (leg == 0 or leg == 1) else -self._abadLocation[0],
             self._abadLocation[1] if (leg == 1 or leg == 3) else -self._abadLocation[1],
             self._abadLocation[2]
-            ]).reshape((3,1))
+            ], dtype=DTYPE).reshape((3,1))
 
         return pHip
 
