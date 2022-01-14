@@ -98,13 +98,13 @@ class LegController:
         dof_states = gym.get_actor_dof_states(env, actor, gymapi.STATE_ALL)
         for leg in range(4):
             # q
-            self.datas[leg].q[0] = dof_states["pos"][leg * 3]
+            self.datas[leg].q[0] = dof_states["pos"][leg * 3 + 0]
             self.datas[leg].q[1] = dof_states["pos"][leg * 3 + 1]
             self.datas[leg].q[2] = dof_states["pos"][leg * 3 + 2]
             # self.datas[leg].q[:, 0] = dof_states["pos"][3*leg:3*leg+3]
 
             # qd
-            self.datas[leg].qd[0] = dof_states["vel"][leg * 3]
+            self.datas[leg].qd[0] = dof_states["vel"][leg * 3 + 0]
             self.datas[leg].qd[1] = dof_states["vel"][leg * 3 + 1]
             self.datas[leg].qd[2] = dof_states["vel"][leg * 3 + 2]
             # self.datas[leg].qd[:, 0] = dof_states["vel"][3*leg:3*leg+3]
@@ -115,6 +115,20 @@ class LegController:
             # v
             self.datas[leg].v = self.datas[leg].J @ self.datas[leg].qd
 
+    def getLegIdx(self, idx_in):
+        # MIT   0 1 2 3
+        # Isaac 1 0 3 2
+        return idx_in
+
+        if idx_in == 0:
+            return 1
+        elif idx_in == 1:
+            return 0
+        elif idx_in == 2:
+            return 3
+        elif idx_in == 3:
+            return 2
+
     def updateCommand(self, gym, env, actor):
         """
         update leg commands for simulator
@@ -124,6 +138,7 @@ class LegController:
 
         if self._legsEnabled == True:
             for leg in range(4):
+                # MPC -> f_ff -R^T-> forceFeedForward
                 # force feedforward + cartesian PD
                 footForce = self.commands[leg].forceFeedForward \
                             + self.commands[leg].kpCartesian @ (self.commands[leg].pDes - self.datas[leg].p) \
@@ -134,17 +149,17 @@ class LegController:
 
                 # TODO Check if legTorque is sufficient for torque control
                 # TODO or a joint PD is needed?
-
-                # estimate torque
+                # estimate leg torque
                 self.datas[leg].tauEstimate = legTorque \
                                             + self.commands[leg].kpJoint @ (self.commands[leg].qDes -self.datas[leg].q) \
                                             + self.commands[leg].kdJoint @ (self.commands[leg].qdDes -self.datas[leg].qd)
 
-                legTorques[leg * 3] = legTorque[0].item()
-                legTorques[leg * 3 + 1] = legTorque[1].item()
-                legTorques[leg * 3 + 2] = legTorque[2].item()
+                legTorques[self.getLegIdx(leg) * 3 + 0] = legTorque[0].item()
+                legTorques[self.getLegIdx(leg) * 3 + 1] = legTorque[1].item()
+                legTorques[self.getLegIdx(leg) * 3 + 2] = legTorque[2].item()
         
         # ! TODO Check legTorques order
+
         gym.apply_actor_dof_efforts(env, actor, legTorques)       
 
 

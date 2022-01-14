@@ -4,6 +4,7 @@ from math import sin, cos
 import quaternion
 CASTING = "same_kind"
 DTYPE = np.float32
+from MPC_Controller.StateEstimatorContainer import quat_to_rot
 
 class RobotState:
 
@@ -27,7 +28,7 @@ class RobotState:
         self.yaw = yaw_
         self.r_feet = r_feet_
 
-        self.R = quaternion.as_rotation_matrix(self.q)
+        self.R = quat_to_rot(self.q)
         yc = cos(yaw_)
         ys = sin(yaw_)
         self.R_yaw = np.array([[yc,  -ys,   0],

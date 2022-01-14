@@ -9,6 +9,7 @@ K_NUM_LEGS = 4
 K_MAX_GAIT_SEGMENTS = 36
 DTYPE = np.float32
 BIG_NUMBER = 9e7 # A numerically large upper bound value  1.0e+08
+CASTING = "same_kind"
 
 class ProblemSetup:
     def __init__(self) -> None: 
@@ -28,13 +29,14 @@ class UpdateData:
         self.traj = [0.0 for _ in range(12*K_MAX_GAIT_SEGMENTS)]
         self.gait = [0 for _ in range(K_MAX_GAIT_SEGMENTS)]
         self.yaw = 0.0
+        self.rpy = np.zeros((3,1), dtype=DTYPE)
         self.alpha = 0.0
-        self.rho = 0.0
-        self.sigma = 0.0
-        self.solver_alpha = 0.0
-        self.terminate = 0.0
+        # self.rho = 0.0
+        # self.sigma = 0.0
+        # self.solver_alpha = 0.0
+        # self.terminate = 0.0
         self.x_drag = 0.0
-        self.max_iterations = 0
+        # self.max_iterations = 0
 
 
 
@@ -58,7 +60,7 @@ qH = np.empty([])
 qg = np.empty([])
 eye_12h = np.empty([])
 
-q_soln = 0.0
+q_soln = None # (12 * horizon, 1)
 
 def near_zero(a:float):
     return a < 0.01 and a > -0.01
@@ -75,8 +77,6 @@ def cross_mat(I_inv:np.ndarray, r:np.ndarray):
 
 def quat_to_rpy(q, rpy:np.ndarray):
     as_ = np.min([-2.*(q.x*q.z-q.w*q.y),.99999])
-    # sinr_cosp = 2 * (q.w * q.x + q.y * q.z)
-    # cosr_cosp = 1 - 2 * (q.x * q.x + q.y * q.y)
     # roll
     rpy[0] = np.arctan2(2.*(q.y*q.z+q.w*q.x), q.w*q.w - q.x*q.x - q.y*q.y + q.z*q.z)
     # pitch
@@ -150,13 +150,14 @@ def solve_mpc(update:UpdateData, setup:ProblemSetup):
     rs.set(update.p, update.v, update.q, update.w, update.r_feet, update.yaw)
 
     # roll pitch yaw
-    rpy = np.zeros((3,1), dtype=DTYPE)
-    quat_to_rpy(rs.q, rpy)
+    rpy = update.rpy
+    # rpy = np.zeros((3,1), dtype=DTYPE)
+    # quat_to_rpy(rs.q, rpy)
 
     # initial state (13 state representation)
     x_0 = np.concatenate((rpy, rs.p, rs.w, rs.v, np.array([[-9.81]])), axis=0)
     # I_world = rs.R_yaw @ rs.I_body @ rs.R_yaw.T
-    np.copyto(I_world, rs.R_yaw @ rs.I_body @ rs.R_yaw.T)
+    np.copyto(I_world, rs.R_yaw @ rs.I_body @ rs.R_yaw.T, casting=CASTING)
 
     # state space models
     ct_ss_mats(I_world, rs.m, rs.r_feet,rs.R_yaw,A_ct, B_ct_r, update.x_drag)
