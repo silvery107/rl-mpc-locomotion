@@ -30,17 +30,17 @@ viewer = add_viewer(gym, sim, envs[0], cam_pos)
 # configure the joints for effort control mode (once)
 for idx in range(num_envs):
     props = gym.get_actor_dof_properties(envs[idx], actors[idx])
-    props["driveMode"].fill(gymapi.DOF_MODE_EFFORT)
-    props["stiffness"].fill(0.0)
-    props["damping"].fill(0.0)
+    props["driveMode"].fill(gymapi.DOF_MODE_POS)
+    props["stiffness"].fill(1000.0)
+    props["damping"].fill(100.0)
     gym.set_actor_dof_properties(envs[idx], actors[idx], props)
 
 
 # Setup MPC Controller
-robotController = RobotController()
-robotRunner = RobotRunner(robotController)
-print("[Simulator Driver] First run of robot controller...")
-robotRunner.init(robot)
+# robotController = RobotController()
+# robotRunner = RobotRunner(robotController)
+# print("[Simulator Driver] First run of robot controller...")
+# robotRunner.init(robot)
 
 # simulation loop
 while not gym.query_viewer_has_closed(viewer):
@@ -49,10 +49,22 @@ while not gym.query_viewer_has_closed(viewer):
     gym.simulate(sim)
     gym.fetch_results(sim, True)
 
-    t = gym.get_sim_time(sim)
+    # Aliengo joint range:
+    # Hip -1.2217 -- +1.2217
+    # Thigh -3.14 -- +3.14
+    # Calf -2.7751 -- -0.6458
 
-    # run controller
-    robotRunner.run(gym, envs[0], actors[0])
+    # Front
+    # 0 1  Right
+    # 2 3
+    # Back
+    targets = np.array([0, 0, 1,
+                        0, 0, 1,
+                        0, 0, 0,
+                        0, 0, 0],
+                        dtype=np.float32)
+    gym.set_actor_dof_position_targets(envs[0], actors[0], targets)
+
 
     # update the viewer
     gym.step_graphics(sim);

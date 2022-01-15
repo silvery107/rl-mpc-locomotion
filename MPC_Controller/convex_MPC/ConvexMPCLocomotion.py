@@ -1,3 +1,4 @@
+import math
 import sys
 sys.path.append("..")
 from math import sin, cos
@@ -22,7 +23,7 @@ class CoordinateAxis(Enum):
 def coordinateRotation(axis:CoordinateAxis, theta:float):
     s = sin(theta)
     c = cos(theta)
-    R = None
+    R:np.ndarray = None
     if axis == CoordinateAxis.X:
         R = np.array([1, 0, 0, 0, c, s, 0, -s, c], dtype=DTYPE).reshape((3,3))
     if axis == CoordinateAxis.Y:
@@ -231,13 +232,13 @@ class ConvexMPCLocomotion:
 
 
     def run(self, data:ControlFSMData):
-
+        # Command Setup
         self.__SetupCommand(data)
         gaitNumber = data.userParameters.cmpc_gait
         seResult = data._stateEstimator.getResult()
 
         # Check if transition to standing
-        if(((gaitNumber == 4) and self.current_gait !=4) or self.firstRun):
+        if (gaitNumber==4 and self.current_gait!=4) or self.firstRun:
             self.stand_traj[0] = seResult.position[0]
             self.stand_traj[1] = seResult.position[1]
             self.stand_traj[2] = 0.21
@@ -272,25 +273,28 @@ class ConvexMPCLocomotion:
         if np.abs(v_robot[1]>0.1): # avoid dividing by zero
             self.rpy_int[0] += self.dt * (self._roll_des - seResult.rpy[0]) / v_robot[1]
 
-        self.rpy_int[0] = np.min([np.max([self.rpy_int[0], -0.25]), 0.25])
-        self.rpy_int[1] = np.min([np.max([self.rpy_int[1], -0.25]), 0.25])
+        self.rpy_int[0] = min(max(self.rpy_int[0], -0.25), 0.25)
+        self.rpy_int[1] = min(max(self.rpy_int[1], -0.25), 0.25)
 
         self.rpy_comp[0] = v_robot[1]*self.rpy_int[0]
         self.rpy_comp[1] = v_robot[0]*self.rpy_int[1]
 
         for i in range(4):
-            self.pFoot[i] = seResult.position + \
-                            seResult.rBody.T @ (data._quadruped.getHipLocation(i)+
-                            data._legController.datas[i].p)
+            np.copyto(self.pFoot[i], seResult.position + \
+                                     seResult.rBody.T @ (data._quadruped.getHipLocation(i)+
+                                     data._legController.datas[i].p))
+            # self.pFoot[i] = seResult.position + \
+            #                 seResult.rBody.T @ (data._quadruped.getHipLocation(i)+
+            #                 data._legController.datas[i].p)
         
         if gait is not self.standing:
             self.world_position_desired += self.dt*np.array([v_des_world[0], v_des_world[1], 0.0], dtype=DTYPE).reshape((3,1))
         
         # first time initialization
         if self.firstRun:
-            self.world_position_desired[0] = seResult.position[0]
-            self.world_position_desired[1] = seResult.position[1]
-            self.world_position_desired[2] = seResult.rpy[2]
+            self.world_position_desired[0] = seResult.position[0].item()
+            self.world_position_desired[1] = seResult.position[1].item()
+            self.world_position_desired[2] = seResult.rpy[2].item()
 
             for i in range(4):
                 self.footSwingTrajectories[i].setHeight(0.05)
@@ -306,7 +310,7 @@ class ConvexMPCLocomotion:
         side_sign = [-1, 1, -1, 1]
         interleave_y = [-0.08, 0.08, 0.02, -0.02]
         interleave_gain = -0.2
-        v_abs = np.abs(v_des_robot[0])
+        v_abs = math.fabs(v_des_robot[0])
 
         for i in range(4):
             if self.firstSwing[i]:
@@ -318,7 +322,7 @@ class ConvexMPCLocomotion:
 
             offset = np.array([0, side_sign[i]*0.065, 0], dtype=DTYPE).reshape((3,1))
             pRobotFrame = data._quadruped.getHipLocation(i) + offset
-            pRobotFrame[1] += interleave_y[i]*v_abs*interleave_gain
+            pRobotFrame[1] += interleave_y[i] * v_abs * interleave_gain
 
             stance_time = gait.getCurrentSwingTime(self.dtMPC, i)
             pYawCorrected = coordinateRotation(CoordinateAxis.Z, -self._yaw_turn_rate*stance_time/2) @ pRobotFrame
@@ -362,7 +366,9 @@ class ConvexMPCLocomotion:
         for foot in range(4):
             contactState = contactStates[foot]
             swingState = swingStates[foot]
-            if swingState > 0: # foot is in swing
+            swingState = 1
+            if swingState > 0: #* foot is in swing
+                # ! init error here, foots swing to the sky
                 if self.firstSwing[foot]:
                     self.firstSwing[foot] = False
                     self.footSwingTrajectories[foot].setInitialPosition(self.pFoot[foot])
@@ -385,7 +391,8 @@ class ConvexMPCLocomotion:
                 # data._legController.commands[foot].kpCartesian = self.Kp
                 # data._legController.commands[foot].kdCartesian = self.Kd
 
-            else: # foot is in stance
+            else: #* foot is in stance
+                self.firstSwing[foot] = True
                 pDesFootWorld = self.footSwingTrajectories[foot].getPosition()
                 vDesFootWorld = self.footSwingTrajectories[foot].getVelocity()
                 pDesLeg = seResult.rBody @ (pDesFootWorld - seResult.position) \

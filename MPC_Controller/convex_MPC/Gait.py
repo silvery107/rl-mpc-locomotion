@@ -83,7 +83,7 @@ class OffsetDurationGait:
         return self.__iteration
 
     def getCurrentSwingTime(self, dtMPC:float, leg:int):
-        return dtMPC*self.__swing
+        return dtMPC * self.__swing
 
     def getCurrentStanceTime(self, dtMPC:float, leg:int):
-        return dtMPC*self.__stance
+        return dtMPC * self.__stance

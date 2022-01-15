@@ -58,7 +58,7 @@ class Quadruped:
         """
         Get if the i-th leg is on the left (+) or right (-) of the robot
         """
-        sideSigns= [-1, 1, -1, 1]
+        sideSigns = [-1, 1, -1, 1]
         assert leg >= 0 and leg < 4
         return sideSigns[leg]
 

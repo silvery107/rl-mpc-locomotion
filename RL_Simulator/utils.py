@@ -1,4 +1,5 @@
 from isaacgym import gymapi
+import math
 from MPC_Controller.common.Quadruped import RobotType
 
 ASSET_ROOT = "/home/silvery/isaacgym/assets"
@@ -6,6 +7,9 @@ MINI_CHEETAH = "urdf/mini_cheetah/mini_cheetah.urdf"
 XIAOTIAN = "urdf/Xiaotian-ROS/urdf/xiaotian_description.urdf"
 ALIENGO = "urdf/aliengo_description/xacro/aliengo.urdf"
 ANYMAL = "urdf/anymal_c/urdf/anymal.urdf"
+
+fix_base_link = True
+init_height = 0.45
 
 def acquire_sim(gym, dt):
     # get default set of parameters
@@ -70,7 +74,9 @@ def add_viewer(gym, sim, env, cam_pos):
     gym.viewer_camera_look_at(viewer, env, cam_pos, cam_target)
     return viewer
 
-def create_envs(gym, sim, asset, num_envs, envs_per_row, env_spacing):
+def create_envs(gym, sim, robot, num_envs, envs_per_row, env_spacing):
+    # load robot from urdf
+    asset = load_asset(gym, sim, robot, fix_base_link)
     # set up the env grid
     env_lower = gymapi.Vec3(-env_spacing, -env_spacing, 0.0)
     env_upper = gymapi.Vec3(env_spacing, env_spacing, env_spacing)
@@ -78,7 +84,7 @@ def create_envs(gym, sim, asset, num_envs, envs_per_row, env_spacing):
     # cache some common handles for later use
     envs = []
     actor_handles = []
-    height = 0.5
+    height = init_height
 
     # create and populate the environments
     for i in range(num_envs):
@@ -87,8 +93,9 @@ def create_envs(gym, sim, asset, num_envs, envs_per_row, env_spacing):
 
         pose = gymapi.Transform()
         pose.p = gymapi.Vec3(0.0, 0.0, height)
+
         # pose.r = gymapi.Quat(-0.707107, 0.0, 0.0, 0.707107) # rotate -90deg about x
-        # pose.r = gymapi.Quat.from_axis_angle(gymapi.Vec3(0, 0, 1), -0.5*math.pi)
+        # pose.r = gymapi.Quat.from_axis_angle(gymapi.Vec3(1, 0, 0), -0.5*math.pi)
 
         actor_handle = gym.create_actor(env, asset, pose, "MyActor", group=i, filter=1)
         actor_handles.append(actor_handle)

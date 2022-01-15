@@ -1,3 +1,4 @@
+import math
 import numpy as np
 from math import sin, cos
 from MPC_Controller.common.Quadruped import Quadruped
@@ -10,8 +11,8 @@ class LegControllerCommand:
         self.tauFeedForward = np.zeros((3,1), dtype=DTYPE)
         self.forceFeedForward = np.zeros((3,1), dtype=DTYPE)
 
-        self.qDes = np.zeros((3,1), dtype=DTYPE)
-        self.qdDes = np.zeros((3,1), dtype=DTYPE)
+        # self.qDes = np.zeros((3,1), dtype=DTYPE)
+        # self.qdDes = np.zeros((3,1), dtype=DTYPE)
         self.pDes = np.zeros((3,1), dtype=DTYPE)
         self.vDes = np.zeros((3,1), dtype=DTYPE)
 
@@ -27,8 +28,8 @@ class LegControllerCommand:
         self.tauFeedForward.fill(0)
         self.forceFeedForward.fill(0)
 
-        self.qDes.fill(0)
-        self.qdDes.fill(0)
+        # self.qDes.fill(0)
+        # self.qdDes.fill(0)
         self.pDes.fill(0)
         self.vDes.fill(0)
 
@@ -46,7 +47,7 @@ class LegControllerData:
         self.v = np.zeros((3,1), dtype=DTYPE)
 
         self.J = np.zeros((3,3), dtype=DTYPE)
-        self.tauEstimate = np.zeros((3,1), dtype=DTYPE)
+        # self.tauEstimate = np.zeros((3,1), dtype=DTYPE)
 
     def zero(self):
 
@@ -57,7 +58,7 @@ class LegControllerData:
         self.v.fill(0)
 
         self.J.fill(0)
-        self.tauEstimate.fill(0)
+        # self.tauEstimate.fill(0)
 
     def setQuadruped(self, quad:Quadruped):
         self.quadruped = quad
@@ -99,8 +100,8 @@ class LegController:
         for leg in range(4):
             # q
             self.datas[leg].q[0] = dof_states["pos"][leg * 3 + 0]
-            self.datas[leg].q[1] = dof_states["pos"][leg * 3 + 1]
-            self.datas[leg].q[2] = dof_states["pos"][leg * 3 + 2]
+            self.datas[leg].q[1] = dof_states["pos"][leg * 3 + 1] - math.pi/2
+            self.datas[leg].q[2] = dof_states["pos"][leg * 3 + 2] - math.pi/2
             # self.datas[leg].q[:, 0] = dof_states["pos"][3*leg:3*leg+3]
 
             # qd
@@ -150,9 +151,9 @@ class LegController:
                 # TODO Check if legTorque is sufficient for torque control
                 # TODO or a joint PD is needed?
                 # estimate leg torque
-                self.datas[leg].tauEstimate = legTorque \
-                                            + self.commands[leg].kpJoint @ (self.commands[leg].qDes -self.datas[leg].q) \
-                                            + self.commands[leg].kdJoint @ (self.commands[leg].qdDes -self.datas[leg].qd)
+                # self.datas[leg].tauEstimate = legTorque \
+                #                             + self.commands[leg].kpJoint @ (self.commands[leg].qDes -self.datas[leg].q) \
+                #                             + self.commands[leg].kdJoint @ (self.commands[leg].qdDes -self.datas[leg].qd)
 
                 legTorques[self.getLegIdx(leg) * 3 + 0] = legTorque[0].item()
                 legTorques[self.getLegIdx(leg) * 3 + 1] = legTorque[1].item()
@@ -185,8 +186,7 @@ def computeLegJacobianAndPosition(quad:Quadruped, q:np.ndarray,
     c23 = c2 * c3 - s2 * s3
     s23 = s2 * c3 + c2 * s3
 
-    # J = np.zeros((3,3), dtype=DTYPE)
-    J[0, 0] = 0
+    J[0, 0] = 0.0
     J[0, 1] = l3 * c23 + l2 * c2
     J[0, 2] = l3 * c23
     J[1, 0] = l3 * c1 * c23 + l2 * c1 * c2 - (l1 + l4) * sideSign * s1
@@ -196,9 +196,6 @@ def computeLegJacobianAndPosition(quad:Quadruped, q:np.ndarray,
     J[2, 1] = l3 * c1 * s23 + l2 * c1 * s2
     J[2, 2] = l3 * c1 * s23
 
-    # p = np.zeros((3,1), dtype=DTYPE)
     p[0] = l3 * s23 + l2 * s2
     p[1] = (l1 + l4) * sideSign * c1 + l3 * (s1 * c23) + l2 * c2 * s1
     p[2] = (l1 + l4) * sideSign * s1 - l3 * (c1 * c23) - l2 * c1 * c2
-    
-    # return J, p
