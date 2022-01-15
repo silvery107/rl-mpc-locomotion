@@ -2,7 +2,7 @@
 # phase : How far along we are in the swing (0 to 1)
 # swingTime : How long the swing should take (seconds)
 import numpy as np
-from MPC_Controller.common.Interpolation import cubicBezier, cubicBezierFirstDerivative, cubicBezierSecondDerivative
+from MPC_Controller.utils import cubicBezier, cubicBezierFirstDerivative, cubicBezierSecondDerivative
 
 class FootSwingTrajectory:
     def __init__(self):
@@ -16,21 +16,39 @@ class FootSwingTrajectory:
         self._height = 0.0
 
     def setInitialPosition(self, p0:np.ndarray):
+        """
+        Set the starting location of the foot
+        """
         self._p0 = p0
     
     def setFinalPosition(self, pf:np.ndarray):
+        """
+        Set the desired final position of the foot
+        """
         self._pf = pf
 
     def setHeight(self, h:float):
+        """
+        Set the maximum height of the swing
+        """
         self._height = h
 
     def getPosition(self):
+        """
+        Get the foot position at the current point along the swing
+        """
         return self._p
     
     def getVelocity(self):
+        """
+        Get the foot velocity at the current point along the swing
+        """
         return self._v
     
     def getAcceleration(self):
+        """
+        Get the foot acceleration at the current point along the swing
+        """
         return self._a
 
     def computeSwingTrajectoryBezier(self, phase:float, swingTime:float):
@@ -38,7 +56,7 @@ class FootSwingTrajectory:
         self._v = cubicBezierFirstDerivative(self._p0, self._pf, phase) / swingTime
         self._a = cubicBezierSecondDerivative(self._p0, self._pf, phase) / (swingTime * swingTime)
 
-        if phase < float(0.5):
+        if phase < 0.5:
             zp = cubicBezier(self._p0[2], self._p0[2] + self._height, phase * 2)
             zv = cubicBezierFirstDerivative(self._p0[2], self._p0[2] + self._height, phase * 2) * 2 / swingTime
             za = cubicBezierSecondDerivative(self._p0[2], self._p0[2] + self._height, phase * 2) * 4 / (swingTime * swingTime)

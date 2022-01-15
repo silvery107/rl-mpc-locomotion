@@ -1,8 +1,6 @@
 import math
 import sys
 sys.path.append("..")
-from math import sin, cos
-from enum import Enum, auto
 import numpy as np
 from MPC_Controller.common.LegController import LegController, LegControllerCommand
 from MPC_Controller.convex_MPC.Gait import OffsetDurationGait
@@ -11,27 +9,11 @@ from MPC_Controller.FSM_states.ControlFSMData import ControlFSMData
 from MPC_Controller.common.Quadruped import RobotType
 from MPC_Controller.Parameters import Parameters
 from MPC_Controller.common.FootSwingTrajectory import FootSwingTrajectory
+from MPC_Controller.utils import coordinateRotation, CoordinateAxis
 
 DTYPE = np.float32
 CASTING = "same_kind"
 
-class CoordinateAxis(Enum):
-    X = auto()
-    Y = auto()
-    Z = auto()
-
-def coordinateRotation(axis:CoordinateAxis, theta:float):
-    s = sin(theta)
-    c = cos(theta)
-    R:np.ndarray = None
-    if axis == CoordinateAxis.X:
-        R = np.array([1, 0, 0, 0, c, s, 0, -s, c], dtype=DTYPE).reshape((3,3))
-    if axis == CoordinateAxis.Y:
-        R = np.array([c, 0, -s, 0, 1, 0, s, 0, c], dtype=DTYPE).reshape((3,3))
-    if axis == CoordinateAxis.Z:
-        R = np.array([c, s, 0, -s, c, 0, 0, 0, 1], dtype=DTYPE).reshape((3,3))
-
-    return R
 
 class ConvexMPCLocomotion:
     def __init__(self, _dt:float, _iterationsBetweenMPC:int, parameters:Parameters):
@@ -53,7 +35,7 @@ class ConvexMPCLocomotion:
 
         self.rpy_comp = np.zeros((3,1),dtype=DTYPE)
         self.rpy_int = np.zeros((3,1),dtype=DTYPE)
-        self.firstSwing = [True for _ in range(4)]
+        self.firstSwing:list = None
         
 
         # self.pBody_des = np.zeros((3,1), dtype=DTYPE)
@@ -386,11 +368,6 @@ class ConvexMPCLocomotion:
                 np.copyto(data._legController.commands[foot].kpCartesian, self.Kp, casting=CASTING)
                 np.copyto(data._legController.commands[foot].kdCartesian, self.Kd, casting=CASTING)
 
-                # data._legController.commands[foot].pDes = pDesLeg
-                # data._legController.commands[foot].vDes = vDesLeg
-                # data._legController.commands[foot].kpCartesian = self.Kp
-                # data._legController.commands[foot].kdCartesian = self.Kd
-
             else: #* foot is in stance
                 self.firstSwing[foot] = True
                 pDesFootWorld = self.footSwingTrajectories[foot].getPosition()
@@ -407,14 +384,6 @@ class ConvexMPCLocomotion:
 
                 np.copyto(data._legController.commands[foot].forceFeedForward, self.f_ff[foot], casting=CASTING)
                 np.copyto(data._legController.commands[foot].kdJoint, np.identity(3) * 0.2, casting=CASTING)
-
-                # data._legController.commands[foot].pDes = pDesLeg
-                # data._legController.commands[foot].vDes = vDesLeg
-                # data._legController.commands[foot].kpCartesian = self.Kp_stance
-                # data._legController.commands[foot].kdCartesian = self.Kd_stance
-
-                # data._legController.commands[foot].forceFeedForward = self.f_ff[foot]
-                # data._legController.commands[foot].kdJoint = np.identity(3) * 0.2
 
                 se_contactState[foot] = contactState
 

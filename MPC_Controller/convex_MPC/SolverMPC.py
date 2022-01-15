@@ -1,9 +1,9 @@
 import numpy as np
 import scipy
-import quaternion
 import cvxopt
 import mosek
 from MPC_Controller.convex_MPC.RobotState import RobotState
+from MPC_Controller.utils import Quaternion
 
 K_NUM_LEGS = 4
 K_MAX_GAIT_SEGMENTS = 36
@@ -22,7 +22,7 @@ class UpdateData:
     def __init__(self) -> None:
         self.p = np.zeros((3, 1), dtype=DTYPE)
         self.v = np.zeros((3, 1), dtype=DTYPE)
-        self.q = np.quaternion(1, 0, 0, 0)
+        self.q = Quaternion(1, 0, 0, 0)
         self.w = np.zeros((3, 1), dtype=DTYPE)
         self.r_feet = np.zeros((3,4), dtype=DTYPE)
         self.weights = np.zeros((12, 1), dtype=DTYPE)
