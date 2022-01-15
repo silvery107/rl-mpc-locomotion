@@ -57,7 +57,7 @@ if __name__ == "__main__":
             gym.set_actor_dof_position_targets(envs[0], actor_handles[0], pos_targets)
 
         # update the viewer
-        gym.step_graphics(sim);
+        gym.step_graphics(sim)
         gym.draw_viewer(viewer, sim, True)
         
         # Wait for dt to elapse in real time.

@@ -128,7 +128,7 @@ while not gym.query_viewer_has_closed(viewer):
     gym.fetch_results(sim, True)
 
     # update the viewer
-    gym.step_graphics(sim);
+    gym.step_graphics(sim)
     gym.draw_viewer(viewer, sim, True)
 
     # trot control

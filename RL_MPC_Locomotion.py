@@ -1,16 +1,10 @@
 import numpy as np
-from enum import Enum, auto
-
 from MPC_Controller.RobotRunner import RobotRunner
 from MPC_Controller.RobotController import RobotController
-from MPC_Controller.common.Quadruped import Quadruped, RobotType
-from MPC_Controller.common.LegController import LegController
-from MPC_Controller.StateEstimatorContainer import StateEstimatorContainer
-from MPC_Controller.DesiredStateCommand import DesiredStateCommand
-from MPC_Controller.Parameters import Parameters
+from MPC_Controller.common.Quadruped import RobotType
 
 from isaacgym import gymapi
-from RL_Simulator.utils import *
+from RL_Simulator.utils import acquire_sim, create_envs, add_viewer, add_force_sensor
 
 robot = RobotType.MINI_CHEETAH
 dt =  1 / 60
@@ -55,7 +49,7 @@ while not gym.query_viewer_has_closed(viewer):
     robotRunner.run(gym, envs[0], actors[0])
 
     # update the viewer
-    gym.step_graphics(sim);
+    gym.step_graphics(sim)
     gym.draw_viewer(viewer, sim, True)
     
     # Wait for dt to elapse in real time.

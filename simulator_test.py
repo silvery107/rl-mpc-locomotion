@@ -67,7 +67,7 @@ while not gym.query_viewer_has_closed(viewer):
 
 
     # update the viewer
-    gym.step_graphics(sim);
+    gym.step_graphics(sim)
     gym.draw_viewer(viewer, sim, True)
     
     # Wait for dt to elapse in real time.

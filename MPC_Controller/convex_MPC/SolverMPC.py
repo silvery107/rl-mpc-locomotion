@@ -1,7 +1,7 @@
-import numpy as np
-import scipy
-import cvxopt
 import mosek
+import cvxopt
+import numpy as np
+from scipy.linalg import expm
 from MPC_Controller.convex_MPC.RobotState import RobotState
 from MPC_Controller.utils import Quaternion, DTYPE, CASTING
 
@@ -120,7 +120,7 @@ def c2qp(Ac:np.ndarray, Bc:np.ndarray, dt:float, horizon:int):
     ABc[0:13,13:25] = Bc
     # ABc = dt * ABc
     ABc *= dt
-    expmm = scipy.linalg.expm(ABc) # matrix exponential
+    expmm = expm(ABc) # matrix exponential
     Adt = expmm[0:13,0:13]
     Bdt = expmm[0:13,13:25]
     if horizon > 19:

@@ -15,7 +15,7 @@ def setup_problem(dt:float, horizon:int, mu:float, fmax:float):
     problem_configuration.f_max = fmax
     resize_qp_mats(horizon)
 
-def update_problem_data(p:np.ndarray, v:np.ndarray, q:np.quaternion, w:np.ndarray, 
+def update_problem_data(p:np.ndarray, v:np.ndarray, q:Quaternion, w:np.ndarray, 
                         rpy:np.ndarray, r_feet:np.ndarray, yaw:float, weights:np.ndarray, 
                         state_trajectory:list, alpha:float, gait:list):
     global has_solved

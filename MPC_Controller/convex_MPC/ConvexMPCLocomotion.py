@@ -18,11 +18,11 @@ class ConvexMPCLocomotion:
         self.horizonLength = 10
         self.dt = _dt
         self.trotting = OffsetDurationGait(self.horizonLength, 
-                        np.array([0,5,5,0], dtype=DTYPE), 
-                        np.array([5,5,5,5], dtype=DTYPE), "Trotting")
+                            np.array([0,5,5,0], dtype=DTYPE), 
+                            np.array([5,5,5,5], dtype=DTYPE), "Trotting")
         self.standing = OffsetDurationGait(self.horizonLength, 
-                        np.array([0,0,0,0], dtype=DTYPE), 
-                        np.array([10,10,10,10], dtype=DTYPE), "Standing")
+                            np.array([0,0,0,0], dtype=DTYPE), 
+                            np.array([10,10,10,10], dtype=DTYPE), "Standing")
         self._parameters = parameters
         self.dtMPC = self.dt*self.iterationsBetweenMPC
         self.default_iterations_between_mpc = self.iterationsBetweenMPC
@@ -34,11 +34,6 @@ class ConvexMPCLocomotion:
         self.rpy_int = np.zeros((3,1),dtype=DTYPE)
         self.firstSwing:list = None
         
-
-        # self.pBody_des = np.zeros((3,1), dtype=DTYPE)
-        # self.vBody_des = np.zeros((3,1), dtype=DTYPE)
-        # self.aBody_des = np.zeros((3,1), dtype=DTYPE)
-
 
         self.firstRun = True
         self.pFoot = [np.zeros((3,1)) for _ in range(4)]
@@ -162,8 +157,8 @@ class ConvexMPCLocomotion:
             
             else: # other gait
                 max_pos_error = 0.1
-                xStart = self.world_position_desired[0]
-                yStart = self.world_position_desired[1]
+                xStart = self.world_position_desired[0].copy()
+                yStart = self.world_position_desired[1].copy()
 
                 if xStart-p[0] > max_pos_error:
                     xStart = p[0] + max_pos_error
@@ -271,9 +266,9 @@ class ConvexMPCLocomotion:
         
         # first time initialization
         if self.firstRun:
-            self.world_position_desired[0] = seResult.position[0].item()
-            self.world_position_desired[1] = seResult.position[1].item()
-            self.world_position_desired[2] = seResult.rpy[2].item()
+            self.world_position_desired[0] = seResult.position[0]
+            self.world_position_desired[1] = seResult.position[1]
+            self.world_position_desired[2] = seResult.rpy[2]
 
             for i in range(4):
                 self.footSwingTrajectories[i].setHeight(0.05)
@@ -319,10 +314,10 @@ class ConvexMPCLocomotion:
                       0.03 * (seResult.vWorld[1] - v_des_world[1]) + \
                       (0.5 * seResult.position[2] / 9.81) * (-seResult.vWorld[0] * self._yaw_turn_rate)
             
-            pfx_rel = np.min([np.max([pfx_rel, -p_rel_max]), p_rel_max])
-            pfy_rel = np.min([np.max([pfy_rel, -p_rel_max]), p_rel_max])
-            Pf[0] += pfx_rel.item()
-            Pf[1] += pfy_rel.item()
+            pfx_rel = min(max(pfx_rel, -p_rel_max), p_rel_max)
+            pfy_rel = min(max(pfy_rel, -p_rel_max), p_rel_max)
+            Pf[0] += pfx_rel
+            Pf[1] += pfy_rel
             Pf[2] = -0.003
             self.footSwingTrajectories[i].setFinalPosition(Pf)
 

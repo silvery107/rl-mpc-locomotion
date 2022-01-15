@@ -110,8 +110,7 @@ class LegController:
             # self.datas[leg].qd[:, 0] = dof_states["vel"][3*leg:3*leg+3]
             
             # J and p
-            computeLegJacobianAndPosition(self._quadruped, self.datas[leg].q, 
-                                          self.datas[leg].J, self.datas[leg].p, leg)
+            self.computeLegJacobianAndPosition(leg)
             # v
             self.datas[leg].v = self.datas[leg].J @ self.datas[leg].qd
 
@@ -154,47 +153,47 @@ class LegController:
                 #                             + self.commands[leg].kpJoint @ (self.commands[leg].qDes -self.datas[leg].q) \
                 #                             + self.commands[leg].kdJoint @ (self.commands[leg].qdDes -self.datas[leg].qd)
 
-                legTorques[self.getLegIdx(leg) * 3 + 0] = legTorque[0].item()
-                legTorques[self.getLegIdx(leg) * 3 + 1] = legTorque[1].item()
-                legTorques[self.getLegIdx(leg) * 3 + 2] = legTorque[2].item()
+                legTorques[self.getLegIdx(leg) * 3 + 0] = legTorque[0]
+                legTorques[self.getLegIdx(leg) * 3 + 1] = legTorque[1]
+                legTorques[self.getLegIdx(leg) * 3 + 2] = legTorque[2]
         
         # ! TODO Check legTorques order
-
         gym.apply_actor_dof_efforts(env, actor, legTorques)       
 
 
-def computeLegJacobianAndPosition(quad:Quadruped, q:np.ndarray, 
-                                  J:np.ndarray, p:np.ndarray, leg:int):
-    """
-    return J and p
-    """
-    l1 = quad._abadLinkLength
-    l2 = quad._hipLinkLength
-    l3 = quad._kneeLinkLength
-    l4 = quad._kneeLinkY_offset
-    sideSign = quad.getSideSign(leg)
+    def computeLegJacobianAndPosition(self, leg:int):
+        """
+        return J and p
+        """
+        l1 = self._quadruped._abadLinkLength
+        l2 = self._quadruped._hipLinkLength
+        l3 = self._quadruped._kneeLinkLength
+        l4 = self._quadruped._kneeLinkY_offset
+        sideSign = self._quadruped.getSideSign(leg)
 
-    s1 = sin(q[0])
-    s2 = sin(q[1])
-    s3 = sin(q[2])
+        q = self.datas[leg].q
 
-    c1 = cos(q[0])
-    c2 = cos(q[1])
-    c3 = cos(q[2])
+        s1 = sin(q[0])
+        s2 = sin(q[1])
+        s3 = sin(q[2])
 
-    c23 = c2 * c3 - s2 * s3
-    s23 = s2 * c3 + c2 * s3
+        c1 = cos(q[0])
+        c2 = cos(q[1])
+        c3 = cos(q[2])
 
-    J[0, 0] = 0.0
-    J[0, 1] = l3 * c23 + l2 * c2
-    J[0, 2] = l3 * c23
-    J[1, 0] = l3 * c1 * c23 + l2 * c1 * c2 - (l1 + l4) * sideSign * s1
-    J[1, 1] = -l3 * s1 * s23 - l2 * s1 * s2
-    J[1, 2] = -l3 * s1 * s23
-    J[2, 0] = l3 * s1 * c23 + l2 * c2 * s1 + (l1 + l4) * sideSign * c1
-    J[2, 1] = l3 * c1 * s23 + l2 * c1 * s2
-    J[2, 2] = l3 * c1 * s23
+        c23 = c2 * c3 - s2 * s3
+        s23 = s2 * c3 + c2 * s3
 
-    p[0] = l3 * s23 + l2 * s2
-    p[1] = (l1 + l4) * sideSign * c1 + l3 * (s1 * c23) + l2 * c2 * s1
-    p[2] = (l1 + l4) * sideSign * s1 - l3 * (c1 * c23) - l2 * c1 * c2
+        self.datas[leg].J[0, 0] = 0.0
+        self.datas[leg].J[0, 1] = l3 * c23 + l2 * c2
+        self.datas[leg].J[0, 2] = l3 * c23
+        self.datas[leg].J[1, 0] = l3 * c1 * c23 + l2 * c1 * c2 - (l1 + l4) * sideSign * s1
+        self.datas[leg].J[1, 1] = -l3 * s1 * s23 - l2 * s1 * s2
+        self.datas[leg].J[1, 2] = -l3 * s1 * s23
+        self.datas[leg].J[2, 0] = l3 * s1 * c23 + l2 * c2 * s1 + (l1 + l4) * sideSign * c1
+        self.datas[leg].J[2, 1] = l3 * c1 * s23 + l2 * c1 * s2
+        self.datas[leg].J[2, 2] = l3 * c1 * s23
+
+        self.datas[leg].p[0] = l3 * s23 + l2 * s2
+        self.datas[leg].p[1] = (l1 + l4) * sideSign * c1 + l3 * (s1 * c23) + l2 * c2 * s1
+        self.datas[leg].p[2] = (l1 + l4) * sideSign * s1 - l3 * (c1 * c23) - l2 * c1 * c2
