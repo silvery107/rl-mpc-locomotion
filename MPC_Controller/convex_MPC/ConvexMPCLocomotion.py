@@ -9,10 +9,7 @@ from MPC_Controller.FSM_states.ControlFSMData import ControlFSMData
 from MPC_Controller.common.Quadruped import RobotType
 from MPC_Controller.Parameters import Parameters
 from MPC_Controller.common.FootSwingTrajectory import FootSwingTrajectory
-from MPC_Controller.utils import coordinateRotation, CoordinateAxis
-
-DTYPE = np.float32
-CASTING = "same_kind"
+from MPC_Controller.utils import coordinateRotation, CoordinateAxis, DTYPE, CASTING
 
 
 class ConvexMPCLocomotion:

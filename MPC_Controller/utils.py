@@ -1,7 +1,9 @@
 import numpy as np
 from enum import Enum, auto
 from math import sin, cos
+
 DTYPE = np.float32
+CASTING = "same_kind"
 
 class CoordinateAxis(Enum):
     X = auto()

@@ -1,8 +1,8 @@
 import numpy as np
 from copy import deepcopy, copy
 from MPC_Controller.convex_MPC.SolverMPC import *
+from MPC_Controller.utils import CASTING
 
-CASTING = "same_kind"
 
 problem_configuration = ProblemSetup()
 update = UpdateData()

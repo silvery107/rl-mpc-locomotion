@@ -5,8 +5,7 @@ from MPC_Controller.convex_MPC.ConvexMPCLocomotion import ConvexMPCLocomotion
 from MPC_Controller.FSM_states.ControlFSMData import ControlFSMData
 from MPC_Controller.common.Quadruped import RobotType
 from MPC_Controller.FSM_states.FSM_State import FSM_State, FSM_StateName
-
-DTYPE = np.float32
+from MPC_Controller.utils import DTYPE
 
 class FSM_State_Locomotion(FSM_State):
     def __init__(self, _controlFSMData:ControlFSMData):

@@ -1,9 +1,7 @@
 import numpy as np
 from copy import copy, deepcopy
 from math import sin, cos
-import quaternion
-CASTING = "same_kind"
-DTYPE = np.float32
+from MPC_Controller.utils import DTYPE, CASTING, Quaternion
 from MPC_Controller.StateEstimatorContainer import quat_to_rot
 
 class RobotState:
@@ -16,7 +14,7 @@ class RobotState:
         self.R:np.ndarray = None # (3,3)
         self.R_yaw:np.ndarray = None # (3,3)
         self.I_body:np.ndarray = np.zeros((3, 3))
-        self.q:np.quaternion = None
+        self.q:Quaternion = None
         self.yaw = 0.0
         self.m = 9.0
 

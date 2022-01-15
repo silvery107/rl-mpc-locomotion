@@ -1,6 +1,5 @@
 import numpy as np
-
-DTYPE = np.float32
+from MPC_Controller.utils import DTYPE
 
 class TransitionData:
     """

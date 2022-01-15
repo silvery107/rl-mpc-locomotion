@@ -3,13 +3,11 @@ import scipy
 import cvxopt
 import mosek
 from MPC_Controller.convex_MPC.RobotState import RobotState
-from MPC_Controller.utils import Quaternion
+from MPC_Controller.utils import Quaternion, DTYPE, CASTING
 
 K_NUM_LEGS = 4
 K_MAX_GAIT_SEGMENTS = 36
-DTYPE = np.float32
 BIG_NUMBER = 9e7 # A numerically large upper bound value  1.0e+08
-CASTING = "same_kind"
 
 class ProblemSetup:
     def __init__(self) -> None: 

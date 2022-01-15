@@ -2,9 +2,8 @@ import math
 import numpy as np
 from math import sin, cos
 from MPC_Controller.common.Quadruped import Quadruped
+from MPC_Controller.utils import DTYPE
 from isaacgym import gymapi
-
-DTYPE = np.float32
 
 class LegControllerCommand:
     def __init__(self):

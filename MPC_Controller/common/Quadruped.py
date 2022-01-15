@@ -1,7 +1,6 @@
 from enum import Enum, auto
 import numpy as np
-
-DTYPE = np.float32
+from MPC_Controller.utils import DTYPE
 
 # Data structure containing parameters for quadruped robot
 class RobotType(Enum):

@@ -1,8 +1,6 @@
 import numpy as np
 from isaacgym import gymapi
-from MPC_Controller.utils import quat_to_rot, quat_to_rpy, Quaternion
-
-DTYPE = np.float32
+from MPC_Controller.utils import quat_to_rot, quat_to_rpy, Quaternion, DTYPE
 
 class StateEstimate:
     def __init__(self):

@@ -29,7 +29,6 @@
 - 腿部控制器需要按照`SpineBoard.cpp`改写`legController.command`到12自由度的torque
 - bridged legController, stateEstimator and simulator 1.13
 - 关节零点待修正, 控制器基本work 1.14
-- TODO 重写四元数类
 
 ### Roadmap
 
