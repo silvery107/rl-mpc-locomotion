@@ -21,6 +21,8 @@ def update_problem_data(p:np.ndarray, v:np.ndarray, q:Quaternion, w:np.ndarray,
     global has_solved
     np.copyto(update.p, p, casting=CASTING)
     np.copyto(update.v, v, casting=CASTING)
+    # update.p = p
+    # update.v = v
     update.q.w = q.w
     update.q.x = q.x
     update.q.y = q.y
@@ -28,11 +30,15 @@ def update_problem_data(p:np.ndarray, v:np.ndarray, q:Quaternion, w:np.ndarray,
     np.copyto(update.w, w, casting=CASTING)
     np.copyto(update.rpy, rpy, casting=CASTING)
     np.copyto(update.r_feet, r_feet, casting=CASTING)
+    # update.w = w
+    # update.rpy = rpy
+    # update.r_feet = r_feet
     update.yaw = yaw
     np.copyto(update.weights, weights, casting=CASTING)
-    update.traj = copy(state_trajectory)
+    # update.weights = weights
+    update.traj = state_trajectory
     update.alpha = alpha
-    update.gait = copy(gait)
+    update.gait = gait
     solve_mpc(update, problem_configuration)
     has_solved = 1
 

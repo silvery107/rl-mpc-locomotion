@@ -2,7 +2,7 @@ import math
 import numpy as np
 from math import sin, cos
 from MPC_Controller.common.Quadruped import Quadruped
-from MPC_Controller.utils import DTYPE
+from MPC_Controller.utils import DTYPE, getSideSign
 from isaacgym import gymapi
 
 class LegControllerCommand:
@@ -99,8 +99,8 @@ class LegController:
         for leg in range(4):
             # q
             self.datas[leg].q[0] = dof_states["pos"][leg * 3 + 0]
-            self.datas[leg].q[1] = dof_states["pos"][leg * 3 + 1] - math.pi/2
-            self.datas[leg].q[2] = dof_states["pos"][leg * 3 + 2] - math.pi/2
+            self.datas[leg].q[1] = dof_states["pos"][leg * 3 + 1]
+            self.datas[leg].q[2] = dof_states["pos"][leg * 3 + 2]
             # self.datas[leg].q[:, 0] = dof_states["pos"][3*leg:3*leg+3]
 
             # qd
@@ -169,7 +169,7 @@ class LegController:
         l2 = self._quadruped._hipLinkLength
         l3 = self._quadruped._kneeLinkLength
         l4 = self._quadruped._kneeLinkY_offset
-        sideSign = self._quadruped.getSideSign(leg)
+        sideSign = getSideSign(leg)
 
         q = self.datas[leg].q
 

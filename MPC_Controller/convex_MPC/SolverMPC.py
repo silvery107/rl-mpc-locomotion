@@ -1,7 +1,9 @@
+import time
 import mosek
 import cvxopt
 import numpy as np
 from scipy.linalg import expm
+from numpy.linalg import inv
 from MPC_Controller.convex_MPC.RobotState import RobotState
 from MPC_Controller.utils import Quaternion, DTYPE, CASTING
 
@@ -29,10 +31,6 @@ class UpdateData:
         self.yaw = 0.0
         self.rpy = np.zeros((3,1), dtype=DTYPE)
         self.alpha = 0.0
-        # self.rho = 0.0
-        # self.sigma = 0.0
-        # self.solver_alpha = 0.0
-        # self.terminate = 0.0
         self.x_drag = 0.0
         # self.max_iterations = 0
 
@@ -69,7 +67,8 @@ def near_one(a:float):
 def cross_mat(I_inv:np.ndarray, r:np.ndarray):
     cm = np.array([[0.0, -r[2], r[1]],
                   [r[2], 0.0, -r[0]],
-                  [-r[1], r[0], 0.0]])
+                  [-r[1], r[0], 0.0]],
+                  dtype=DTYPE)
 
     return I_inv @ cm
 
@@ -95,11 +94,11 @@ def ct_ss_mats(I_world:np.ndarray, m:float, r_feet:np.ndarray,
     A[0:3, 6:9] = R_yaw.T
 
     B.fill(0)
-    I_inv = np.linalg.inv(I_world)
+    I_inv = inv(I_world)
 
     for b in range(4):
         B[6:9, b*3:b*3+3] = cross_mat(I_inv, r_feet[:, b])
-        B[9:12, b*3:b*3+3] = np.identity(3) / m
+        B[9:12, b*3:b*3+3] = np.identity(3, dtype=DTYPE) / m
 
 def resize_qp_mats(horizon:int):
     global A_qp, B_qp, S, X_d, U_b, fmat, qH, qg, eye_12h
@@ -149,8 +148,6 @@ def solve_mpc(update:UpdateData, setup:ProblemSetup):
 
     # roll pitch yaw
     rpy = update.rpy
-    # rpy = np.zeros((3,1), dtype=DTYPE)
-    # quat_to_rpy(rs.q, rpy)
 
     # initial state (13 state representation)
     x_0 = np.concatenate((rpy, rs.p, rs.w, rs.v, np.array([[-9.81]])), axis=0)
@@ -158,16 +155,16 @@ def solve_mpc(update:UpdateData, setup:ProblemSetup):
     np.copyto(I_world, rs.R_yaw @ rs.I_body @ rs.R_yaw.T, casting=CASTING)
 
     # state space models
-    ct_ss_mats(I_world, rs.m, rs.r_feet,rs.R_yaw,A_ct, B_ct_r, update.x_drag)
+    ct_ss_mats(I_world, rs.m, rs.r_feet, rs.R_yaw, A_ct, B_ct_r, update.x_drag)
     # QP matrices
     c2qp(A_ct, B_ct_r, setup.dt, setup.horizon)
-    full_weight = np.concatenate((update.weights, np.array([0.0])[None]), axis=0)
-    np.fill_diagonal(S, np.tile(full_weight,(setup.horizon,1)))
+    full_weight = np.concatenate((update.weights, np.array([[0.0]])), axis=0)
+    np.fill_diagonal(S, np.tile(full_weight, (setup.horizon, 1)))
 
     # trajectory
     for i in range(setup.horizon):
         for j in range(12):
-            X_d[13*i+j,0] = update.traj[12*i+j]
+            X_d[13*i+j, 0] = update.traj[12*i+j]
     
     k = 0
     for i in range(setup.horizon):
@@ -196,13 +193,15 @@ def solve_mpc(update:UpdateData, setup:ProblemSetup):
     # solve this QP using cvxopt
     cvxopt.solvers.options['mosek'] = {mosek.iparam.log: 0, 
                                        mosek.iparam.max_num_warnings: 1}
-
+    # timer = time.time()
     qp_solution = cvxopt.solvers.qp(cvxopt.matrix(qH.astype(np.double)), 
-                               cvxopt.matrix(qg.astype(np.double)), 
-                               cvxopt.matrix(fmat.astype(np.double)), 
-                               cvxopt.matrix(U_b.astype(np.double)), 
-                               solver="mosek") # "mosek"
-                               
+                                    cvxopt.matrix(qg.astype(np.double)), 
+                                    cvxopt.matrix(fmat.astype(np.double)), 
+                                    cvxopt.matrix(U_b.astype(np.double)), 
+                                    solver="mosek")
+
+    # print("Mosek solve time %.3f"%(time.time()-timer))
+
     if qp_solution["x"] is not None:
         q_soln = qp_solution["x"]
     

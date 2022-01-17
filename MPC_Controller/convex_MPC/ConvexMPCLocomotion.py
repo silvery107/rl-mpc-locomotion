@@ -1,5 +1,6 @@
 import math
 import sys
+import time
 sys.path.append("..")
 import numpy as np
 from MPC_Controller.common.LegController import LegController, LegControllerCommand
@@ -9,7 +10,7 @@ from MPC_Controller.FSM_states.ControlFSMData import ControlFSMData
 from MPC_Controller.common.Quadruped import RobotType
 from MPC_Controller.Parameters import Parameters
 from MPC_Controller.common.FootSwingTrajectory import FootSwingTrajectory
-from MPC_Controller.utils import coordinateRotation, CoordinateAxis, DTYPE, CASTING
+from MPC_Controller.utils import coordinateRotation, CoordinateAxis, DTYPE, CASTING, getSideSign
 
 
 class ConvexMPCLocomotion:
@@ -87,7 +88,7 @@ class ConvexMPCLocomotion:
         self._x_vel_des = self._x_vel_des*(1-filter) + x_vel_cmd*filter
         self._y_vel_des = self._y_vel_des*(1-filter) + y_vel_cmd*filter
 
-        self._yaw_des = data._stateEstimator.getResult().rpy[2] + self.dt*self._yaw_turn_rate
+        self._yaw_des = data._stateEstimator.getResult().rpy[2].item() + self.dt*self._yaw_turn_rate
         self._roll_des = 0.0
         self._pitch_des = 0.0
 
@@ -121,8 +122,9 @@ class ConvexMPCLocomotion:
         if vxy[0]>0.3 or vxy[0]<-0.3:
             self.x_comp_integral += self._parameters.cmpc_x_drag * pz_err * self.dtMPC / vxy[0]
 
-        # mpc.update_solver_settings()
+        # timer = time.time()
         mpc.update_problem_data(p, v, q, w, rpy, r_feet, yaw, weights, self.trajAll, alpha, gait=mpcTable)
+        # print("MPC Solve Time %.3f s\n"%(time.time()-timer))
 
         f = np.zeros((3,1), dtype=DTYPE)
         for leg in range(4):
@@ -130,8 +132,6 @@ class ConvexMPCLocomotion:
                 f[axis] = mpc.get_solution(leg * 3 + axis)
 
             self.f_ff[leg] = - seResult.rBody @ f
-
-            # self.Fr_des[leg] = f
 
     def updateMPCIfNeeded(self, mpcTable:list, data:ControlFSMData):
         
@@ -254,12 +254,12 @@ class ConvexMPCLocomotion:
         self.rpy_comp[1] = v_robot[0]*self.rpy_int[1]
 
         for i in range(4):
-            np.copyto(self.pFoot[i], seResult.position + \
-                                     seResult.rBody.T @ (data._quadruped.getHipLocation(i)+
-                                     data._legController.datas[i].p))
-            # self.pFoot[i] = seResult.position + \
-            #                 seResult.rBody.T @ (data._quadruped.getHipLocation(i)+
-            #                 data._legController.datas[i].p)
+            self.pFoot[i] = seResult.position + \
+                            seResult.rBody.T @ (data._quadruped.getHipLocation(i)+
+                            data._legController.datas[i].p)
+            # np.copyto(self.pFoot[i], seResult.position + \
+            #                          seResult.rBody.T @ (data._quadruped.getHipLocation(i)+
+            #                          data._legController.datas[i].p))
         
         if gait is not self.standing:
             self.world_position_desired += self.dt*np.array([v_des_world[0], v_des_world[1], 0.0], dtype=DTYPE).reshape((3,1))
@@ -281,7 +281,6 @@ class ConvexMPCLocomotion:
         for l in range(4):
             self.swingTimes[l] = gait.getCurrentSwingTime(self.dtMPC, l)
         
-        side_sign = [-1, 1, -1, 1]
         interleave_y = [-0.08, 0.08, 0.02, -0.02]
         interleave_gain = -0.2
         v_abs = math.fabs(v_des_robot[0])
@@ -293,8 +292,8 @@ class ConvexMPCLocomotion:
                 self.swingTimeRemaining[i] -= self.dt
 
             self.footSwingTrajectories[i].setHeight(0.06)
-
-            offset = np.array([0, side_sign[i]*0.065, 0], dtype=DTYPE).reshape((3,1))
+            
+            offset = np.array([0, getSideSign(i)*0.065, 0], dtype=DTYPE).reshape((3,1))
             pRobotFrame = data._quadruped.getHipLocation(i) + offset
             pRobotFrame[1] += interleave_y[i] * v_abs * interleave_gain
 
@@ -323,7 +322,7 @@ class ConvexMPCLocomotion:
 
         # calc gait
         self.iterationCounter += 1
-        
+
         self.Kp = np.array([700, 0, 0, 0, 700, 0, 0, 0, 150], dtype=DTYPE).reshape((3,3))
         self.Kp_stance = 0 * self.Kp
 
@@ -353,7 +352,7 @@ class ConvexMPCLocomotion:
                 pDesLeg = seResult.rBody @ (pDesFootWorld - seResult.position) \
                           - data._quadruped.getHipLocation(foot)
                 vDesLeg = seResult.rBody @ (vDesFootWorld - seResult.vWorld)
-
+                # ! pFoot error if offset joint zero position
                 np.copyto(data._legController.commands[foot].pDes, pDesLeg, casting=CASTING)
                 np.copyto(data._legController.commands[foot].vDes, vDesLeg, casting=CASTING)
 
@@ -375,11 +374,8 @@ class ConvexMPCLocomotion:
                 np.copyto(data._legController.commands[foot].kdCartesian, self.Kd_stance, casting=CASTING)
 
                 np.copyto(data._legController.commands[foot].forceFeedForward, self.f_ff[foot], casting=CASTING)
-                np.copyto(data._legController.commands[foot].kdJoint, np.identity(3) * 0.2, casting=CASTING)
+                # np.copyto(data._legController.commands[foot].kdJoint, np.identity(3) * 0.2, casting=CASTING)
 
                 se_contactState[foot] = contactState
 
         data._stateEstimator.setContactPhase(se_contactState)
-        
-
-

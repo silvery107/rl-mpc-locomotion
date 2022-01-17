@@ -4,6 +4,7 @@ from math import sin, cos
 
 DTYPE = np.float32
 CASTING = "same_kind"
+SIDE_SIGN = [-1, 1, -1, 1]
 
 class CoordinateAxis(Enum):
     X = auto()
@@ -79,3 +80,10 @@ def cubicBezierSecondDerivative(y0:np.ndarray, yf:np.ndarray, x:float):
     yDiff = yf - y0
     bezier = 6.0 - 12.0 * x
     return bezier * yDiff
+
+def getSideSign(leg:int):
+    """
+    Get if the i-th leg is on the left (+) or right (-) of the robot
+    """
+    assert leg >= 0 and leg < 4
+    return SIDE_SIGN[leg]

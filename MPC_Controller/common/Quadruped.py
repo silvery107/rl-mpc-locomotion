@@ -53,14 +53,6 @@ class Quadruped:
             
         self._robotType = robotype
 
-    def getSideSign(self, leg:int):
-        """
-        Get if the i-th leg is on the left (+) or right (-) of the robot
-        """
-        sideSigns = [-1, 1, -1, 1]
-        assert leg >= 0 and leg < 4
-        return sideSigns[leg]
-
     def getHipLocation(self, leg:int):
         """
         Get location of the hip for the given leg in robot frame
