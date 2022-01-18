@@ -1,9 +1,9 @@
 import time
 import mosek
-import cvxopt
 import numpy as np
 from scipy.linalg import expm
 from numpy.linalg import inv
+from cvxopt import  solvers, matrix
 from MPC_Controller.convex_MPC.RobotState import RobotState
 from MPC_Controller.utils import Quaternion, DTYPE, CASTING
 
@@ -191,14 +191,14 @@ def solve_mpc(update:UpdateData, setup:ProblemSetup):
     qg = 2 * B_qp.T @ S @ (A_qp @ x_0 - X_d)
     
     # solve this QP using cvxopt
-    cvxopt.solvers.options['mosek'] = {mosek.iparam.log: 0, 
+    solvers.options['mosek'] = {mosek.iparam.log: 0, 
                                        mosek.iparam.max_num_warnings: 1}
     # timer = time.time()
-    qp_solution = cvxopt.solvers.qp(cvxopt.matrix(qH.astype(np.double)), 
-                                    cvxopt.matrix(qg.astype(np.double)), 
-                                    cvxopt.matrix(fmat.astype(np.double)), 
-                                    cvxopt.matrix(U_b.astype(np.double)), 
-                                    solver="mosek")
+    qp_solution = solvers.qp(matrix(qH.astype(np.double)), 
+                             matrix(qg.astype(np.double)), 
+                             matrix(fmat.astype(np.double)), 
+                             matrix(U_b.astype(np.double)), 
+                             solver="mosek")
 
     # print("Mosek solve time %.3f"%(time.time()-timer))
 
