@@ -11,7 +11,7 @@
 - class可以声明确定类型的值为None成员变量
 - `*` 对mat做矩阵乘法, 对ndarray做点乘 
 - `@` 矩阵乘法
-- `ndarray..dot` 矩阵乘法 
+- `ndarray.dot` 矩阵乘法 
 - `np.mutiply()` 点乘
 - `self._quadruped:Quadruped = None` 类内类型声明
 - Successfully bridge Isaac Gym and MPC Controller on 1.7.2022, it took me 1 month coding blindly.
@@ -29,7 +29,9 @@
 - 腿部控制器需要按照`SpineBoard.cpp`改写`legController.command`到12自由度的torque
 - bridged legController, stateEstimator and simulator 1.13
 - 关节零点待修正, 控制器基本work 1.14
-- MPC average solved time: 0.133 s
+- MPC average solved time: 0.1 s
+- MPC solver needed to be check, like result order etc... 1.17
+- joint zero pos and conventions !!! 摆动相和站立相永远差一个pi..... 1.18
 
 ### Roadmap
 
