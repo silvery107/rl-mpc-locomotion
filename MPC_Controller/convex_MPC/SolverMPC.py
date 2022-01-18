@@ -202,10 +202,11 @@ def solve_mpc(update:UpdateData, setup:ProblemSetup):
 
     # print("Mosek solve time %.3f"%(time.time()-timer))
 
+    # q_soln = qp_solution["x"]
     if qp_solution["x"] is not None:
         q_soln = qp_solution["x"]
-    
-    # q_soln = np.zeros((12 * setup.horizon,1), dtype=DTYPE)
+    else:
+        q_soln = np.zeros((12 * setup.horizon, 1), dtype=DTYPE)
 
 
 def get_q_soln():
