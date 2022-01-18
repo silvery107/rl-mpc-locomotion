@@ -24,7 +24,7 @@ env_spacing = 1.0
 # one actor per env 
 envs, actors = create_envs(gym, sim, robot, num_envs, envs_per_row, env_spacing)
 # force_sensors = add_force_sensor(gym, num_envs, envs, actor_handles)
-cam_pos = gymapi.Vec3(1, 1, 1) # w.r.t target env
+cam_pos = gymapi.Vec3(-0.1, 0, 1.5) # w.r.t target env
 viewer = add_viewer(gym, sim, envs[0], cam_pos)
 
 # configure the joints for effort control mode (once)
@@ -58,8 +58,8 @@ while not gym.query_viewer_has_closed(viewer):
     # 0 1  Right
     # 2 3
     # Back
-    targets = np.array([0, 0, 1,
-                        0, 0, 1,
+    targets = np.array([1, 0, 1,
+                        0, 0, 0,
                         0, 0, 0,
                         0, 0, 0],
                         dtype=np.float32)

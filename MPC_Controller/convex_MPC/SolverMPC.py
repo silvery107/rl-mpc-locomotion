@@ -32,7 +32,6 @@ class UpdateData:
         self.rpy = np.zeros((3,1), dtype=DTYPE)
         self.alpha = 0.0
         self.x_drag = 0.0
-        # self.max_iterations = 0
 
 
 
@@ -72,7 +71,7 @@ def cross_mat(I_inv:np.ndarray, r:np.ndarray):
 
     return I_inv @ cm
 
-def quat_to_rpy(q, rpy:np.ndarray):
+def quat_to_rpy(q:Quaternion, rpy:np.ndarray):
     as_ = np.min([-2.*(q.x*q.z-q.w*q.y),.99999])
     # roll
     rpy[0] = np.arctan2(2.*(q.y*q.z+q.w*q.x), q.w*q.w - q.x*q.x - q.y*q.y + q.z*q.z)
@@ -117,7 +116,6 @@ def c2qp(Ac:np.ndarray, Bc:np.ndarray, dt:float, horizon:int):
     ABc.fill(0)
     ABc[0:13,0:13] = Ac
     ABc[0:13,13:25] = Bc
-    # ABc = dt * ABc
     ABc *= dt
     expmm = expm(ABc) # matrix exponential
     Adt = expmm[0:13,0:13]
@@ -151,8 +149,7 @@ def solve_mpc(update:UpdateData, setup:ProblemSetup):
 
     # initial state (13 state representation)
     x_0 = np.concatenate((rpy, rs.p, rs.w, rs.v, np.array([[-9.81]])), axis=0)
-    # I_world = rs.R_yaw @ rs.I_body @ rs.R_yaw.T
-    np.copyto(I_world, rs.R_yaw @ rs.I_body @ rs.R_yaw.T, casting=CASTING)
+    I_world = rs.R_yaw @ rs.I_body @ rs.R_yaw.T
 
     # state space models
     ct_ss_mats(I_world, rs.m, rs.r_feet, rs.R_yaw, A_ct, B_ct_r, update.x_drag)

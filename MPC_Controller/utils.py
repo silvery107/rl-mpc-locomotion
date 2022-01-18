@@ -17,9 +17,9 @@ def coordinateRotation(axis:CoordinateAxis, theta:float) -> np.ndarray:
     R:np.ndarray = None
     if axis == CoordinateAxis.X:
         R = np.array([1, 0, 0, 0, c, s, 0, -s, c], dtype=DTYPE).reshape((3,3))
-    if axis == CoordinateAxis.Y:
+    elif axis == CoordinateAxis.Y:
         R = np.array([c, 0, -s, 0, 1, 0, s, 0, c], dtype=DTYPE).reshape((3,3))
-    if axis == CoordinateAxis.Z:
+    elif axis == CoordinateAxis.Z:
         R = np.array([c, s, 0, -s, c, 0, 0, 0, 1], dtype=DTYPE).reshape((3,3))
 
     return R

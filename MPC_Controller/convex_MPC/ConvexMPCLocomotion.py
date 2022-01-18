@@ -339,7 +339,7 @@ class ConvexMPCLocomotion:
         for foot in range(4):
             contactState = contactStates[foot]
             swingState = swingStates[foot]
-            swingState = 1
+            swingState = 0
             if swingState > 0: #* foot is in swing
                 # ! init error here, foots swing to the sky
                 if self.firstSwing[foot]:
@@ -374,7 +374,6 @@ class ConvexMPCLocomotion:
                 np.copyto(data._legController.commands[foot].kdCartesian, self.Kd_stance, casting=CASTING)
 
                 np.copyto(data._legController.commands[foot].forceFeedForward, self.f_ff[foot], casting=CASTING)
-                # np.copyto(data._legController.commands[foot].kdJoint, np.identity(3) * 0.2, casting=CASTING)
 
                 se_contactState[foot] = contactState
 
