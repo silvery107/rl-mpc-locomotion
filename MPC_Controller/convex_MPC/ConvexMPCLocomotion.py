@@ -14,7 +14,7 @@ from MPC_Controller.utils import coordinateRotation, CoordinateAxis, DTYPE, CAST
 
 
 class ConvexMPCLocomotion:
-    def __init__(self, _dt:float, _iterationsBetweenMPC:int, parameters:Parameters):
+    def __init__(self, _dt:float, _iterationsBetweenMPC:int):
         self.iterationsBetweenMPC = int(_iterationsBetweenMPC)
         self.horizonLength = 10
         self.dt = _dt
@@ -24,7 +24,7 @@ class ConvexMPCLocomotion:
         self.standing = OffsetDurationGait(self.horizonLength, 
                             np.array([0,0,0,0], dtype=DTYPE), 
                             np.array([10,10,10,10], dtype=DTYPE), "Standing")
-        self._parameters = parameters
+
         self.dtMPC = self.dt*self.iterationsBetweenMPC
         self.default_iterations_between_mpc = self.iterationsBetweenMPC
         print("[Convex MPC] dt: %.3f iterations: %d, dtMPC: %.3f\n"% (self.dt, self.iterationsBetweenMPC, self.dtMPC))
@@ -120,7 +120,7 @@ class ConvexMPCLocomotion:
         mpc.setup_problem(self.dtMPC, self.horizonLength, mu=0.4, fmax=120)
         mpc.update_x_drag(self.x_comp_integral)
         if vxy[0]>0.3 or vxy[0]<-0.3:
-            self.x_comp_integral += self._parameters.cmpc_x_drag * pz_err * self.dtMPC / vxy[0]
+            self.x_comp_integral += Parameters.cmpc_x_drag * pz_err * self.dtMPC / vxy[0]
 
         # timer = time.time()
         mpc.update_problem_data(p, v, q, w, rpy, r_feet, yaw, weights, self.trajAll, alpha, gait=mpcTable)
@@ -305,7 +305,7 @@ class ConvexMPCLocomotion:
             Pf = seResult.position + seResult.rBody.T @ (pYawCorrected + des_vel * self.swingTimeRemaining[i])
 
             p_rel_max = 0.3
-            pfx_rel = seResult.vWorld[0] * (0.5 + self._parameters.cmpc_bonus_swing) * stance_time + \
+            pfx_rel = seResult.vWorld[0] * (0.5 + Parameters.cmpc_bonus_swing) * stance_time + \
                       0.03 * (seResult.vWorld[0] - v_des_world[0]) + \
                       (0.5 * seResult.position[2] / 9.81) * (seResult.vWorld[1] * self._yaw_turn_rate)
             

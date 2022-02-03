@@ -29,7 +29,7 @@
 - 腿部控制器需要按照`SpineBoard.cpp`改写`legController.command`到12自由度的torque
 - bridged legController, stateEstimator and simulator 1.13
 - 关节零点待修正, 控制器基本work 1.14
-- MPC average solved time: 0.1 s
+- 10 horizon MPC average solved time: 0.1 s
 - MPC solver needed to be check, like result order etc... 1.17
 - joint zero pos and conventions !!! 摆动相和站立相永远差一个pi..... 1.18
 

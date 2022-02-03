@@ -3,7 +3,7 @@ sys.path.append("..")
 from enum import Enum, auto
 from MPC_Controller.FSM_states.ControlFSMData import ControlFSMData
 from MPC_Controller.FSM_states.TransitionData import TransitionData
-from abc import abstractmethod, ABCMeta
+from abc import abstractmethod
 
 class FSM_StateName(Enum):
     INVALID = auto()
@@ -18,7 +18,7 @@ class FSM_StateName(Enum):
     BACKFLIP = auto()
     FRONTJUMP = auto()
 
-class FSM_State(ABCMeta):
+class FSM_State:
     def __init__(self, 
                  _controlFSMData:ControlFSMData,
                  stateNameIn:FSM_StateName,

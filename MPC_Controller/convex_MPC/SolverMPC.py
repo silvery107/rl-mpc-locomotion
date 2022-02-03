@@ -3,9 +3,10 @@ import mosek
 import numpy as np
 from scipy.linalg import expm
 from numpy.linalg import inv
-from cvxopt import  solvers, matrix
+from cvxopt import solvers, matrix
 from MPC_Controller.convex_MPC.RobotState import RobotState
 from MPC_Controller.utils import Quaternion, DTYPE, CASTING
+from MPC_Controller.Parameters import Parameters
 
 K_NUM_LEGS = 4
 K_MAX_GAIT_SEGMENTS = 36
@@ -190,14 +191,15 @@ def solve_mpc(update:UpdateData, setup:ProblemSetup):
     # solve this QP using cvxopt
     solvers.options['mosek'] = {mosek.iparam.log: 0, 
                                        mosek.iparam.max_num_warnings: 1}
-    # timer = time.time()
+    timer = time.time()
     qp_solution = solvers.qp(matrix(qH.astype(np.double)), 
                              matrix(qg.astype(np.double)), 
                              matrix(fmat.astype(np.double)), 
                              matrix(U_b.astype(np.double)), 
                              solver="mosek")
 
-    # print("Mosek solve time %.3f"%(time.time()-timer))
+    if Parameters.count_mpc_time:
+        print("Mosek solve time %.3f"%(time.time()-timer))
 
     # q_soln = qp_solution["x"]
     if qp_solution["x"] is not None:

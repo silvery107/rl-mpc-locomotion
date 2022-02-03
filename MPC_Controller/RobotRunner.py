@@ -41,16 +41,12 @@ class RobotRunner:
 
         # init desired state command
         self._desiredStateCommand = DesiredStateCommand()
-
-        # init control and user params
-        self.userControlParameters = Parameters()
         
         # Controller initializations
         self._robot_ctrl.initializeController(self._quadruped, 
                                               self._stateEstimator, 
                                               self._legController, 
-                                              self._desiredStateCommand,
-                                              self.userControlParameters)
+                                              self._desiredStateCommand)
 
 
     def run(self, gym, env, actor):

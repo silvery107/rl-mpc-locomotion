@@ -2,7 +2,7 @@ import sys
 sys.path.append("..")
 from MPC_Controller.common.Quadruped import Quadruped
 from MPC_Controller.common.LegController import LegController
-from MPC_Controller.Parameters import Parameters
+# from MPC_Controller.Parameters import Parameters
 from MPC_Controller.StateEstimatorContainer import StateEstimatorContainer
 from MPC_Controller.DesiredStateCommand import DesiredStateCommand
 
@@ -13,5 +13,5 @@ class ControlFSMData:
         self._legController:LegController = None
         # self._gaitScheduler:GaitScheduler = None
         self._desiredStateCommand:DesiredStateCommand = None
-        self.userParameters:Parameters = None
+        # self.userParameters:Parameters = None
 

@@ -1,11 +1,12 @@
 import numpy as np
 from copy import deepcopy, copy
-from MPC_Controller.convex_MPC.SolverMPC import *
+from MPC_Controller.utils import Quaternion
+import MPC_Controller.convex_MPC.SolverMPC as solver
 from MPC_Controller.utils import CASTING
 
 
-problem_configuration = ProblemSetup()
-update = UpdateData()
+problem_configuration = solver.ProblemSetup()
+update = solver.UpdateData()
 has_solved = 0
 
 def setup_problem(dt:float, horizon:int, mu:float, fmax:float):
@@ -13,7 +14,7 @@ def setup_problem(dt:float, horizon:int, mu:float, fmax:float):
     problem_configuration.horizon = horizon
     problem_configuration.mu = mu
     problem_configuration.f_max = fmax
-    resize_qp_mats(horizon)
+    solver.resize_qp_mats(horizon)
 
 def update_problem_data(p:np.ndarray, v:np.ndarray, q:Quaternion, w:np.ndarray, 
                         rpy:np.ndarray, r_feet:np.ndarray, yaw:float, weights:np.ndarray, 
@@ -39,7 +40,7 @@ def update_problem_data(p:np.ndarray, v:np.ndarray, q:Quaternion, w:np.ndarray,
     update.traj = state_trajectory
     update.alpha = alpha
     update.gait = gait
-    solve_mpc(update, problem_configuration)
+    solver.solve_mpc(update, problem_configuration)
     has_solved = 1
 
 def update_x_drag(x_drag:float):
@@ -49,5 +50,5 @@ def get_solution(index:int):
     if not has_solved:
         return 0.0
 
-    qs = get_q_soln()
+    qs = solver.get_q_soln()
     return qs[index]
