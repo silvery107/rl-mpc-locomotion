@@ -10,9 +10,9 @@ class OffsetDurationGait:
     def __init__(self, nSegment:int, offset:np.ndarray, durations:np.ndarray, name:str):
 
         # offset in mpc segments
-        self.__offsets = offset
+        self.__offsets = offset.flatten()
         # duration of step in mpc segments
-        self.__durations = durations
+        self.__durations = durations.flatten()
         # offsets in phase (0 to 1)
         self.__offsetsFloat = offset / nSegment
         # durations in phase (0 to 1)
@@ -33,13 +33,14 @@ class OffsetDurationGait:
         for i in range(4):
             if progress[i] < 0:
              progress[i] += 1.0
+
             if progress[i] > self.__durationsFloat[i]:
                 progress[i] = 0.0
             else:
                 progress[i] = progress[i] / self.__durationsFloat[i]
             
         # print("contact state: %.3f %.3f %.3f %.3f\n"%(progress[0], progress[1], progress[2], progress[3]))
-        return progress
+        return progress[:, None] # convert to matrix
 
     def getSwingState(self):
         swing_offset = self.__offsetsFloat + self.__durationsFloat
@@ -60,7 +61,7 @@ class OffsetDurationGait:
                 progress[i] = progress[i] / swing_duration[i]
 
         # print("swing state: %.3f %.3f %.3f %.3f\n"%(progress[0], progress[1], progress[2], progress[3]))
-        return progress
+        return progress[:,None]
 
     def getMpcTable(self):
         # print("MPC table:\n")

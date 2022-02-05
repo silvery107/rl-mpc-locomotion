@@ -3,7 +3,7 @@ import sys
 import time
 sys.path.append("..")
 import numpy as np
-from MPC_Controller.common.LegController import LegController, LegControllerCommand
+# from MPC_Controller.common.LegController import LegController, LegControllerCommand
 from MPC_Controller.convex_MPC.Gait import OffsetDurationGait
 import MPC_Controller.convex_MPC.convexMPC_interface as mpc
 from MPC_Controller.FSM_states.ControlFSMData import ControlFSMData
@@ -16,14 +16,14 @@ from MPC_Controller.utils import coordinateRotation, CoordinateAxis, DTYPE, CAST
 class ConvexMPCLocomotion:
     def __init__(self, _dt:float, _iterationsBetweenMPC:int):
         self.iterationsBetweenMPC = int(_iterationsBetweenMPC)
-        self.horizonLength = 10
+        self.horizonLength = Parameters.cmpc_horizons
         self.dt = _dt
         self.trotting = OffsetDurationGait(self.horizonLength, 
-                            np.array([0,5,5,0], dtype=DTYPE), 
-                            np.array([5,5,5,5], dtype=DTYPE), "Trotting")
+                            np.array([0, 5, 5, 0], dtype=DTYPE), 
+                            np.array([5, 5, 5, 5], dtype=DTYPE), "Trotting")
         self.standing = OffsetDurationGait(self.horizonLength, 
-                            np.array([0,0,0,0], dtype=DTYPE), 
-                            np.array([10,10,10,10], dtype=DTYPE), "Standing")
+                            np.array([0, 0, 0, 0], dtype=DTYPE), 
+                            np.array([10, 10, 10, 10], dtype=DTYPE), "Standing")
 
         self.dtMPC = self.dt*self.iterationsBetweenMPC
         self.default_iterations_between_mpc = self.iterationsBetweenMPC
@@ -96,8 +96,8 @@ class ConvexMPCLocomotion:
         seResult = data._stateEstimator.getResult()
         
         # ! parameters here
-        Q = [0.25, 0.25, 10, 2, 2, 50, 0, 0, 0.3, 0.2, 0.2, 0.1]
-        alpha = 4e-5
+        Q = Parameters.cmpc_weights
+        alpha = Parameters.cmpc_alpha
 
         p = seResult.position
         v = seResult.vWorld
@@ -208,7 +208,7 @@ class ConvexMPCLocomotion:
     def run(self, data:ControlFSMData):
         # Command Setup
         self.__SetupCommand(data)
-        gaitNumber = data.userParameters.cmpc_gait
+        gaitNumber = Parameters.cmpc_gait
         seResult = data._stateEstimator.getResult()
 
         # Check if transition to standing

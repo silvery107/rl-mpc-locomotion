@@ -198,7 +198,7 @@ def solve_mpc(update:UpdateData, setup:ProblemSetup):
                              matrix(U_b.astype(np.double)), 
                              solver="mosek")
 
-    if Parameters.count_mpc_time:
+    if Parameters.cmpc_solver_time:
         print("Mosek solve time %.3f"%(time.time()-timer))
 
     # q_soln = qp_solution["x"]

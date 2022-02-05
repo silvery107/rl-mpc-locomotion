@@ -32,6 +32,7 @@
 - 10 horizon MPC average solved time: 0.1 s
 - MPC solver needed to be check, like result order etc... 1.17
 - joint zero pos and conventions !!! 摆动相和站立相永远差一个pi..... 1.18
+- 优化了调试参数传递方式, 目前打算重新检查一遍翻译是否有误, 以及用 C++ 编译求解器提高效率 2.4
 
 ### Roadmap
 
