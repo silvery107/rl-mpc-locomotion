@@ -1,5 +1,3 @@
-
-
 class DesiredStateCommand:
     def __init__(self) -> None:
         self.yaw_turn_rate = 0.0

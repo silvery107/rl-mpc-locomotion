@@ -9,6 +9,6 @@ class Parameters:
     cmpc_total_time = False
 
     cmpc_gait = 9
-    controller_dt = 0.001
+    controller_dt = 0.002
     control_mode = 4 # trot
     operatingMode = 0 # test
