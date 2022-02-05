@@ -6,7 +6,7 @@ from enum import Enum, auto
 from time import sleep
 from MPC_Controller.RobotRunner import RobotRunner
 from MPC_Controller.common.Quadruped import RobotType
-from MPC_Controller.RobotController import RobotController
+from MPC_Controller.deprecated.RobotController import RobotController
 
 class SimulatorMode(Enum):
     RUN_CONTROL_PARAMETERS = auto()

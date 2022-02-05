@@ -1,6 +1,6 @@
 from MPC_Controller.RobotRunner import RobotRunner
 from MPC_Controller.common.Quadruped import RobotType
-from MPC_Controller.RobotController import RobotController
+from MPC_Controller.deprecated.RobotController import RobotController
 from enum import Enum, auto
 
 class SimulatorMode(Enum):

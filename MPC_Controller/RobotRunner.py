@@ -1,15 +1,16 @@
-from MPC_Controller.RobotController import RobotController
+from MPC_Controller.FSM_states.ControlFSM import ControlFSM
+# from MPC_Controller.RobotController import RobotController
 from MPC_Controller.common.Quadruped import Quadruped, RobotType
 from MPC_Controller.common.LegController import LegController
 from MPC_Controller.StateEstimatorContainer import StateEstimatorContainer
 from MPC_Controller.DesiredStateCommand import DesiredStateCommand
-from MPC_Controller.Parameters import Parameters
+# from MPC_Controller.Parameters import Parameters
 import numpy as np
 
 
 class RobotRunner:
-    def __init__(self, robot_ctrl:RobotController):
-        self._robot_ctrl = robot_ctrl
+    def __init__(self): #, robot_ctrl:RobotController):
+        # self._robot_ctrl = robot_ctrl
         self._iterations = 0
 
 
@@ -43,10 +44,14 @@ class RobotRunner:
         self._desiredStateCommand = DesiredStateCommand()
         
         # Controller initializations
-        self._robot_ctrl.initializeController(self._quadruped, 
-                                              self._stateEstimator, 
-                                              self._legController, 
-                                              self._desiredStateCommand)
+        self._controlFSM = ControlFSM(self._quadruped, 
+                                      self._stateEstimator, 
+                                      self._legController,
+                                      self._desiredStateCommand)
+        # self._robot_ctrl.initializeController(self._quadruped, 
+        #                                       self._stateEstimator, 
+        #                                       self._legController, 
+        #                                       self._desiredStateCommand)
 
 
     def run(self, gym, env, actor):
@@ -63,8 +68,8 @@ class RobotRunner:
         # update robot states
         self._stateEstimator.update(gym, env, actor, self._quadruped.bodyName)
         
-        # Run Control user code
-        self._robot_ctrl.runController()
+        # Run the Control FSM code
+        self._controlFSM.runFSM()
 
         # Sets the leg controller commands for the robot
         self._legController.updateCommand(gym, env, actor)

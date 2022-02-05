@@ -2,7 +2,7 @@ import numpy as np
 from enum import Enum, auto
 
 from MPC_Controller.RobotRunner import RobotRunner
-from MPC_Controller.RobotController import RobotController
+from MPC_Controller.deprecated.RobotController import RobotController
 from MPC_Controller.common.Quadruped import Quadruped, RobotType
 from MPC_Controller.common.LegController import LegController
 from MPC_Controller.StateEstimatorContainer import StateEstimatorContainer
