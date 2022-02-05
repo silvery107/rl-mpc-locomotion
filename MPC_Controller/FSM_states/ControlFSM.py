@@ -1,26 +1,40 @@
+"""
+* The Finite State Machine that manages the robot's controls. Handles
+* calls to the FSM State functions and manages transitions between all
+* of the states.
+"""
 import sys
+
+from MPC_Controller.FSM_states.FSM_State_Passive import FSM_State_Passive
+from MPC_Controller.FSM_states.FSM_State_RecoveryStand import FSM_State_RecoveyrStand
+from MPC_Controller.FSM_states.FSM_State_StandUp import FSM_State_StandUp
+from MPC_Controller.FSM_states.TransitionData import TransitionData
 sys.path.append("..")
 
-from MPC_Controller.FSM_states.FSM_State import FSM_State
+from MPC_Controller.FSM_states.FSM_State import FSM_State, FSM_StateName
 from MPC_Controller.common.Quadruped import Quadruped
 from MPC_Controller.StateEstimatorContainer import StateEstimatorContainer
 from MPC_Controller.common.LegController import LegController
-# from MPC_Controller.Parameters import Parameters
+from MPC_Controller.Parameters import Parameters
 from MPC_Controller.FSM_states.ControlFSMData import ControlFSMData
 from MPC_Controller.FSM_states.FSM_State_Locomotion import FSM_State_Locomotion
 from MPC_Controller.DesiredStateCommand import DesiredStateCommand
 from enum import Enum, auto
 
 class FSM_OperatingMode(Enum):
-    NORMAL = auto()
-    TRANSITIONING = auto() 
-    ESTOP = auto()
-    EDAMP = auto()
+    TEST = 0
+    NORMAL = 1
+    TRANSITIONING = auto()
+    # ESTOP = auto()
+    # EDAMP = auto()
 
 
 class FSM_StatesList:
     def __init__(self) -> None:
         self.invalid:FSM_State = None
+        self.passive:FSM_State_Passive = None
+        self.standUp:FSM_State_StandUp = None
+        self.recoveryStand:FSM_State_RecoveyrStand = None
         self.locomotion:FSM_State_Locomotion = None
 
 class ControlFSM:
@@ -37,11 +51,21 @@ class ControlFSM:
 
         self.statesList = FSM_StatesList()
         self.statesList.invalid = None
+        self.statesList.passive = FSM_State_Passive(self.data)
+        self.statesList.standUp = FSM_State_StandUp(self.data)
         self.statesList.locomotion = FSM_State_Locomotion(self.data)
+        self.statesList.recoveryStand = FSM_State_RecoveyrStand(self.data)
 
+        # FSM state information
+        self.currentState:FSM_State = None
+        self.nextState:FSM_State = None
+        self.nextStateName:FSM_StateName = None
+
+        self.printIter = 0
+        self.printNum = 10000 # N*(0.001s) in simulation time
         self.iter = 0
 
-        # ! need a SafetyChecker
+        # ! may need a SafetyChecker
         # self.safetyChecker = 
 
         self.initialize()
@@ -54,10 +78,116 @@ class ControlFSM:
         # Initialize to not be in transition
         self.nextState = self.currentState
         # Initialize FSM mode to normal operation
-        self.operatingMode = FSM_OperatingMode.NORMAL
+        self.operatingMode = FSM_OperatingMode(Parameters.operatingMode)
 
     def runFSM(self):
-        if self.operatingMode == FSM_OperatingMode.NORMAL:
+        if self.operatingMode == FSM_OperatingMode.TEST:
             self.currentState.run()
-            
+
+        # Run normal controls if no transition is detected
+        elif self.operatingMode == FSM_OperatingMode.NORMAL:
+            # Check the current state for any transition
+            nextStateName = self.currentState.checkTransition()
+
+            # Detect a commanded transition
+            if nextStateName != self.currentState.stateName:
+                # Set the FSM operating mode to transitioning
+                self.operatingMode = FSM_OperatingMode.TRANSITIONING
+                # Get the next FSM State by name
+                self.nextState = self.getNextState(nextStateName)
+                # Print transition initialized info
+                self.printInfo(1)
+            else:
+                self.currentState.run()
+
+        # Check the robot state for safe operation
+        elif self.operatingMode == FSM_OperatingMode.TRANSITIONING:
+            self.transitionData = self.currentState.transition()
+
+            # TODO Check the robot state for safe operation
+            # safetyPostCheck()
+
+            # Run the state transition
+            if self.transitionData.done:
+                # Exit the current state cleanly
+                self.currentState.onExit()
+
+                # Print finalizing transition info
+                self.printInfo(2)
+
+                # Complete the transition
+                self.currentState = self.nextState
+
+                # Enter the new current state cleanly
+                self.currentState.onEnter()
+
+                # Return the FSM to normal operation mode
+                self.operatingMode = FSM_OperatingMode.NORMAL
+        else:
+            raise NotImplementedError
+            # TODO Check the robot state for safe operation
+            # safetyPostCheck()
+        
+
+        # TODO if ESTOP
+        # self.currentState = self.statesList.passive
+        # self.currentState.onEnter()
+        # nextStateName = self.currentState.stateName
+
+        # Print the current state of the FSM
+        self.printInfo(0) 
         self.iter += 1
+
+
+    def getNextState(self, stateName:FSM_StateName):
+        """
+        * Returns the approptiate next FSM State when commanded.
+        *
+        * @param  next commanded enumerated state name
+        * @return next FSM state
+        """
+        if stateName == FSM_StateName.INVALID:
+            return self.statesList.invalid
+        elif stateName == FSM_StateName.PASSIVE:
+            return self.statesList.passive
+        elif stateName == FSM_StateName.STAND_UP:
+            return self.statesList.standUp
+        elif stateName == FSM_StateName.LOCOMOTION:
+            return self.statesList.locomotion
+        elif stateName == FSM_StateName.RECOVERY_STAND:
+            return self.statesList.recoveryStand
+        else:
+            return self.statesList.invalid
+
+
+    def printInfo(self, opt:int):
+        """
+        * Prints Control FSM info at regular intervals and on important events
+        * such as transition initializations and finalizations. Separate function
+        * to not clutter the actual code.
+        *
+        * @param printing mode option for regular or an event
+        """
+
+        if opt == 0:
+            self.printIter += 1
+            if self.printIter == self.printNum:
+                print("[CONTROL FSM] Printing FSM Info...")
+                print("---------------------------------------------------------")
+                print("Iteration: " + str(self.iter))
+                # TODO print Operating Mode
+                self.printIter = 0
+        
+        # Initializing FSM State transition
+        elif opt == 1:
+            print("[CONTROL FSM] Transition initialized from "+
+                  self.currentState.stateString + " to " +
+                  self.nextState.stateString)
+
+        # Finalizing FSM State transition
+        elif opt == 2:
+            print("[CONTROL FSM] Transition finalizing from "+
+                  self.currentState.stateString + " to " +
+                  self.nextState.stateString)
+
+
