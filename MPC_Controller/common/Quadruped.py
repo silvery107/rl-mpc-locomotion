@@ -39,6 +39,7 @@ class Quadruped:
             self._kneeLinkY_offset = 0.0
             self._abadLocation = np.array([0.2399, 0.051, 0], dtype=DTYPE).reshape((3,1))
             self.bodyName = "trunk"
+            self._bodyMass = 9.041
 
         elif robotype == RobotType.MINI_CHEETAH:
             self._abadLinkLength = 0.062
@@ -47,6 +48,7 @@ class Quadruped:
             self._kneeLinkY_offset = 0.004
             self._abadLocation = np.array([0.19, 0.049, 0], dtype=DTYPE).reshape((3,1))
             self.bodyName = "body"
+            self._bodyMass = 3.3
             
         else:
             raise "Invalid RobotType"

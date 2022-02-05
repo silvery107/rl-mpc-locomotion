@@ -12,7 +12,7 @@ from MPC_Controller.Parameters import Parameters
 from isaacgym import gymapi
 from RL_Simulator.utils import *
 
-robot = RobotType.MINI_CHEETAH
+robot = RobotType.ALIENGO
 dt =  1 / 60
 gym = gymapi.acquire_gym()
 sim = acquire_sim(gym, dt)
