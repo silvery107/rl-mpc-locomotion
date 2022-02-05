@@ -71,7 +71,7 @@ class ConvexMPCLocomotion:
 
     def __SetupCommand(self, data:ControlFSMData):
         if data._quadruped._robotType == RobotType.ALIENGO:
-            self.__body_height = 0.29
+            self.__body_height = 0.32
         elif data._quadruped._robotType == RobotType.MINI_CHEETAH:
             self.__body_height = 0.29
         else:

@@ -33,11 +33,11 @@ class Quadruped:
     def __init__(self, robotype:RobotType):
 
         if robotype == RobotType.ALIENGO:
-            self._abadLinkLength = 0.062
-            self._hipLinkLength = 0.209
-            self._kneeLinkLength = 0.195
-            self._kneeLinkY_offset = 0.004
-            self._abadLocation = np.array([0.19, 0.049, 0], dtype=DTYPE).reshape((3,1))
+            self._abadLinkLength = 0.0418
+            self._hipLinkLength = 0.25
+            self._kneeLinkLength = 0.25
+            self._kneeLinkY_offset = 0.0
+            self._abadLocation = np.array([0.2399, 0.051, 0], dtype=DTYPE).reshape((3,1))
             self.bodyName = "trunk"
 
         elif robotype == RobotType.MINI_CHEETAH:
