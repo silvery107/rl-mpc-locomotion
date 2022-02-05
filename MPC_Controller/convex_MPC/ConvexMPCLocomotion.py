@@ -71,7 +71,7 @@ class ConvexMPCLocomotion:
 
     def __SetupCommand(self, data:ControlFSMData):
         if data._quadruped._robotType == RobotType.ALIENGO:
-            self.__body_height = 0.32
+            self.__body_height = 0.35
         elif data._quadruped._robotType == RobotType.MINI_CHEETAH:
             self.__body_height = 0.29
         else:
@@ -242,7 +242,7 @@ class ConvexMPCLocomotion:
         
         # Integral-esque pitch and roll compensation
         if np.abs(v_robot[0]>0.2): # avoid dividing by zero
-            self.rpy_int[1] += self.dt * (self._pitch_des - seResult.rpy[1]) / v_robot[0]
+            self.rpy_int[1] += self.dt * (self.__pitch_des - seResult.rpy[1]) / v_robot[0]
 
         if np.abs(v_robot[1]>0.1): # avoid dividing by zero
             self.rpy_int[0] += self.dt * (self.__roll_des - seResult.rpy[0]) / v_robot[1]
@@ -339,9 +339,8 @@ class ConvexMPCLocomotion:
         for foot in range(4):
             contactState = contactStates[foot]
             swingState = swingStates[foot]
-            # swingState = 1
+            # swingState = 0
             if swingState > 0: #* foot is in swing
-                # ! init error here, foots swing to the sky
                 if self.firstSwing[foot]:
                     self.firstSwing[foot] = False
                     self.footSwingTrajectories[foot].setInitialPosition(self.pFoot[foot])
@@ -352,7 +351,7 @@ class ConvexMPCLocomotion:
                 pDesLeg = seResult.rBody @ (pDesFootWorld - seResult.position) \
                           - data._quadruped.getHipLocation(foot)
                 vDesLeg = seResult.rBody @ (vDesFootWorld - seResult.vWorld)
-                # ! pFoot error if offset joint zero position
+                
                 np.copyto(data._legController.commands[foot].pDes, pDesLeg, casting=CASTING)
                 np.copyto(data._legController.commands[foot].vDes, vDesLeg, casting=CASTING)
 

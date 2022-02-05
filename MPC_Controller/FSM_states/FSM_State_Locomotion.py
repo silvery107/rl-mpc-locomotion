@@ -30,7 +30,7 @@ class FSM_State_Locomotion(FSM_State):
                 27/(1000.0*Parameters.controller_dt))
         elif _controlFSMData._quadruped._robotType == RobotType.ALIENGO:
             self.cMPC = ConvexMPCLocomotion(Parameters.controller_dt,
-                27/(1000.0*Parameters.controller_dt))
+                8/(1000.0*Parameters.controller_dt))
         else:
             raise "Invalid RobotType"
         

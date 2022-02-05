@@ -7,8 +7,9 @@ class Parameters:
     cmpc_alpha = 4e-5
     cmpc_solver_time = False
     cmpc_total_time = False
+    cmpc_solver = 1 # 0 cvxopt 1 osqp
 
-    cmpc_gait = 9
+    cmpc_gait = 9 # 9 trot 4 stand
     controller_dt = 0.002
-    control_mode = 4 # trot
-    operatingMode = 0 # test
+    control_mode = 4 # 4 locomotion
+    operatingMode = 0 # 0 no transition

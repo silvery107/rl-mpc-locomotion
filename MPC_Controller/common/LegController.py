@@ -153,12 +153,12 @@ class LegController:
                 #                             + self.commands[leg].kpJoint @ (self.commands[leg].qDes -self.datas[leg].q) \
                 #                             + self.commands[leg].kdJoint @ (self.commands[leg].qdDes -self.datas[leg].qd)
 
-                legTorques[self.getLegIdx(leg) * 3 + 0] = legTorque[0]
-                legTorques[self.getLegIdx(leg) * 3 + 1] = legTorque[1]
-                legTorques[self.getLegIdx(leg) * 3 + 2] = legTorque[2]
+                legTorques[leg * 3 + 0] = legTorque[0] 
+                legTorques[leg * 3 + 1] = legTorque[1]
+                legTorques[leg * 3 + 2] = legTorque[2]
         
         # ! TODO Check legTorques order
-        gym.apply_actor_dof_efforts(env, actor, legTorques)       
+        gym.apply_actor_dof_efforts(env, actor, 5*legTorques)       
 
 
     def computeLegJacobianAndPosition(self, leg:int):

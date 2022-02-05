@@ -12,7 +12,7 @@ class RobotState:
         self.r_feet:np.ndarray = None # (3,4)
         self.R:np.ndarray = None # (3,3)
         self.R_yaw:np.ndarray = None # (3,3)
-        self.I_body:np.ndarray = np.zeros((3, 3))
+        self.I_body:np.ndarray = np.zeros((3, 3), dtype=DTYPE)
         self.q:Quaternion = None
         self.yaw = 0.0
         self.m = 9.0
@@ -31,7 +31,7 @@ class RobotState:
         self.R_yaw = np.array([[yc,  -ys,   0],
                                [ys,  yc,   0],
                                [0,   0,   1]], dtype=DTYPE)
-        # ! update I_body
+
         np.fill_diagonal(self.I_body, [0.07, 0.26, 0.242])
 
 

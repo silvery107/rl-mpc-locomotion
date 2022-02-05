@@ -6,7 +6,7 @@ from isaacgym import gymapi
 from RL_Simulator.utils import acquire_sim, create_envs, add_viewer, add_force_sensor
 
 robot = RobotType.ALIENGO
-dt =  1 / 60
+dt =  0.002
 gym = gymapi.acquire_gym()
 sim = acquire_sim(gym, dt)
 
@@ -17,7 +17,7 @@ env_spacing = 1.0
 # one actor per env 
 envs, actors = create_envs(gym, sim, robot, num_envs, envs_per_row, env_spacing)
 # force_sensors = add_force_sensor(gym, num_envs, envs, actor_handles)
-cam_pos = gymapi.Vec3(-1, 0, 1.5) # w.r.t target env
+cam_pos = gymapi.Vec3(-1, 1, 1) # w.r.t target env
 viewer = add_viewer(gym, sim, envs[0], cam_pos)
 
 # controllers = []

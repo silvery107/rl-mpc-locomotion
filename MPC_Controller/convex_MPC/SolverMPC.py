@@ -4,6 +4,8 @@ import numpy as np
 from scipy.linalg import expm
 from numpy.linalg import inv
 from cvxopt import solvers, matrix
+import osqp
+from scipy import sparse
 import MPC_Controller.convex_MPC.RobotState as RobotState
 from MPC_Controller.utils import Quaternion, DTYPE, CASTING
 from MPC_Controller.Parameters import Parameters
@@ -180,22 +182,29 @@ def solve_mpc(update:UpdateData, setup:ProblemSetup):
     qH = 2 * (B_qp.T @ S @ B_qp + update.alpha * eye_12h)
     qg = 2 * B_qp.T @ S @ (A_qp @ x_0 - X_d)
     
-    # solve this QP using cvxopt
-    solvers.options['mosek'] = {mosek.iparam.log: 0, 
-                                       mosek.iparam.max_num_warnings: 1}
     timer = time.time()
-    qp_solution = solvers.qp(matrix(qH.astype(np.double)), 
-                             matrix(qg.astype(np.double)), 
-                             matrix(fmat.astype(np.double)), 
-                             matrix(U_b.astype(np.double)), 
-                             solver="mosek")
+    if Parameters.cmpc_solver==0:
+        # solve this QP using cvxopt
+        solvers.options['mosek'] = {mosek.iparam.log: 0, 
+                                        mosek.iparam.max_num_warnings: 1}
+        qp_solution = solvers.qp(matrix(qH.astype(np.double)), 
+                                matrix(qg.astype(np.double)), 
+                                matrix(fmat.astype(np.double)), 
+                                matrix(U_b.astype(np.double)), 
+                                solver="mosek")["x"]
+
+
+    elif Parameters.cmpc_solver==1:
+        m = osqp.OSQP()
+        m.setup(P=sparse.csc_matrix(qH), q=qg, A=sparse.csc_matrix(fmat), l=np.zeros_like(U_b), u=U_b,
+                verbose=False)
+        qp_solution = m.solve().x
 
     if Parameters.cmpc_solver_time:
-        print("Mosek solve time %.3f"%(time.time()-timer))
-
-    # q_soln = qp_solution["x"]
-    if qp_solution["x"] is not None:
-        q_soln = qp_solution["x"]
+        print("Solver solved time %.3f"%(time.time()-timer))
+        
+    if qp_solution is not None:
+        q_soln = qp_solution
     else:
         q_soln = np.zeros((12 * setup.horizon, 1), dtype=DTYPE)
 

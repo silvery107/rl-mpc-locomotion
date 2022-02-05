@@ -8,8 +8,8 @@ XIAOTIAN = "urdf/Xiaotian-ROS/urdf/xiaotian_description.urdf"
 ALIENGO = "urdf/aliengo_description/xacro/aliengo.urdf"
 ANYMAL = "urdf/anymal_c/urdf/anymal.urdf"
 
-fix_base_link = True
-init_height = 0.55
+fix_base_link = False
+init_height = 0.49
 
 def acquire_sim(gym, dt):
     # get default set of parameters

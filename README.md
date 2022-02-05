@@ -33,6 +33,12 @@
 - MPC solver needed to be check, like result order etc... 1.17
 - joint zero pos and conventions !!! 摆动相和站立相永远差一个pi..... 1.18
 - 优化了调试参数传递方式, 目前打算重新检查一遍翻译是否有误, 以及用 C++ 编译求解器提高效率 2.4
+- `<convex_MPC>`, `<common>`, `<FSM_states>` folders double checked 
+- 经过调整左右腿符号和偏置顺序, 给0初始速度, 摆动相正常、雅克比正常, 支撑相异常、反向 2.5
+- 以及mini cheetah 模型腿部惯量有问题、不均匀
+- work 了???!!! 2.5 [video](images/MPC_trot_first.mkv)
+- TODO 用 PyBind11 转译一下solver, 或者测试一下OSQP
+- OSQP 10ms 大惊喜
 
 ### Roadmap
 
@@ -42,12 +48,11 @@
     - [DesiredStateCommand](MPC_Controller/DesiredStateCommand.py),
     - [StateEstimatorContainer](MPC_Controller/StateEstimatorContainer.py),
     - [Parameters](MPC_Controller/Parameters.py),
-    - [RobotController](MPC_Controller/RobotRunner.py) ->
-        - [ControlFSM](MPC_Controller/FSM_states/ControlFSM.py) ->
-            - [FSM_State_Locomotion](MPC_Controller/FSM_states/FSM_State_Locomotion.py) ->
-                - [ConvexMPCLocomotion](MPC_Controller/convex_MPC/ConvexMPCLocomotion.py) ->
-                    - [convexMPC_interface](MPC_Controller/convex_MPC/convexMPC_interface.py) ->
-                        - [SolverMPC](MPC_Controller/convex_MPC/SolverMPC.py)
+    - [ControlFSM](MPC_Controller/FSM_states/ControlFSM.py) ->
+        - [FSM_State_Locomotion](MPC_Controller/FSM_states/FSM_State_Locomotion.py) ->
+            - [ConvexMPCLocomotion](MPC_Controller/convex_MPC/ConvexMPCLocomotion.py) ->
+                - [convexMPC_interface](MPC_Controller/convex_MPC/convexMPC_interface.py) ->
+                    - [SolverMPC](MPC_Controller/convex_MPC/SolverMPC.py)
 
 ### Partially implemented:
 - SimulationBridge
