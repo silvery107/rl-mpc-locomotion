@@ -10,8 +10,8 @@ class LegControllerCommand:
         self.tauFeedForward = np.zeros((3,1), dtype=DTYPE)
         self.forceFeedForward = np.zeros((3,1), dtype=DTYPE)
 
-        # self.qDes = np.zeros((3,1), dtype=DTYPE)
-        # self.qdDes = np.zeros((3,1), dtype=DTYPE)
+        self.qDes = np.zeros((3,1), dtype=DTYPE)
+        self.qdDes = np.zeros((3,1), dtype=DTYPE)
         self.pDes = np.zeros((3,1), dtype=DTYPE)
         self.vDes = np.zeros((3,1), dtype=DTYPE)
 
@@ -27,8 +27,8 @@ class LegControllerCommand:
         self.tauFeedForward.fill(0)
         self.forceFeedForward.fill(0)
 
-        # self.qDes.fill(0)
-        # self.qdDes.fill(0)
+        self.qDes.fill(0)
+        self.qdDes.fill(0)
         self.pDes.fill(0)
         self.vDes.fill(0)
 

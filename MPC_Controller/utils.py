@@ -1,10 +1,12 @@
+import math
 import numpy as np
 from enum import Enum, auto
 from math import sin, cos
 
 DTYPE = np.float32
 CASTING = "same_kind"
-SIDE_SIGN = [-1, 1, -1, 1]
+# SIDE_SIGN = [-1, 1, -1, 1]
+SIDE_SIGN = [1, -1, 1, -1]
 
 class CoordinateAxis(Enum):
     X = auto()
@@ -54,6 +56,12 @@ def quat_to_rot(q:Quaternion) -> np.ndarray:
                   1 - 2 * (e1 * e1 + e2 * e2)], 
                   dtype=DTYPE).reshape((3,3))
     return R.T
+
+def deg2rad(deg:float):
+    return deg*math.pi/180
+
+def rad2deg(rad:float):
+    return rad*180/math.pi
 
 # Interpolation
 def cubicBezier(y0:np.ndarray, yf:np.ndarray, x:float):

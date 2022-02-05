@@ -60,7 +60,7 @@ class Quadruped:
         assert leg >= 0 and leg < 4
         pHip = np.array([
             self._abadLocation[0] if (leg == 0 or leg == 1) else -self._abadLocation[0],
-            self._abadLocation[1] if (leg == 1 or leg == 3) else -self._abadLocation[1],
+            self._abadLocation[1] if (leg == 0 or leg == 2) else -self._abadLocation[1],
             self._abadLocation[2]
             ], dtype=DTYPE).reshape((3,1))
 
