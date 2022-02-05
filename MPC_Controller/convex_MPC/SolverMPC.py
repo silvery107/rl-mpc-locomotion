@@ -4,7 +4,7 @@ import numpy as np
 from scipy.linalg import expm
 from numpy.linalg import inv
 from cvxopt import solvers, matrix
-from MPC_Controller.convex_MPC.RobotState import RobotState
+import MPC_Controller.convex_MPC.RobotState as RobotState
 from MPC_Controller.utils import Quaternion, DTYPE, CASTING
 from MPC_Controller.Parameters import Parameters
 
@@ -35,8 +35,7 @@ class UpdateData:
         self.x_drag = 0.0
 
 
-
-rs = RobotState()
+rs = RobotState.RobotState()
 # Adt = np.zeros((13,13), dtype=DTYPE)
 # Bdt = np.zeros((13,12), dtype=DTYPE)
 ABc = np.zeros((25,25), dtype=DTYPE)
@@ -64,24 +63,16 @@ def near_zero(a:float):
 def near_one(a:float):
     return near_zero(a-1)
 
+# Skew-symmetric Matrix
 def cross_mat(I_inv:np.ndarray, r:np.ndarray):
-    cm = np.array([[0.0, -r[2], r[1]],
-                  [r[2], 0.0, -r[0]],
-                  [-r[1], r[0], 0.0]],
-                  dtype=DTYPE)
+    cm = np.array([0.0, -r[2], r[1],
+                  r[2], 0.0, -r[0],
+                  -r[1], r[0], 0.0],
+                  dtype=DTYPE).reshape((3,3))
 
     return I_inv @ cm
 
-def quat_to_rpy(q:Quaternion, rpy:np.ndarray):
-    as_ = np.min([-2.*(q.x*q.z-q.w*q.y),.99999])
-    # roll
-    rpy[0] = np.arctan2(2.*(q.y*q.z+q.w*q.x), q.w*q.w - q.x*q.x - q.y*q.y + q.z*q.z)
-    # pitch
-    rpy[1] = np.arcsin(as_)
-    # yaw
-    rpy[2] = np.arctan2(2.*(q.x*q.y+q.w*q.z), q.w*q.w + q.x*q.x - q.y*q.y - q.z*q.z)
-
-# continuous time state space matrices.  
+# continuous time state space matrices.
 def ct_ss_mats(I_world:np.ndarray, m:float, r_feet:np.ndarray, 
                R_yaw:np.ndarray, A:np.ndarray, B:np.ndarray, x_drag:float):
     A.fill(0)
@@ -156,6 +147,7 @@ def solve_mpc(update:UpdateData, setup:ProblemSetup):
     ct_ss_mats(I_world, rs.m, rs.r_feet, rs.R_yaw, A_ct, B_ct_r, update.x_drag)
     # QP matrices
     c2qp(A_ct, B_ct_r, setup.dt, setup.horizon)
+    # weights
     full_weight = np.concatenate((update.weights, np.array([[0.0]])), axis=0)
     np.fill_diagonal(S, np.tile(full_weight, (setup.horizon, 1)))
 
