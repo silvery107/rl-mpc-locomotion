@@ -27,7 +27,7 @@ class ConvexMPCLocomotion:
 
         self.dtMPC = self.dt*self.iterationsBetweenMPC
         self.default_iterations_between_mpc = self.iterationsBetweenMPC
-        print("[Convex MPC] dt: %.3f iterations: %d, dtMPC: %.3f\n" % (self.dt, self.iterationsBetweenMPC, self.dtMPC))
+        print("[Convex MPC] dt: %.3f iterations: %d, dtMPC: %.3f" % (self.dt, self.iterationsBetweenMPC, self.dtMPC))
         mpc.setup_problem(self.dtMPC, self.horizonLength, mu=0.4, fmax=120)
 
 

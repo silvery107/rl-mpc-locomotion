@@ -1,16 +1,13 @@
 from MPC_Controller.FSM_states.ControlFSM import ControlFSM
-# from MPC_Controller.RobotController import RobotController
 from MPC_Controller.common.Quadruped import Quadruped, RobotType
 from MPC_Controller.common.LegController import LegController
 from MPC_Controller.StateEstimatorContainer import StateEstimatorContainer
 from MPC_Controller.DesiredStateCommand import DesiredStateCommand
-# from MPC_Controller.Parameters import Parameters
 import numpy as np
 
 
 class RobotRunner:
-    def __init__(self): #, robot_ctrl:RobotController):
-        # self._robot_ctrl = robot_ctrl
+    def __init__(self):
         self._iterations = 0
 
 
@@ -48,10 +45,6 @@ class RobotRunner:
                                       self._stateEstimator, 
                                       self._legController,
                                       self._desiredStateCommand)
-        # self._robot_ctrl.initializeController(self._quadruped, 
-        #                                       self._stateEstimator, 
-        #                                       self._legController, 
-        #                                       self._desiredStateCommand)
 
 
     def run(self, gym, env, actor):
