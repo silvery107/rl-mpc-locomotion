@@ -39,6 +39,7 @@
 - work 了???!!! 2.5 [video](images/MPC_trot_first.mkv)
 - TODO 用 PyBind11 转译一下solver, 或者测试一下OSQP
 - OSQP 10ms 大惊喜
+- Isaac Gym 升级到 preview 3 2.6
 
 ### Roadmap
 

@@ -2,14 +2,14 @@ from isaacgym import gymapi
 import math
 from MPC_Controller.common.Quadruped import RobotType
 
-ASSET_ROOT = "/home/silvery/isaacgym/assets"
+ASSET_ROOT = "/home/silvery/isaacgym3/assets"
 MINI_CHEETAH = "urdf/mini_cheetah/mini_cheetah.urdf"
 XIAOTIAN = "urdf/Xiaotian-ROS/urdf/xiaotian_description.urdf"
 ALIENGO = "urdf/aliengo_description/xacro/aliengo.urdf"
 ANYMAL = "urdf/anymal_c/urdf/anymal.urdf"
 
-fix_base_link = False
-init_height = 0.49
+fix_base_link = True
+init_height = 0.4
 
 def acquire_sim(gym, dt):
     # get default set of parameters
@@ -70,7 +70,7 @@ def add_viewer(gym, sim, env, cam_pos):
     viewer = gym.create_viewer(sim, cam_props)
     # Look at the env
     # cam_pos = gymapi.Vec3(1.5, 1, 3)
-    cam_target = gymapi.Vec3(0, 0, 0)
+    cam_target = gymapi.Vec3(0, 0, 0.3)
     gym.viewer_camera_look_at(viewer, env, cam_pos, cam_target)
     return viewer
 
