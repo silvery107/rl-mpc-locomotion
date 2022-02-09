@@ -40,6 +40,7 @@
 - TODO 用 PyBind11 转译一下solver, 或者测试一下OSQP
 - OSQP 10ms 大惊喜
 - Isaac Gym 升级到 preview 3 2.6
+- 仿真步长太长0.01行走有抖动, 不稳定, 太短0.001则很卡, gym渲染时间太长0.04 2.7
 
 ### Roadmap
 
