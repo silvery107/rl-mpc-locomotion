@@ -38,9 +38,10 @@
 - 以及mini cheetah 模型腿部惯量有问题、不均匀
 - work 了???!!! 2.5 [video](images/MPC_trot_first.mkv)
 - TODO 用 PyBind11 转译一下solver, 或者测试一下OSQP
-- OSQP 10ms 大惊喜
+- OSQP 求解10ms 总时间12-15ms 大惊喜
 - Isaac Gym 升级到 preview 3 2.6
 - 仿真步长太长0.01行走有抖动, 不稳定, 太短0.001则很卡, gym渲染时间太长0.04 2.7
+- 用CPP重写solver 用pybind11转译 用osqp eigen求解 平均用时1ms 但加上数据转换时间后长达30ms 2.9
 
 ### Roadmap
 
