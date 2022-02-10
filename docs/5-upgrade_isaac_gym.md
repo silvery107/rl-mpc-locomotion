@@ -4,7 +4,8 @@
 Install Nvidia drivers on Ubuntu 18.04 using GNOME GUI or Command Line methods.
 
 1. GNOME GUI:
-    ![drivers](../images/nvidia_driver.png)
+
+     <img src="../images/nvidia_driver.png" width=500>
     
     Open the Software & Updates application window. Select TAB Additional Drivers and choose any proprietary NVIDIA driver. The higher the driver number the latest the version.
 
