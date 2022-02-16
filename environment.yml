@@ -15,3 +15,4 @@ dependencies:
   - cvxopt # conda install -c conda-forge cvxopt
   - mosek # conda install -c mosek mosek
   - pybind11 # conda install -c conda-forge pybind11
+  - pybullet # pip3 install pybullet --user --upgrade
