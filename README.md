@@ -42,6 +42,7 @@
 - Isaac Gym 升级到 preview 3 2.6
 - 仿真步长太长0.01行走有抖动, 不稳定, 太短0.001则很卡, gym渲染时间太长0.04 2.7
 - 用CPP重写solver 用pybind11转译 用osqp eigen求解 平均用时1ms 但加上数据转换时间后长达30ms 2.9
+- 在谷歌motion imitation中完整剥离了MPC控制器,效果不错,但是是基于pybullet的仿真.重新编译基于c的控制器也很成功
 
 ### Roadmap
 
