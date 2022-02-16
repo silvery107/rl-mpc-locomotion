@@ -43,15 +43,15 @@
 \end{tabular}
 
 \section{State Space Model}
-$$
-\begin{aligned}
+
+\begin{align}
     &\frac{\mathrm d}{\mathrm d t} \hat{\mathbf\Theta}=R_{z}(\psi) \hat{\mathbf\Theta} \\
     &\frac{\mathrm d}{\mathrm d t} \hat{\mathbf p}=\hat{\dot{\mathbf p}} \\
     &\frac{\mathrm d}{\mathrm d t} \hat{\mathbf \omega}=\hat{\mathbf I}^{-1} \sum_{i=1}^{n} \mathbf r_{i} \times \mathbf f_{i}=\hat{\mathbf I}^{-1}\left(\left[\mathbf r_{1}\right]_{\times} \mathbf f_{1}+\cdots+\left[\mathbf r_{n}\right]_{\times} \mathbf f_{n}\right) \\
     &\frac{\mathrm d}{\mathrm d t} \hat{\dot{\mathbf p}}=\frac{\sum_{i=1}^{n} \mathbf f_{i}}{m}-\mathbf g=\frac{\mathbf f_{1}+\cdots+\mathbf f_{n}}{m}-\mathbf g
-\end{aligned}
-$$
-\\
+\end{align}
+
+
 $$
 \begin{aligned}
     \frac{\mathrm{d}}{\mathrm{d} t}\left[
@@ -65,9 +65,9 @@ $$
     \right]=
     \left[
     \begin{array}{lllll}
-        \mathbf{0}_{3} & \mathbf{0}_{3} & \mathbf{R}_{z}(\psi) & \mathbf{0}_{3} & \mathbf 0_{1\times 3}\\
-        \mathbf{0}_{3} & \mathbf{0}_{3} & \mathbf{0}_{3} & \mathbf{I}_{3} & \mathbf 0_{1\times 3}\\
-        \mathbf{0}_{3} & \mathbf{0}_{3} & \mathbf{0}_{3} & \mathbf{0}_{3} & \mathbf 0_{1\times 3}\\
+        \mathbf{0}_{3} & \mathbf{0}_{3} & \mathbf{R}_{z}(\psi) & \mathbf{0}_{3} & \mathbf 0_{3\times 1}\\
+        \mathbf{0}_{3} & \mathbf{0}_{3} & \mathbf{0}_{3} & \mathbf{I}_{3} & \mathbf 0_{3\times 1}\\
+        \mathbf{0}_{3} & \mathbf{0}_{3} & \mathbf{0}_{3} & \mathbf{0}_{3} & \mathbf 0_{3\times 1}\\
         \mathbf{0}_{3} & \mathbf{0}_{3} & \mathbf{0}_{3} & \mathbf{0}_{3} & [0\ 0\ 1]^T\\
         \mathbf{0}_{1\times 3} & \mathbf{0}_{1\times 3} & \mathbf{0}_{1\times 3} & \mathbf{0}_{1\times 3} & 0
     \end{array}
