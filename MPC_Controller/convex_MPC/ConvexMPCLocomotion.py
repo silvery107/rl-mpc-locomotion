@@ -118,7 +118,7 @@ class ConvexMPCLocomotion:
     def solveDenseMPC(self, mpcTable:list, data:ControlFSMData):
         seResult = data._stateEstimator.getResult()
         
-        Q = Parameters.cmpc_weights
+        Q = data._quadruped._mpc_weights[:12]
         alpha = Parameters.cmpc_alpha
 
         p = seResult.position
@@ -140,7 +140,8 @@ class ConvexMPCLocomotion:
         vxy = np.array([seResult.vWorld[0], seResult.vWorld[1], 0], dtype=DTYPE).reshape((3,1))
         self.dtMPC = self.dt*self.iterationsBetweenMPC
         if Parameters.c_solver == 2:
-            self._cpp_mpc = mpc.ConvexMpc(data._quadruped._bodyMass, list(data._quadruped._bodyInertia),
+            self._cpp_mpc = mpc.ConvexMpc(data._quadruped._bodyMass, 
+                                          list(data._quadruped._bodyInertia),
                                           num_legs,
                                           self.horizonLength,
                                           self.dtMPC, 
@@ -341,7 +342,7 @@ class ConvexMPCLocomotion:
         # foot placement
         for l in range(4):
             self.swingTimes[l] = gait.getCurrentSwingTime(self.dtMPC, l)
-        
+
         interleave_y = [-0.08, 0.08, 0.02, -0.02]
         interleave_gain = -0.2
         v_abs = math.fabs(v_des_robot[0])

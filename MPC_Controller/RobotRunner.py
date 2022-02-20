@@ -21,13 +21,9 @@ class RobotRunner:
         print("[RobotRunner] initialize")
 
         # init quadruped
-        if self.robotType == RobotType.MINI_CHEETAH:
-            # initial directly instead of buildMiniCheetah()
-            self._quadruped = Quadruped(RobotType.MINI_CHEETAH)
+        if self.robotType in RobotType:
+            self._quadruped = Quadruped(self.robotType)
 
-        elif self.robotType == RobotType.ALIENGO:
-            self._quadruped = Quadruped(RobotType.ALIENGO)
-            
         else:
             raise "Invalid RobotType"
 
@@ -59,7 +55,7 @@ class RobotRunner:
         self._legController.setMaxTorque(100)
 
         # update robot states
-        self._stateEstimator.update(gym, env, actor, self._quadruped.bodyName)
+        self._stateEstimator.update(gym, env, actor, self._quadruped._bodyName)
         
         # Run the Control FSM code
         self._controlFSM.runFSM()
