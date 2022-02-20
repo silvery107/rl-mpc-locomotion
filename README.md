@@ -98,5 +98,4 @@
 <img src="images/aliengo_static.png" width=500>
 <img src="images/aliengo_train.png" width=500>
 <img src="images/aliengo_trot.gif" width=500>
-<img src="images/mini_cheetah_trot.gif" width=500>
 <img src="images/4_cheetah_trot.gif" width=500>
