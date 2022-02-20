@@ -48,6 +48,8 @@
 - TODO 先不纠结编译问题，用setup编译的so跑移植，测试单独solver移植可行性
 - 单独移植yuxiang solver成功，求解总时间0.001 但是mpc仍然有腿软的问题，怀疑是apply force isaac有误 2.19
 - mini cheetah trot 完全成功，多机器人mpc成功，抗扰动鲁棒性也不错，调整了body mass 和 inertia 来稳定控制器，目前是100Hz 2.20
+- aliengo 似乎朝向错了
+- 增加了a1支持, 但是 aliengo和 a1 都在往地上走，很奇怪 2.20
 
 ### Roadmap
 
@@ -61,7 +63,9 @@
         - [FSM_State_Locomotion](MPC_Controller/FSM_states/FSM_State_Locomotion.py) ->
             - [ConvexMPCLocomotion](MPC_Controller/convex_MPC/ConvexMPCLocomotion.py) ->
                 - [convexMPC_interface](MPC_Controller/convex_MPC/convexMPC_interface.py) ->
-                    - [SolverMPC](MPC_Controller/convex_MPC/SolverMPC.py)
+                    - [SolverMPC in Python](MPC_Controller/convex_MPC/SolverMPC.py)
+                - [mpc_osqp in C](MPC_Controller/convex_MPC/mpc_osqp.cc)
+                - [SolverMPC in C++](MPC_Controller/convex_MPC/SolverMPC.cpp)
 
 ### Partially implemented:
 - SimulationBridge
@@ -86,6 +90,8 @@
   - [How to copy data from list or ndarray into a Python struct?](docs/2-development_log.md#how-to-copy-data-from-list-or-ndarray-into-a-python-struct)
   - [Matrix multiplication and exponential](docs/2-development_log.md#matrix-multiplication-and-exponential)
   - [Quadratic programming with CVXOPT](docs/2-development_log.md#quadratic-programming-with-cvxopt)
+- [Upgrade IsaacGym Preview 2 to Preview 3](docs/3-isaac_api_note.md)
+- [QP Solver Installation and Testing](docs/6-qp_solver.md)
 
 ## Gallery
 
@@ -93,4 +99,4 @@
 <img src="images/aliengo_train.png" width=500>
 <img src="images/aliengo_trot.gif" width=500>
 <img src="images/mini_cheetah_trot.gif" width=500>
-
+<img src="images/4_cheetah_trot.gif" width=500>
