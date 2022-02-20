@@ -146,19 +146,16 @@ class LegController:
                 # tau feedforward + torque
                 legTorque = self.commands[leg].tauFeedForward + self.datas[leg].J.T @ footForce
 
-                # TODO Check if legTorque is sufficient for torque control
-                # TODO or a joint PD is needed?
-                # estimate leg torque
-                # self.datas[leg].tauEstimate = legTorque \
-                #                             + self.commands[leg].kpJoint @ (self.commands[leg].qDes -self.datas[leg].q) \
-                #                             + self.commands[leg].kdJoint @ (self.commands[leg].qdDes -self.datas[leg].qd)
+                # joint PD control, not functional in MPC
+                # legTorque += self.commands[leg].kpJoint @ (self.commands[leg].qDes - self.datas[leg].q)
+                # legTorque += self.commands[leg].kdJoint @ (self.commands[leg].qdDes - self.datas[leg].qd)
 
                 legTorques[leg * 3 + 0] = legTorque[0] 
                 legTorques[leg * 3 + 1] = legTorque[1]
                 legTorques[leg * 3 + 2] = legTorque[2]
         
-        # ! TODO Check legTorques order
-        gym.apply_actor_dof_efforts(env, actor, 5*legTorques)       
+
+        gym.apply_actor_dof_efforts(env, actor, 1*legTorques)       
 
 
     def computeLegJacobianAndPosition(self, leg:int):

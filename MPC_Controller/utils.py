@@ -7,6 +7,7 @@ DTYPE = np.float32
 CASTING = "same_kind"
 # SIDE_SIGN = [-1, 1, -1, 1]
 SIDE_SIGN = [1, -1, 1, -1]
+K_MAX_GAIT_SEGMENTS = 40
 
 class CoordinateAxis(Enum):
     X = auto()
@@ -32,6 +33,9 @@ class Quaternion:
         self.x = float(x)
         self.y = float(y)
         self.z = float(z)
+        
+    def toNumpy(self):
+        return np.array([self.w,self.x,self.y,self.z], dtype=DTYPE).reshape((4,1))
 
 def quat_to_rpy(q:Quaternion) -> np.ndarray:
     rpy = np.zeros((3,1), dtype=DTYPE)

@@ -39,7 +39,7 @@ class OffsetDurationGait:
             else:
                 progress[i] = progress[i] / self.__durationsFloat[i]
             
-        # print("contact state: %.3f %.3f %.3f %.3f\n"%(progress[0], progress[1], progress[2], progress[3]))
+        # print("contact state: %.3f %.3f %.3f %.3f"%(progress[0], progress[1], progress[2], progress[3]))
         return progress[:, None] # convert to matrix
 
     def getSwingState(self):
@@ -47,7 +47,7 @@ class OffsetDurationGait:
         for i in range(4):
             if swing_offset[i] > 1:
                 swing_offset[i] -= 1.0
-        swing_duration = 1.0 - self.__durationsFloat
+        swing_duration = np.ones_like(self.__durationsFloat) - self.__durationsFloat
 
         progress = self.__phase - swing_offset
 
@@ -58,13 +58,16 @@ class OffsetDurationGait:
             if progress[i] > swing_duration[i]:
                 progress[i] = 0.0
             else:
-                progress[i] = progress[i] / swing_duration[i]
+                if swing_duration[i] == 0.0:
+                    progress[i] = 0.0
+                else:
+                    progress[i] = progress[i] / swing_duration[i]
 
-        # print("swing state: %.3f %.3f %.3f %.3f\n"%(progress[0], progress[1], progress[2], progress[3]))
+        # print("swing state: %.3f %.3f %.3f %.3f"%(progress[0], progress[1], progress[2], progress[3]))
         return progress[:,None]
 
     def getMpcTable(self):
-        # print("MPC table:\n")
+        # print("MPC table:")
         for i in range(self.__nIterations):
     
             iter = (i + self.__iteration + 1) % self.__nIterations
@@ -76,7 +79,7 @@ class OffsetDurationGait:
                     self.__mpc_table[i * 4 + j] = 1
                 else:
                     self.__mpc_table[i * 4 + j] = 0
-            # print("%d "% _mpc_table[i*4 + j])
+            # print("%d "% self.__mpc_table[i*4 + j], end="")
         
         return self.__mpc_table
 

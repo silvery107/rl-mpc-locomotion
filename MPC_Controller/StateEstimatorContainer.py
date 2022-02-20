@@ -46,6 +46,8 @@ class StateEstimatorContainer:
         self.result.orientation.y = body_states["pose"]["r"]["y"]
         self.result.orientation.z = body_states["pose"]["r"]["z"]
 
-        np.copyto(self.result.rpy, quat_to_rpy(self.result.orientation))
-        np.copyto(self.result.rBody, quat_to_rot(self.result.orientation))
+        self.result.rpy = quat_to_rpy(self.result.orientation)
+        self.result.rBody = quat_to_rot(self.result.orientation)
+        # np.copyto(self.result.rpy, quat_to_rpy(self.result.orientation))
+        # np.copyto(self.result.rBody, quat_to_rot(self.result.orientation))
 
