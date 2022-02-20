@@ -1,3 +1,4 @@
+from re import A
 from isaacgym import gymapi
 import math
 from MPC_Controller.common.Quadruped import RobotType
@@ -6,6 +7,7 @@ ASSET_ROOT = "/home/silvery/isaacgym3/assets"
 MINI_CHEETAH = "urdf/mini_cheetah/mini_cheetah.urdf"
 XIAOTIAN = "urdf/Xiaotian-ROS/urdf/xiaotian_description.urdf"
 ALIENGO = "urdf/aliengo_description/xacro/aliengo.urdf"
+A1 = "urdf/a1_description/a1.urdf"
 ANYMAL = "urdf/anymal_c/urdf/anymal.urdf"
 
 fix_base_link = False
@@ -52,11 +54,15 @@ def load_asset(gym, sim, robot, fix_base_link):
         asset_file = XIAOTIAN
     elif robot == RobotType.ANYMAL:
         asset_file = ANYMAL
+    elif robot == RobotType.A1:
+        asset_file = A1
+    else:
+        raise "Invalid RobotType"
     
     asset_options = gymapi.AssetOptions()
     asset_options.fix_base_link = fix_base_link
     asset_options.use_mesh_materials = True
-    asset_options.flip_visual_attachments = False if asset_file==XIAOTIAN or asset_file==MINI_CHEETAH else True
+    asset_options.flip_visual_attachments = False if asset_file==XIAOTIAN or asset_file==MINI_CHEETAH or asset_file==A1 else True
     asset_options.armature = 0.01   # added to the diagonal elements of inertia tensors
                                     # for all of the asset’s rigid bodies/links. 
                                     # Could improve simulation stability
