@@ -25,7 +25,7 @@ elif Parameters.c_solver == 2:
 #                      0, 0, 0.25447]
 # desired_body_height = 0.35
 num_legs = 4
-friction_coeffs = np.ones(4, dtype=DTYPE) * 0.6
+friction_coeffs = np.ones(4, dtype=DTYPE) * 0.4
 
 class ConvexMPCLocomotion:
     def __init__(self, _dt:float, _iterationsBetweenMPC:int):
@@ -143,7 +143,8 @@ class ConvexMPCLocomotion:
             self._cpp_mpc = mpc.ConvexMpc(data._quadruped._bodyMass, list(data._quadruped._bodyInertia),
                                           num_legs,
                                           self.horizonLength,
-                                          self.dtMPC, Parameters.yuxiang_weights, 1e-5,
+                                          self.dtMPC, 
+                                          data._quadruped._mpc_weights, 1e-5,
                                           mpc.QPOASES)
         else:
             mpc.setup_problem(self.dtMPC, self.horizonLength, mu=0.4, fmax=120)
@@ -356,8 +357,7 @@ class ConvexMPCLocomotion:
             offset = np.array([0, getSideSign(i)*0.065, 0], dtype=DTYPE).reshape((3,1))
             pRobotFrame = data._quadruped.getHipLocation(i) + offset
             pRobotFrame[1] += interleave_y[i] * v_abs * interleave_gain
-
-            stance_time = gait.getCurrentSwingTime(self.dtMPC, i)
+            stance_time = gait.getCurrentStanceTime(self.dtMPC, i)
             pYawCorrected = coordinateRotation(CoordinateAxis.Z, -self.__yaw_turn_rate*stance_time/2) @ pRobotFrame
 
             des_vel = np.array([self.__x_vel_des, self.__y_vel_des, 0.0], dtype=DTYPE).reshape((3,1))
