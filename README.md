@@ -67,20 +67,6 @@
                 - [mpc_osqp in C](MPC_Controller/convex_MPC/mpc_osqp.cc)
                 - [SolverMPC in C++](MPC_Controller/convex_MPC/SolverMPC.cpp)
 
-### Partially implemented:
-- SimulationBridge
-- RobotRunner
-- StateEstimatorContainer
-- DesiredStateCommand
-- LegController
-- ControlFSM
-- FSM_State_Locomotion
-
-### Fully implemented:
-- ConvexMPCLocomotion
-- convexMPC_interface
-- SolverMPC
-
 ## User Notes
 
 - [Import URDF model in ISAAC](docs/0-model_import.md)
