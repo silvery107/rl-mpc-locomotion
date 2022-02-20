@@ -5,7 +5,7 @@
 #include <iostream>
 #include <pybind11/pybind11.h>
 #include <pybind11/eigen.h>
-#include <vector>
+
 namespace py = pybind11;
 using Eigen::Dynamic;
 using Eigen::Matrix;
@@ -39,36 +39,6 @@ struct UpdateData
     float alpha;
     float x_drag;
 };
-
-// class RobotState
-// {
-//   public:
-//     void set(float *p_, float *v_, float *q_, float *w_, float *r_, float yaw_)
-//     {
-//         for (uint8_t i = 0; i < 3; i++)
-//         {
-//             this->p(i) = p_[i];
-//             this->v(i) = v_[i];
-//             this->w(i) = w_[i];
-//         }
-//         this->q(0) = q_[0];
-//         this->q(1) = q_[1];
-//         this->q(2) = q_[2];
-//         this->q(3) = q_[3];
-//         this->yaw = yaw_;
-//     }
-//     // TODO other states
-//     Matrix<float, 3, 1> p, v, w;
-//     Matrix<float, 3, 4> r_feet;
-//     Matrix<float, 3, 3> R;
-//     Matrix<float, 3, 3> R_yaw;
-//     Matrix<float, 3, 3> I_body;
-//     Matrix<float, 3, 1> q;
-//     float yaw;
-//     float m = 9;
-// };
-
-// RobotState rs;
 
 Matrix<float, Dynamic, 13> A_qp;
 Matrix<float, Dynamic, Dynamic> B_qp;
@@ -351,16 +321,19 @@ void setup_problem(double dt_, int horizon_, double mu_, double f_max_){
     resize_qp_mats(horizon_);
 }
 
-int update_problem_data(Matrix<float,3,1> p,
-                         Matrix<float, 3, 1> v,
-                         Matrix<float, 4, 1> q,
-                         Matrix<float, 3, 1> w,
-                         Matrix<float, 3, 4> r_feet,
-                         float yaw,
-                         Matrix<float, 12, 1> weights,
-                         Matrix<float, 12 * K_MAX_GAIT_SEGMENTS, 1> traj,
-                         float alpha,
-                         Matrix<float, K_MAX_GAIT_SEGMENTS, 1> gait){
+int update_problem_data(
+    Matrix<float,3,1> p,
+    Matrix<float, 3, 1> v,
+    Matrix<float, 4, 1> q,
+    Matrix<float, 3, 1> w,
+    Matrix<float, 3, 4> r_feet,
+    float yaw,
+    Matrix<float, 12, 1> weights,
+    Matrix<float, 12 * K_MAX_GAIT_SEGMENTS, 1> traj,
+    float alpha,
+    Matrix<float, K_MAX_GAIT_SEGMENTS, 1> gait)
+
+{
     update.p = p;
     update.v = v;
     update.w = w;
