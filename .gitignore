@@ -134,3 +134,5 @@ dmypy.json
 .vscode/
 .tmp.*
 *.ini
+reference/mpc_controller
+reference/anymal.py

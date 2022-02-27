@@ -153,7 +153,7 @@ class LegController:
                 legTorques[leg*3:(leg+1)*3] = legTorque.flatten()
         
         # print("leg 0 effort %.3f %.3f %.3f"%(legTorques[0], legTorques[1], legTorques[2]))
-        gym.apply_actor_dof_efforts(env, actor, 1.0*legTorques)       
+        gym.apply_actor_dof_efforts(env, actor, legTorques)       
 
 
     def computeLegJacobianAndPosition(self, leg:int):

@@ -12,25 +12,6 @@ class RobotType(Enum):
 
 class Quadruped:
 
-    # num_act_joint = 12
-    # num_q = 19
-    # dim_config = 18
-    # num_leg = 4
-    # num_leg_joint = 3
-
-    # Link indices for cheetah-shaped robots
-    # FR = 9   # Front Right Foot
-    # FL = 11  # Front Left Foot
-    # HR = 13  # Hind Right Foot
-    # HL = 15  # Hind Left Foot
-
-    # FR_abd = 2  # Front Right Abduction
-    # FL_abd = 0  # Front Left Abduction
-    # HR_abd = 3  # Hind Right Abduction
-    # HL_abd = 1  # Hind Left Abduction
-    
-    # _robotType = RobotType.ALIENGO
-
     def __init__(self, robotype:RobotType):
 
         if robotype == RobotType.ALIENGO:

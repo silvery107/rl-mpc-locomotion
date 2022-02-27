@@ -3,12 +3,12 @@ from isaacgym import gymapi
 import math
 from MPC_Controller.common.Quadruped import RobotType
 
-ASSET_ROOT = "/home/silvery/isaacgym3/assets"
-MINI_CHEETAH = "urdf/mini_cheetah/mini_cheetah.urdf"
-XIAOTIAN = "urdf/Xiaotian-ROS/urdf/xiaotian_description.urdf"
-ALIENGO = "urdf/aliengo_description/xacro/aliengo.urdf"
-A1 = "urdf/a1_description/a1.urdf"
-ANYMAL = "urdf/anymal_c/urdf/anymal.urdf"
+ASSET_ROOT = "assets"
+MINI_CHEETAH = "mini_cheetah/mini_cheetah.urdf"
+ALIENGO = "aliengo_description/xacro/aliengo.urdf"
+A1 = "a1_description/a1.urdf"
+XIAOTIAN = "Xiaotian-ROS/urdf/xiaotian_description.urdf"
+ANYMAL = "anymal_c/urdf/anymal.urdf"
 
 fix_base_link = False
 init_height = 0.5

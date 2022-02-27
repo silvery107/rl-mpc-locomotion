@@ -18,12 +18,6 @@ elif Parameters.c_solver == 2:
     import MPC_Controller.convex_MPC.mpc_osqp as mpc
 
 
-
-# body_mass = 220 / 9.8
-# body_inertia_list = [0.07335, 0, 0, 
-#                      0, 0.25068, 0, 
-#                      0, 0, 0.25447]
-# desired_body_height = 0.35
 num_legs = 4
 friction_coeffs = np.ones(4, dtype=DTYPE) * 0.4
 
