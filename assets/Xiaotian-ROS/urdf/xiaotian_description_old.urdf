@@ -1,0 +1,977 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.6.0-1-g15f4949  Build Version: 1.6.7594.29634
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot
+  name="xiaotianhybrid">
+  <link
+    name="root_link">
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://xiaotian_description/meshes/base_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.75294 0.75294 0.75294 1" />
+      </material>
+    </visual>
+  </link>
+  <joint name="floating_base" type="fixed">
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+    <parent link="root_link"/>
+    <child link="base_link"/>
+  </joint>
+  <link
+    name="base_link">
+    <inertial>
+      <origin
+        xyz="-7.7053E-05 7.7376E-05 0.00036296"
+        rpy="0 0 0" />
+      <mass
+        value="2.8082" />
+      <inertia
+        ixx="0.0066319"
+        ixy="1.6299E-07"
+        ixz="-9.5143E-07"
+        iyy="0.0072824"
+        iyz="-1.2314E-06"
+        izz="0.0087394" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://xiaotian_description/meshes/base_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.75294 0.75294 0.75294 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://xiaotian_description/meshes/base_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="fl_hip">
+    <inertial>
+      <origin
+        xyz="-0.0016893 -0.0029367 -3.0057E-06"
+        rpy="0 0 0" />
+      <mass
+        value="0.55934" />
+      <inertia
+        ixx="0.00055336"
+        ixy="1.9349E-06"
+        ixz="1.806E-08"
+        iyy="0.00086844"
+        iyz="-2.5432E-08"
+        izz="0.00049603" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://xiaotian_description/meshes/fl_hip.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.75294 0.75294 0.75294 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://xiaotian_description/meshes/fl_hip.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="fl_hip_roll"
+    type="revolute">
+    <origin
+      xyz="0.2836 0.07 0"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="fl_hip" />
+    <axis
+      xyz="1 0 0" />
+    <limit
+      lower="0"
+      upper="0"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="fl_thigh">
+    <inertial>
+      <origin
+        xyz="-0.028316 -0.031071 0.0039275"
+        rpy="0 0 0" />
+      <mass
+        value="0.77892" />
+      <inertia
+        ixx="0.00066307"
+        ixy="9.9544E-06"
+        ixz="0.00013554"
+        iyy="0.0026196"
+        iyz="-1.0054E-06"
+        izz="0.0021143" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://xiaotian_description/meshes/fl_thigh.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.75294 0.75294 0.75294 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://xiaotian_description/meshes/fl_thigh.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="fl_hip_pitch"
+    type="revolute">
+    <origin
+      xyz="0 0.1068 0"
+      rpy="0 0 0" />
+    <parent
+      link="fl_hip" />
+    <child
+      link="fl_thigh" />
+    <axis
+      xyz="0 1 0" />
+    <limit
+      lower="0"
+      upper="0"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="fl_calf">
+    <inertial>
+      <origin
+        xyz="0.093372 -0.00013169 -0.028991"
+        rpy="0 0 0" />
+      <mass
+        value="0.32975" />
+      <inertia
+        ixx="0.00029357"
+        ixy="1.2982E-05"
+        ixz="0.00069149"
+        iyy="0.0023126"
+        iyz="-4.9926E-06"
+        izz="0.0020687" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://xiaotian_description/meshes/fl_calf.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.75294 0.75294 0.75294 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://xiaotian_description/meshes/fl_calf.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="fl_knee"
+    type="revolute">
+    <origin
+      xyz="-0.25 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="fl_thigh" />
+    <child
+      link="fl_calf" />
+    <axis
+      xyz="0 1 0" />
+    <limit
+      lower="0"
+      upper="0"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="fl_wheel">
+    <inertial>
+      <origin
+        xyz="0.0058473 2.1017E-05 -0.0021938"
+        rpy="0 0 0" />
+      <mass
+        value="0.036356" />
+      <inertia
+        ixx="6.7392E-06"
+        ixy="9.666E-09"
+        ixz="-2.9533E-07"
+        iyy="6.1547E-06"
+        iyz="-3.6403E-09"
+        izz="6.0628E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://xiaotian_description/meshes/fl_wheel.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.75294 0.75294 0.75294 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://xiaotian_description/meshes/fl_wheel.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="fl_wheel"
+    type="fixed">
+    <origin
+      xyz="0.22123 0.005936 -0.074762"
+      rpy="0 0 0" />
+    <parent
+      link="fl_calf" />
+    <child
+      link="fl_wheel" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="fr_hip">
+    <inertial>
+      <origin
+        xyz="-0.0016893 0.0029367 3.0058E-06"
+        rpy="0 0 0" />
+      <mass
+        value="0.55934" />
+      <inertia
+        ixx="0.00055336"
+        ixy="-1.9349E-06"
+        ixz="-1.8061E-08"
+        iyy="0.00086844"
+        iyz="-2.5432E-08"
+        izz="0.00049603" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://xiaotian_description/meshes/fr_hip.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.75294 0.75294 0.75294 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://xiaotian_description/meshes/fr_hip.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="fr_hip_roll"
+    type="revolute">
+    <origin
+      xyz="0.2836 -0.07 0"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="fr_hip" />
+    <axis
+      xyz="1 0 0" />
+    <limit
+      lower="0"
+      upper="0"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="fr_thigh">
+    <inertial>
+      <origin
+        xyz="-0.028482 0.031071 0.0041762"
+        rpy="0 0 0" />
+      <mass
+        value="0.77892" />
+      <inertia
+        ixx="0.00066585"
+        ixy="-1.0653E-05"
+        ixz="0.0001344"
+        iyy="0.0026196"
+        iyz="2.0472E-06"
+        izz="0.0021115" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://xiaotian_description/meshes/fr_thigh.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.75294 0.75294 0.75294 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://xiaotian_description/meshes/fr_thigh.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="fr_hip_pitch"
+    type="revolute">
+    <origin
+      xyz="0 -0.1068 0"
+      rpy="0 0 0" />
+    <parent
+      link="fr_hip" />
+    <child
+      link="fr_thigh" />
+    <axis
+      xyz="0 1 0" />
+    <limit
+      lower="0"
+      upper="0"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="fr_calf">
+    <inertial>
+      <origin
+        xyz="0.093372 0.00033168 -0.028991"
+        rpy="0 0 0" />
+      <mass
+        value="0.32975" />
+      <inertia
+        ixx="0.00029357"
+        ixy="-1.2982E-05"
+        ixz="0.00069149"
+        iyy="0.0023126"
+        iyz="4.9925E-06"
+        izz="0.0020687" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://xiaotian_description/meshes/fr_calf.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.75294 0.75294 0.75294 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://xiaotian_description/meshes/fr_calf.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="fr_knee"
+    type="revolute">
+    <origin
+      xyz="-0.25 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="fr_thigh" />
+    <child
+      link="fr_calf" />
+    <axis
+      xyz="0 1 0" />
+    <limit
+      lower="0"
+      upper="0"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="fr_wheel">
+    <inertial>
+      <origin
+        xyz="0.0058473 -2.1023E-05 -0.0021939"
+        rpy="0 0 0" />
+      <mass
+        value="0.036356" />
+      <inertia
+        ixx="6.7392E-06"
+        ixy="-9.6751E-09"
+        ixz="-2.9533E-07"
+        iyy="6.1547E-06"
+        iyz="3.6175E-09"
+        izz="6.0628E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://xiaotian_description/meshes/fr_wheel.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.75294 0.75294 0.75294 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://xiaotian_description/meshes/fr_wheel.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="fr_wheel"
+    type="fixed">
+    <origin
+      xyz="0.22123 -0.005736 -0.074762"
+      rpy="0 0 0" />
+    <parent
+      link="fr_calf" />
+    <child
+      link="fr_wheel" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="rl_hip">
+    <inertial>
+      <origin
+        xyz="0.0016893 -0.0029367 3.0056E-06"
+        rpy="0 0 0" />
+      <mass
+        value="0.55934" />
+      <inertia
+        ixx="0.00055336"
+        ixy="-1.9349E-06"
+        ixz="1.806E-08"
+        iyy="0.00086844"
+        iyz="2.5432E-08"
+        izz="0.00049603" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://xiaotian_description/meshes/rl_hip.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.75294 0.75294 0.75294 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://xiaotian_description/meshes/rl_hip.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="rl_hip_roll"
+    type="revolute">
+    <origin
+      xyz="-0.2836 0.07 0"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="rl_hip" />
+    <axis
+      xyz="-1 0 0" />
+    <limit
+      lower="0"
+      upper="0"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="rl_thigh">
+    <inertial>
+      <origin
+        xyz="-0.028316 -0.031071 0.0039275"
+        rpy="0 0 0" />
+      <mass
+        value="0.77892" />
+      <inertia
+        ixx="0.00066307"
+        ixy="9.9544E-06"
+        ixz="0.00013554"
+        iyy="0.0026196"
+        iyz="-1.0054E-06"
+        izz="0.0021143" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://xiaotian_description/meshes/rl_thigh.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.75294 0.75294 0.75294 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://xiaotian_description/meshes/rl_thigh.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="rl_hip_pitch"
+    type="revolute">
+    <origin
+      xyz="0 0.1068 0"
+      rpy="0 0 0" />
+    <parent
+      link="rl_hip" />
+    <child
+      link="rl_thigh" />
+    <axis
+      xyz="0 -1 0" />
+    <limit
+      lower="0"
+      upper="0"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="rl_calf">
+    <inertial>
+      <origin
+        xyz="0.093372 -0.00033169 -0.028991"
+        rpy="0 0 0" />
+      <mass
+        value="0.32975" />
+      <inertia
+        ixx="0.00029357"
+        ixy="1.2982E-05"
+        ixz="0.00069149"
+        iyy="0.0023126"
+        iyz="-4.9926E-06"
+        izz="0.0020687" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://xiaotian_description/meshes/rl_calf.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.75294 0.75294 0.75294 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://xiaotian_description/meshes/rl_calf.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="rl_knee"
+    type="revolute">
+    <origin
+      xyz="-0.25 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="rl_thigh" />
+    <child
+      link="rl_calf" />
+    <axis
+      xyz="0 1 0" />
+    <limit
+      lower="0"
+      upper="0"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="rl_wheel">
+    <inertial>
+      <origin
+        xyz="0.0058473 2.1017E-05 -0.0021938"
+        rpy="0 0 0" />
+      <mass
+        value="0.036356" />
+      <inertia
+        ixx="6.7392E-06"
+        ixy="9.666E-09"
+        ixz="-2.9533E-07"
+        iyy="6.1547E-06"
+        iyz="-3.6403E-09"
+        izz="6.0628E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://xiaotian_description/meshes/rl_wheel.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.75294 0.75294 0.75294 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://xiaotian_description/meshes/rl_wheel.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="rl_wheel"
+    type="fixed">
+    <origin
+      xyz="0.22123 0.005736 -0.074762"
+      rpy="0 0 0" />
+    <parent
+      link="rl_calf" />
+    <child
+      link="rl_wheel" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="rr_hip">
+    <inertial>
+      <origin
+        xyz="0.0016893 0.0018904 3.0058E-06"
+        rpy="0 0 0" />
+      <mass
+        value="0.55934" />
+      <inertia
+        ixx="0.00055336"
+        ixy="-1.9349E-06"
+        ixz="1.806E-08"
+        iyy="0.00086844"
+        iyz="2.5432E-08"
+        izz="0.00049603" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://xiaotian_description/meshes/rr_hip.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.75294 0.75294 0.75294 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://xiaotian_description/meshes/rr_hip.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="rr_hip_roll"
+    type="revolute">
+    <origin
+      xyz="-0.2836 -0.07 0"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="rr_hip" />
+    <axis
+      xyz="-1 0 0" />
+    <limit
+      lower="0"
+      upper="0"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="rr_thigh">
+    <inertial>
+      <origin
+        xyz="-0.028482 0.031071 0.0041762"
+        rpy="0 0 0" />
+      <mass
+        value="0.77892" />
+      <inertia
+        ixx="0.00066585"
+        ixy="-1.0653E-05"
+        ixz="0.0001344"
+        iyy="0.0026196"
+        iyz="2.0472E-06"
+        izz="0.0021115" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://xiaotian_description/meshes/rr_thigh.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.75294 0.75294 0.75294 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://xiaotian_description/meshes/rr_thigh.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="rr_hip_pitch"
+    type="revolute">
+    <origin
+      xyz="0 -0.1068 0"
+      rpy="0 0 0" />
+    <parent
+      link="rr_hip" />
+    <child
+      link="rr_thigh" />
+    <axis
+      xyz="0 -1 0" />
+    <limit
+      lower="0"
+      upper="0"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="rr_calf">
+    <inertial>
+      <origin
+        xyz="0.093372 0.00033168 -0.028991"
+        rpy="0 0 0" />
+      <mass
+        value="0.32975" />
+      <inertia
+        ixx="0.00029357"
+        ixy="-1.2982E-05"
+        ixz="0.00069149"
+        iyy="0.0023126"
+        iyz="4.9925E-06"
+        izz="0.0020687" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://xiaotian_description/meshes/rr_calf.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.75294 0.75294 0.75294 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://xiaotian_description/meshes/rr_calf.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="rr_knee"
+    type="revolute">
+    <origin
+      xyz="-0.25 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="rr_thigh" />
+    <child
+      link="rr_calf" />
+    <axis
+      xyz="0 1 0" />
+    <limit
+      lower="0"
+      upper="0"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="rr_wheel">
+    <inertial>
+      <origin
+        xyz="0.0058473 -2.1023E-05 -0.0021939"
+        rpy="0 0 0" />
+      <mass
+        value="0.036356" />
+      <inertia
+        ixx="6.7392E-06"
+        ixy="-9.6751E-09"
+        ixz="-2.9533E-07"
+        iyy="6.1547E-06"
+        iyz="3.6175E-09"
+        izz="6.0628E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://xiaotian_description/meshes/rr_wheel.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.75294 0.75294 0.75294 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://xiaotian_description/meshes/rr_wheel.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="rr_wheel"
+    type="fixed">
+    <origin
+      xyz="0.22123 -0.005736 -0.074762"
+      rpy="0 0 0" />
+    <parent
+      link="rr_calf" />
+    <child
+      link="rr_wheel" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+</robot>
