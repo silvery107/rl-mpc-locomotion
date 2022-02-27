@@ -168,9 +168,9 @@ class ConvexMPCLocomotion:
         
         elif Parameters.c_solver==2:
             predicted_contact_forces = self._cpp_mpc.compute_contact_forces(
-                p.flatten(), #com_position
+                p.flatten(), #! com_position (set x y to 0.0)
                 v.flatten(), #com_velocity
-                rpy.flatten(), #com_roll_pitch_yaw
+                rpy.flatten(), #! com_roll_pitch_yaw (set yaw to 0.0)
                 np.array([0,0,1],dtype=DTYPE),  # Normal Vector of ground
                 w.flatten(), #com_angular_velocity
                 np.asarray(mpcTable, dtype=DTYPE),  # Foot contact states
@@ -178,7 +178,7 @@ class ConvexMPCLocomotion:
                 friction_coeffs,  #foot_friction_coeffs
                 np.array([0., 0., self.__body_height], dtype=DTYPE),  #desired_com_position
                 np.array([self.__x_vel_des, self.__y_vel_des, 0], dtype=DTYPE),  #desired_com_velocity
-                np.zeros(3),  #desired_com_roll_pitch_yaw
+                np.zeros(3, dtype=DTYPE),  #desired_com_roll_pitch_yaw
                 np.array([0, 0, self.__yaw_turn_rate], dtype=DTYPE)  #desired_com_angular_velocity
             )
 

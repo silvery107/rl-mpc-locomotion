@@ -37,7 +37,7 @@ class StateEstimatorContainer:
         body_states = gym.get_actor_rigid_body_states(env, actor, gymapi.STATE_ALL)[body_idx]
 
         for idx in range(3):
-            self.result.position[idx] = body_states["pose"]["p"][idx] # positions (Vec3: x, y, z)
+            self.result.position[idx] = body_states["pose"]["p"][idx] if idx==2 else 0.0 # positions (Vec3: x, y, z)
             self.result.omegaWorld[idx] = body_states["vel"]["angular"][idx] # angular velocities (Vec3: x, y, z)
             self.result.vWorld[idx] = body_states["vel"]["linear"][idx] # linear velocities (Vec3: x, y, z)
 
@@ -47,6 +47,7 @@ class StateEstimatorContainer:
         self.result.orientation.z = body_states["pose"]["r"]["z"]
 
         self.result.rpy = quat_to_rpy(self.result.orientation)
+        self.result.rpy[2] = 0.0
         self.result.rBody = quat_to_rot(self.result.orientation)
         # np.copyto(self.result.rpy, quat_to_rpy(self.result.orientation))
         # np.copyto(self.result.rBody, quat_to_rot(self.result.orientation))
