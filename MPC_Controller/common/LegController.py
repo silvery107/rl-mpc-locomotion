@@ -150,9 +150,7 @@ class LegController:
                 # legTorque += self.commands[leg].kpJoint @ (self.commands[leg].qDes - self.datas[leg].q)
                 # legTorque += self.commands[leg].kdJoint @ (self.commands[leg].qdDes - self.datas[leg].qd)
 
-                legTorques[leg * 3 + 0] = legTorque[0] 
-                legTorques[leg * 3 + 1] = legTorque[1]
-                legTorques[leg * 3 + 2] = legTorque[2]
+                legTorques[leg*3:(leg+1)*3] = legTorque.flatten()
         
         # print("leg 0 effort %.3f %.3f %.3f"%(legTorques[0], legTorques[1], legTorques[2]))
         gym.apply_actor_dof_efforts(env, actor, 1.0*legTorques)       

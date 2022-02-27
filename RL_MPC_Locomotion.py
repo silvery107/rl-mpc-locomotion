@@ -6,7 +6,7 @@ from MPC_Controller.common.Quadruped import RobotType
 from isaacgym import gymapi
 from RL_Simulator.utils import acquire_sim, create_envs, add_viewer, add_force_sensor
 
-robot = RobotType.MINI_CHEETAH
+robot = RobotType.ALIENGO
 dt =  0.01
 gym = gymapi.acquire_gym()
 sim = acquire_sim(gym, dt)
@@ -14,7 +14,7 @@ sim = acquire_sim(gym, dt)
 # set up the env grid
 num_envs = 4
 envs_per_row = 2
-env_spacing = 1.0
+env_spacing = 0.5
 # one actor per env 
 envs, actors = create_envs(gym, sim, robot, num_envs, envs_per_row, env_spacing)
 # force_sensors = add_force_sensor(gym, num_envs, envs, actor_handles)
