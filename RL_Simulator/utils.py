@@ -51,8 +51,6 @@ def load_asset(gym, sim, robot, fix_base_link):
         asset_file = MINI_CHEETAH
     elif robot == RobotType.XIAOTIAN:
         asset_file = XIAOTIAN
-    elif robot == RobotType.ANYMAL:
-        asset_file = ANYMAL
     elif robot == RobotType.A1:
         asset_file = A1
     else:
