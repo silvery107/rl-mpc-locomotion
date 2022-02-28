@@ -33,6 +33,18 @@ class ConvexMPCLocomotion:
         self.standing = OffsetDurationGait(self.horizonLength, 
                             np.array([0, 0, 0, 0], dtype=DTYPE), 
                             np.array([10, 10, 10, 10], dtype=DTYPE), "Standing")
+        
+        self.bounding = OffsetDurationGait(self.horizonLength,
+                            np.array([5, 5, 0, 0], dtype=DTYPE), 
+                            np.array([4, 4, 4, 4], dtype=DTYPE), "Bounding")
+        
+        self.pronking = OffsetDurationGait(self.horizonLength,
+                            np.array([0, 0, 0, 0], dtype=DTYPE), 
+                            np.array([4, 4, 4, 4], dtype=DTYPE), "Pronking")
+
+        self.pacing = OffsetDurationGait(self.horizonLength,
+                            np.array([5, 0, 5, 0], dtype=DTYPE), 
+                            np.array([5, 5, 5, 5], dtype=DTYPE), "Pacing")
 
         self.dtMPC = self.dt * self.iterationsBetweenMPC
         self.default_iterations_between_mpc = self.iterationsBetweenMPC
@@ -275,7 +287,16 @@ class ConvexMPCLocomotion:
 
         # pick gait
         gait = self.trotting
-        if gaitNumber == 4:
+        if gaitNumber == 1:
+            gait = self.bounding
+
+        elif gaitNumber == 2:
+            gait = self.pronking
+
+        elif gaitNumber == 3:
+            gait = self.pacing
+            
+        elif gaitNumber == 4:
             gait = self.standing
 
         self.current_gait = gaitNumber

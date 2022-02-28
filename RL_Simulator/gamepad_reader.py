@@ -42,9 +42,11 @@ class Gamepad:
     self._max_acc = max_acc
     self._lb_pressed = False
     self._rb_pressed = False
+    self._lj_pressed = False
 
     # Controller states
     self.vx, self.vy, self.wz = 0., 0., 0.
+    self._gait_number = 0
     self.estop_flagged = False
     self.is_running = True
 
@@ -61,6 +63,7 @@ class Gamepad:
       try:
         events = self.gamepad.read()
         for event in events:
+          # print(event.ev_type, event.code, event.state)
           self.update_command(event)
       except Exception as e:
         pass
@@ -73,6 +76,8 @@ class Gamepad:
       self._rb_pressed = bool(event.state)
     elif event.ev_type == 'Key' and event.code == 'BTN_THUMBL':
       self._lj_pressed = bool(event.state)
+    elif event.ev_type == 'Absolute' and event.code == 'ABS_HAT0X':
+      self._gait_number += event.state
     elif event.ev_type == 'Absolute' and event.code == 'ABS_X':
       # Left Joystick L/R axis
       self.vy = _interpolate(-event.state, MAX_ABS_VAL, self._vel_scale_y)
@@ -92,8 +97,12 @@ class Gamepad:
       self.vx, self.vy, self.wz = 0., 0., 0.
 
   def get_command(self):
-    
     return (self.vx, self.vy, 0), self.wz, self.estop_flagged
+
+  def get_gait(self):
+    if self._gait_number < 0:
+      self._gait_number = 0
+    return self._gait_number
 
   def stop(self):
     self.is_running = False
@@ -102,9 +111,9 @@ class Gamepad:
 def main(_):
   gamepad = Gamepad()
   while True:
-    print("Vx: {}, Vy: {}, Wz: {}, Estop: {}".format(gamepad.vx, gamepad.vy,
-                                                     gamepad.wz,
-                                                     gamepad.estop_flagged))
+    # print("Vx: {}, Vy: {}, Wz: {}, Estop: {}".format(gamepad.vx, gamepad.vy,
+    #                                                  gamepad.wz,
+    #                                                  gamepad.estop_flagged))
     time.sleep(0.1)
 
 
