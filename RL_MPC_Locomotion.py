@@ -1,11 +1,14 @@
 import numpy as np
+from MPC_Controller.DesiredStateCommand import DesiredStateCommand
 from MPC_Controller.Parameters import Parameters
 from MPC_Controller.RobotRunner import RobotRunner
 from MPC_Controller.common.Quadruped import RobotType
+from RL_Simulator import gamepad_reader
 
 from isaacgym import gymapi
 from RL_Simulator.utils import acquire_sim, create_envs, add_viewer, add_force_sensor
 
+use_gamepad = True
 robot = RobotType.ALIENGO
 dt =  0.01
 gym = gymapi.acquire_gym()
@@ -40,6 +43,9 @@ for idx in range(num_envs):
 # Setup MPC Controller
 # robotRunner = RobotRunner()
 # robotRunner.init(robot)
+if use_gamepad:
+    gamepad = gamepad_reader.Gamepad()
+    command_function = gamepad.get_command
 
 print("[Simulator Driver] First run of robot controller...")
 # simulation loop
@@ -49,7 +55,7 @@ while not gym.query_viewer_has_closed(viewer):
     gym.simulate(sim)
     gym.fetch_results(sim, True)
 
-    t = gym.get_sim_time(sim)
+    current_time = gym.get_sim_time(sim)
     for evt in gym.query_viewer_action_events(viewer):
         if evt.action == "stand" and evt.value > 0:
             print("[FSM LOCOMOTION] MPC Stand triggled")
@@ -57,7 +63,15 @@ while not gym.query_viewer_has_closed(viewer):
         elif evt.action == "trot" and evt.value > 0:
             print("[FSM LOCOMOTION] MPC Trot triggled")
             Parameters.cmpc_gait = 9
+    if use_gamepad:
+        lin_speed, ang_speed, e_stop = command_function(current_time)
+        DesiredStateCommand.x_vel_cmd = lin_speed[0]
+        DesiredStateCommand.y_vel_cmd = lin_speed[1]
+        DesiredStateCommand.yaw_turn_rate = -ang_speed
 
+    if e_stop:
+        "E-stop kicked, exiting..."
+        break
     # run controller
     for i in range(num_envs):
         controllers[i].run(gym, envs[i], actors[i])
@@ -72,5 +86,7 @@ while not gym.query_viewer_has_closed(viewer):
     # like time.sleep()
     gym.sync_frame_time(sim)
 
+if use_gamepad:
+    gamepad.stop()
 gym.destroy_viewer(viewer)
 gym.destroy_sim(sim)
