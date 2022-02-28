@@ -86,12 +86,6 @@ class ConvexMPCLocomotion:
         self.dtMPC = self.dt*iterations_per_mpc
 
     def __SetupCommand(self, data:ControlFSMData):
-        # if data._quadruped._robotType == RobotType.ALIENGO:
-        #     self.__body_height = 0.35
-        # elif data._quadruped._robotType == RobotType.MINI_CHEETAH:
-        #     self.__body_height = 0.29
-        # else:
-        #     raise "Invalid RobotType"
 
         self.__body_height = data._quadruped._bodyHeight
         x_vel_cmd = 0.0

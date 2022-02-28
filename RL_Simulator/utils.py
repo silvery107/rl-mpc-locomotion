@@ -54,7 +54,7 @@ def load_asset(gym, sim, robot, fix_base_link):
     elif robot == RobotType.A1:
         asset_file = A1
     else:
-        raise "Invalid RobotType"
+        raise Exception("Invalid RobotType")
     
     asset_options = gymapi.AssetOptions()
     asset_options.fix_base_link = fix_base_link

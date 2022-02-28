@@ -33,7 +33,7 @@ class Gamepad:
       vel_scale_rot: maximum absolute yaw-dot command.
     """
     if not inputs.devices.gamepads:
-      raise "Please plug in your xbox gamepad!"
+      raise Exception("Please plug in your xbox gamepad!")
 
     self.gamepad = inputs.devices.gamepads[0]
     self._vel_scale_x = vel_scale_x
