@@ -139,7 +139,8 @@ class ConvexMPCLocomotion:
                                           num_legs,
                                           self.horizonLength,
                                           self.dtMPC, 
-                                          data._quadruped._mpc_weights, 1e-5,
+                                          data._quadruped._mpc_weights, 
+                                          1e-5,
                                           mpc.QPOASES)
         else:
             mpc.setup_problem(self.dtMPC, self.horizonLength, mu=0.4, fmax=120)
@@ -169,7 +170,7 @@ class ConvexMPCLocomotion:
                 w.flatten(), #com_angular_velocity
                 np.asarray(mpcTable, dtype=DTYPE),  # Foot contact states
                 np.array(r_feet.flatten(), dtype=DTYPE),  #foot_positions_base_frame
-                friction_coeffs,  #foot_friction_coeffs
+                data._quadruped._friction_coeffs,  #foot_friction_coeffs
                 np.array([0., 0., self.__body_height], dtype=DTYPE),  #desired_com_position
                 np.array([self.__x_vel_des, self.__y_vel_des, 0], dtype=DTYPE),  #desired_com_velocity
                 np.zeros(3, dtype=DTYPE),  #desired_com_roll_pitch_yaw

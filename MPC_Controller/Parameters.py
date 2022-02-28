@@ -11,5 +11,5 @@ class Parameters:
     cmpc_gait = 9 # 9 trot 4 stand
     controller_dt = 0.01
     control_mode = 4 # 4 locomotion
-    operatingMode = 0 # 0 no transition 1 normal
+    operatingMode = 1 # 0 no transition 1 normal
     c_solver = 2 # 0 py solver 1 cpp solver 2 yuxiang solver
