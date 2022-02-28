@@ -24,10 +24,10 @@ class StateEstimatorContainer:
     def __init__(self):
         self.result = StateEstimate()
         self._phase = np.zeros((4,1), dtype=DTYPE)
-        self.contactPhase = self._phase
+    #     self.contactPhase = self._phase
 
-    def setContactPhase(self, phase:np.ndarray):
-        self.contactPhase = phase
+    # def setContactPhase(self, phase:np.ndarray):
+    #     self.contactPhase = phase
 
     def getResult(self):
         return self.result

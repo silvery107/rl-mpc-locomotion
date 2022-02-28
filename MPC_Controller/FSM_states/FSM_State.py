@@ -10,24 +10,14 @@ from abc import abstractmethod
 
 # Normal robot states
 K_PASSIVE = 0
-K_STAND_UP = 1
-# K_BALANCE_STAND = 3
 K_LOCOMOTION = 4
-# K_LOCOMOTION_TEST = 5
 K_RECOVERY_STAND = 6
 
 class FSM_StateName(Enum):
     INVALID = auto()
     PASSIVE = auto()
-    JOINT_PD = auto()
-    IMPEDANCE_CONTROL = auto()
-    STAND_UP = auto()
-    BALANCE_STAND = auto()
     LOCOMOTION = auto()
     RECOVERY_STAND = auto()
-    VISION = auto()
-    BACKFLIP = auto()
-    FRONTJUMP = auto()
 
 class FSM_State:
     """
@@ -79,37 +69,14 @@ class FSM_State:
         kpMat = np.array([80, 0, 0, 0, 80, 0, 0, 0, 80], dtype=DTYPE).reshape((3,3))
         kdMat = np.array([1, 0, 0, 0, 1, 0, 0, 0, 1], dtype=DTYPE).reshape((3,3))
 
-        np.copyto(self._data._legController.commands[leg].kpJoint, kpMat, casting=CASTING)
-        np.copyto(self._data._legController.commands[leg].kdJoint, kdMat, casting=CASTING)
+        self._data._legController.commands[leg].kpJoint = kpMat
+        self._data._legController.commands[leg].kdJoint = kdMat
+        # np.copyto(self._data._legController.commands[leg].kpJoint, kpMat, casting=CASTING)
+        # np.copyto(self._data._legController.commands[leg].kdJoint, kdMat, casting=CASTING)
 
         self._data._legController.commands[leg].qDes = qDes
         self._data._legController.commands[leg].qdDes = qdDes
 
-    def cartesianImpedanceControl(self, leg:int, pDes:np.ndarray, vDes:np.ndarray, 
-                                  kp_cartesian:np.ndarray, kd_cartesian:np.ndarray):
-
-        # self._data._legController.commands[leg].pDes = pDes
-        np.copyto(self._data._legController.commands[leg].pDes, pDes, casting=CASTING)
-
-        # Create the cartesian P gain matrix
-        kpMat = np.array([kp_cartesian[0], 0, 0, 
-                          0, kp_cartesian[1], 0,
-                          0, 0, kp_cartesian[2]], dtype=DTYPE).reshape((3,3))
-
-        # self._data._legController.commands[leg].kpCartesian = kpMat
-        np.copyto(self._data._legController.commands[leg].kpCartesian, kpMat, casting=CASTING)
-
-        # self._data._legController.commands[leg].vDes = vDes
-        np.copyto(self._data._legController.commands[leg].vDes, vDes, casting=CASTING)
-
-        # Create the cartesian D gain matrix
-        kdMat = np.array([kd_cartesian[0], 0, 0, 
-                          0, kd_cartesian[1], 0, 
-                          0, 0, kd_cartesian[2]],dtype=DTYPE).reshape((3,3))
-
-        # self._data._legController.commands[leg].kdCartesian = kdMat
-        np.copyto(self._data._legController.commands[leg].kdCartesian, kdMat, casting=CASTING)
-    
     def turnOnAllSafetyChecks(self):
         # Pre controls safety checks
         self.checkSafeOrientation = True  # check roll and pitch

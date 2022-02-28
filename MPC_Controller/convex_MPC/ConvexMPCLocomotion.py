@@ -19,7 +19,6 @@ elif Parameters.cmpc_solver_type == 2:
 
 
 num_legs = 4
-friction_coeffs = np.ones(4, dtype=DTYPE) * 0.4
 
 class ConvexMPCLocomotion:
     def __init__(self, _dt:float, _iterationsBetweenMPC:int):
@@ -455,4 +454,4 @@ class ConvexMPCLocomotion:
 
                 se_contactState[foot] = contactState
 
-        data._stateEstimator.setContactPhase(se_contactState)
+        # data._stateEstimator.setContactPhase(se_contactState)
