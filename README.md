@@ -53,7 +53,8 @@
 - TODO 对比两组 a1 的控制器输入输出来找bug 2.26
 - debug 完成, aliengo 和 a1 都可以走了, bug 在于宇树 hip、knee 电机正方向和 mit 相反且为 revolute 关节, 对应反向并改为 continuous 关节即可 2.27
 - TODO 写个机器人初始化姿态控制即可, 然后把手柄控制器加上, 准备进入 RL 阶段 2.27
-- 手柄控制完成 2.28
+- 手柄控制完成, 增加了 pronk, bound, pace 步态和对应的手柄按键逻辑 2.28
+- recovery stand 和 passive FSM 写好了, 还需要 debug 一下 2.28
 
 ### Roadmap
 
