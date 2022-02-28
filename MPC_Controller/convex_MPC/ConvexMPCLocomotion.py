@@ -10,11 +10,11 @@ from MPC_Controller.common.FootSwingTrajectory import FootSwingTrajectory
 from MPC_Controller.utils import K_MAX_GAIT_SEGMENTS, coordinateRotation, CoordinateAxis, DTYPE, CASTING, getSideSign
 
 from MPC_Controller.Parameters import Parameters
-if Parameters.c_solver == 1:
+if Parameters.cmpc_solver_type == 1:
     import MPC_Controller.convex_MPC.C_SolverMPC as mpc
-elif Parameters.c_solver == 0:
+elif Parameters.cmpc_solver_type == 0:
     import MPC_Controller.convex_MPC.convexMPC_interface as mpc
-elif Parameters.c_solver == 2:
+elif Parameters.cmpc_solver_type == 2:
     import MPC_Controller.convex_MPC.mpc_osqp as mpc
 
 
@@ -24,7 +24,7 @@ friction_coeffs = np.ones(4, dtype=DTYPE) * 0.4
 class ConvexMPCLocomotion:
     def __init__(self, _dt:float, _iterationsBetweenMPC:int):
         self.iterationsBetweenMPC = int(_iterationsBetweenMPC)
-        self.horizonLength = Parameters.cmpc_horizons
+        self.horizonLength = 10 # a fixed number for all mpc gait
         self.dt = _dt
         self.trotting = OffsetDurationGait(self.horizonLength, 
                             np.array([0, 5, 5, 0], dtype=DTYPE), 
@@ -50,7 +50,7 @@ class ConvexMPCLocomotion:
         self.default_iterations_between_mpc = self.iterationsBetweenMPC
         print("[Convex MPC] dt: %.3f iterations: %d, dtMPC: %.3f" % (self.dt, self.iterationsBetweenMPC, self.dtMPC))
         
-        if Parameters.c_solver != 2:
+        if Parameters.cmpc_solver_type != 2:
             mpc.setup_problem(self.dtMPC, self.horizonLength, mu=0.4, fmax=120)
         # else:
         #     self._cpp_mpc = mpc.ConvexMpc(body_mass, body_inertia_list,
@@ -139,7 +139,7 @@ class ConvexMPCLocomotion:
         pz_err = p[2] - self.__body_height
         vxy = np.array([seResult.vWorld[0], seResult.vWorld[1], 0], dtype=DTYPE).reshape((3,1))
         self.dtMPC = self.dt*self.iterationsBetweenMPC
-        if Parameters.c_solver == 2:
+        if Parameters.cmpc_solver_type == 2:
             self._cpp_mpc = mpc.ConvexMpc(data._quadruped._bodyMass, 
                                           list(data._quadruped._bodyInertia),
                                           num_legs,
@@ -156,7 +156,7 @@ class ConvexMPCLocomotion:
             self.x_comp_integral += Parameters.cmpc_x_drag * pz_err * self.dtMPC / vxy[0]
 
         timer = time.time()
-        if Parameters.c_solver==1:
+        if Parameters.cmpc_solver_type==1:
             mpc.update_problem_data(
                 p, v, q.toNumpy(), w, 
                 r_feet, yaw, weights, 
@@ -164,10 +164,10 @@ class ConvexMPCLocomotion:
                 alpha, 
                 np.array(mpcTable, dtype=DTYPE).reshape((K_MAX_GAIT_SEGMENTS,1)))
 
-        elif Parameters.c_solver==0:
+        elif Parameters.cmpc_solver_type==0:
             mpc.update_problem_data(p, v, q, w, rpy, r_feet, yaw, weights, self.trajAll, alpha, mpcTable)
         
-        elif Parameters.c_solver==2:
+        elif Parameters.cmpc_solver_type==2:
             predicted_contact_forces = self._cpp_mpc.compute_contact_forces(
                 p.flatten(), #! com_position (set x y to 0.0)
                 v.flatten(), #com_velocity
@@ -184,7 +184,7 @@ class ConvexMPCLocomotion:
             )
 
         for leg in range(4):
-            if Parameters.c_solver==2:
+            if Parameters.cmpc_solver_type==2:
                 self.f_ff[leg] = np.array(predicted_contact_forces[leg*3: (leg+1)*3],dtype=DTYPE).reshape((3,1))
 
             else:
@@ -194,7 +194,7 @@ class ConvexMPCLocomotion:
 
                 self.f_ff[leg] = - seResult.rBody @ f
 
-        if Parameters.cmpc_total_time:
+        if Parameters.cmpc_print_total_time:
             print("MPC Update Time %.3f s\n"%(time.time()-timer))
 
     def updateMPCIfNeeded(self, mpcTable:list, data:ControlFSMData):
@@ -295,7 +295,7 @@ class ConvexMPCLocomotion:
 
         elif gaitNumber == 3:
             gait = self.pacing
-            
+
         elif gaitNumber == 4:
             gait = self.standing
 

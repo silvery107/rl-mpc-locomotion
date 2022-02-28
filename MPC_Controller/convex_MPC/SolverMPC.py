@@ -201,7 +201,7 @@ def solve_mpc(update:UpdateData, setup:ProblemSetup):
                 verbose=False)
         qp_solution = m.solve().x
 
-    if Parameters.cmpc_solver_time:
+    if Parameters.cmpc_print_solver_time:
         print("Solver solved time %.3f"%(time.time()-timer))
         
     if qp_solution is not None:
