@@ -146,9 +146,9 @@ class LegController:
                 # tau feedforward + torque
                 legTorque = self.commands[leg].tauFeedForward + self.datas[leg].J.T @ footForce
 
-                # joint PD control, not functional in MPC
-                # legTorque += self.commands[leg].kpJoint @ (self.commands[leg].qDes - self.datas[leg].q)
-                # legTorque += self.commands[leg].kdJoint @ (self.commands[leg].qdDes - self.datas[leg].qd)
+                # joint PD control
+                legTorque += self.commands[leg].kpJoint @ (self.commands[leg].qDes - self.datas[leg].q)
+                legTorque += self.commands[leg].kdJoint @ (self.commands[leg].qdDes - self.datas[leg].qd)
 
                 legTorques[leg*3:(leg+1)*3] = legTorque.flatten()
         

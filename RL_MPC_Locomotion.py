@@ -57,6 +57,9 @@ while not gym.query_viewer_has_closed(viewer):
     if use_gamepad:
         lin_speed, ang_speed, e_stop = gamepad.get_command()
         Parameters.cmpc_gait = gamepad.get_gait()
+        if gamepad.get_FSM_switch():
+            Parameters.control_mode = 4 if Parameters.control_mode==6 else 6
+
         if not e_stop:
             DesiredStateCommand.x_vel_cmd = lin_speed[0]
             DesiredStateCommand.y_vel_cmd = lin_speed[1]

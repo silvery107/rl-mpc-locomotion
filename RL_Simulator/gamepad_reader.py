@@ -47,6 +47,7 @@ class Gamepad:
     # Controller states
     self.vx, self.vy, self.wz = 0., 0., 0.
     self._gait_number = 0
+    self._FSM_switch = False
     self.estop_flagged = False
     self.is_running = True
 
@@ -72,6 +73,7 @@ class Gamepad:
     """Update command based on event readings."""
     if event.ev_type == 'Key' and event.code == 'BTN_TL':
       self._lb_pressed = bool(event.state)
+      self._FSM_switch = self._lb_pressed
     elif event.ev_type == 'Key' and event.code == 'BTN_TR':
       self._rb_pressed = bool(event.state)
     elif event.ev_type == 'Key' and event.code == 'BTN_THUMBL':
@@ -103,6 +105,9 @@ class Gamepad:
     if self._gait_number < 0:
       self._gait_number = 0
     return self._gait_number
+
+  def get_FSM_switch(self):
+    return self._FSM_switch
 
   def stop(self):
     self.is_running = False
