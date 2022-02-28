@@ -1,8 +1,3 @@
-"""
- * FSM State for robot locomotion. Manages the contact specific logic
- * and handles calling the interfaces to the controllers. This state
- * should be independent of controller, gait, and desired trajectory.
-"""
 import sys
 sys.path.append("..")
 import numpy as np
@@ -12,17 +7,16 @@ from MPC_Controller.convex_MPC.ConvexMPCLocomotion import ConvexMPCLocomotion
 from MPC_Controller.FSM_states.ControlFSMData import ControlFSMData
 from MPC_Controller.Parameters import Parameters
 from MPC_Controller.common.Quadruped import RobotType
-from MPC_Controller.FSM_states.FSM_State import K_LOCOMOTION, K_PASSIVE, K_RECOVERY_STAND, K_STAND_UP, FSM_State, FSM_StateName
+from MPC_Controller.FSM_states.FSM_State import K_LOCOMOTION, K_PASSIVE, K_RECOVERY_STAND, FSM_State, FSM_StateName
 from MPC_Controller.utils import DTYPE, deg2rad, rad2deg
 
 class FSM_State_Locomotion(FSM_State):
+    """
+    * FSM State for robot locomotion. Manages the contact specific logic
+    * and handles calling the interfaces to the controllers. This state
+    * should be independent of controller, gait, and desired trajectory.
+    """
     def __init__(self, _controlFSMData:ControlFSMData):
-        """
-        * Constructor for the FSM State that passes in state specific info to
-        * the generic FSM State constructor.
-        *
-        * @param _controlFSMData holds all of the relevant control data
-        """
         super().__init__(_controlFSMData, FSM_StateName.LOCOMOTION, "LOCOMOTION")
 
         if _controlFSMData._quadruped._robotType == RobotType.MINI_CHEETAH:
@@ -84,10 +78,6 @@ class FSM_State_Locomotion(FSM_State):
                 # Transition time is immediate
                 self.transitionDuration = 0.0
 
-            elif Parameters.control_mode == K_STAND_UP:
-                self.nextStateName = FSM_StateName.STAND_UP
-                self.transitionDuration = 0.0
-
             elif Parameters.control_mode == K_RECOVERY_STAND:
                 self.nextStateName = FSM_StateName.RECOVERY_STAND
                 self.transitionDuration = 0.0
@@ -113,9 +103,6 @@ class FSM_State_Locomotion(FSM_State):
             self.turnOffAllSafetyChecks()
             self.transitionData.done = True
 
-        elif self.nextStateName == FSM_StateName.STAND_UP:
-            self.transitionData.done = True
-        
         elif self.nextStateName == FSM_StateName.RECOVERY_STAND:
             self.transitionData.done = True
         
@@ -131,7 +118,7 @@ class FSM_State_Locomotion(FSM_State):
         max_pitch = 40
 
         if fabs(seResult.rpy[0]>deg2rad(max_roll)):
-            print("Unsafe locomotion: roll is %.3f degrees (max %.3f)"%(rad2deg(seResult.rpy[0], max_roll)))
+            print("Unsafe locomotion: roll is %.3f degrees (max %.3f)"%(rad2deg(seResult.rpy[0]), max_roll))
             return False
         
         if fabs(seResult.rpy[1]) > deg2rad(max_pitch):

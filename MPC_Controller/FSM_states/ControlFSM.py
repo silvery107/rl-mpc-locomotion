@@ -7,7 +7,6 @@ import sys
 
 from MPC_Controller.FSM_states.FSM_State_Passive import FSM_State_Passive
 from MPC_Controller.FSM_states.FSM_State_RecoveryStand import FSM_State_RecoveyrStand
-from MPC_Controller.FSM_states.FSM_State_StandUp import FSM_State_StandUp
 from MPC_Controller.FSM_states.TransitionData import TransitionData
 sys.path.append("..")
 
@@ -33,7 +32,6 @@ class FSM_StatesList:
     def __init__(self) -> None:
         self.invalid:FSM_State = None
         self.passive:FSM_State_Passive = None
-        self.standUp:FSM_State_StandUp = None
         self.recoveryStand:FSM_State_RecoveyrStand = None
         self.locomotion:FSM_State_Locomotion = None
 
@@ -52,7 +50,6 @@ class ControlFSM:
         self.statesList = FSM_StatesList()
         self.statesList.invalid = None
         self.statesList.passive = FSM_State_Passive(self.data)
-        self.statesList.standUp = FSM_State_StandUp(self.data)
         self.statesList.locomotion = FSM_State_Locomotion(self.data)
         self.statesList.recoveryStand = FSM_State_RecoveyrStand(self.data)
 
@@ -72,7 +69,7 @@ class ControlFSM:
 
     def initialize(self):
         # Initialize a new FSM State with the control data
-        self.currentState = self.statesList.locomotion
+        self.currentState = self.statesList.passive
         # Enter the new current state cleanly
         self.currentState.onEnter()
         # Initialize to not be in transition
@@ -150,8 +147,6 @@ class ControlFSM:
             return self.statesList.invalid
         elif stateName == FSM_StateName.PASSIVE:
             return self.statesList.passive
-        elif stateName == FSM_StateName.STAND_UP:
-            return self.statesList.standUp
         elif stateName == FSM_StateName.LOCOMOTION:
             return self.statesList.locomotion
         elif stateName == FSM_StateName.RECOVERY_STAND:
