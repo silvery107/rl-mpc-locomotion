@@ -443,8 +443,9 @@ class ConvexMPCLocomotion:
                 data._legController.commands[foot].vDes = vDesLeg
                 data._legController.commands[foot].kpCartesian = self.Kp_stance
                 data._legController.commands[foot].kdCartesian = self.Kd_stance
+
                 data._legController.commands[foot].forceFeedForward = self.f_ff[foot]
-                # data._legController.commands[foot].kdJoint = np.identity(3, dtype=DTYPE)*0.2
+                data._legController.commands[foot].kdJoint = np.identity(3, dtype=DTYPE)*0.2
 
                 # np.copyto(data._legController.commands[foot].pDes, pDesLeg, casting=CASTING)
                 # np.copyto(data._legController.commands[foot].vDes, vDesLeg, casting=CASTING)

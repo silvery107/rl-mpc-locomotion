@@ -58,7 +58,7 @@ class FSM_State:
     def transition(self):
         return self.transitionData
 
-    def jointPDControl(self, leg:int, qDes:np.ndarray, qdDes:np.ndarray):
+    def jointPDControl(self, leg:int, qDes:np.ndarray, qdDes:np.ndarray, kpMat=None, kdMat=None):
         """
         * Cartesian impedance control for a given leg.
         *
@@ -66,8 +66,10 @@ class FSM_State:
         * @param qDes desired joint position
         * @param dqDes desired joint velocity
         """
-        kpMat = np.array([80, 0, 0, 0, 80, 0, 0, 0, 80], dtype=DTYPE).reshape((3,3))
-        kdMat = np.array([1, 0, 0, 0, 1, 0, 0, 0, 1], dtype=DTYPE).reshape((3,3))
+        if kpMat is None:
+            kpMat = np.array([80, 0, 0, 0, 80, 0, 0, 0, 80], dtype=DTYPE).reshape((3,3))
+        if kdMat is None:
+            kdMat = np.array([1, 0, 0, 0, 1, 0, 0, 0, 1], dtype=DTYPE).reshape((3,3))
 
         self._data._legController.commands[leg].kpJoint = kpMat
         self._data._legController.commands[leg].kdJoint = kdMat

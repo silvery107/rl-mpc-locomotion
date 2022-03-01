@@ -29,7 +29,7 @@ for idx in range(num_envs):
     # configure the joints for effort control mode (once)
     props = gym.get_actor_dof_properties(envs[idx], actors[idx])
     props["driveMode"].fill(gymapi.DOF_MODE_EFFORT)
-    props["stiffness"].fill(0.0)
+    props["stiffness"].fill(0.1)
     props["damping"].fill(0.0)
     gym.set_actor_dof_properties(envs[idx], actors[idx], props)
 
