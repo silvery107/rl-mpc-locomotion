@@ -45,6 +45,18 @@ class ConvexMPCLocomotion:
                             np.array([5, 0, 5, 0], dtype=DTYPE), 
                             np.array([5, 5, 5, 5], dtype=DTYPE), "Pacing")
 
+        self.galloping = OffsetDurationGait(self.horizonLength,
+                            np.array([0, 2, 7, 9], dtype=DTYPE), 
+                            np.array([4, 4, 4, 4], dtype=DTYPE), "Galloping")
+
+        self.walking = OffsetDurationGait(self.horizonLength,
+                            np.array([0, 3, 5, 8], dtype=DTYPE), 
+                            np.array([5, 5, 5, 5], dtype=DTYPE), "Walking")
+
+        self.trotRunning = OffsetDurationGait(self.horizonLength,
+                            np.array([0, 5, 5, 0], dtype=DTYPE), 
+                            np.array([4, 4, 4, 4], dtype=DTYPE), "Trot Running")
+
         self.dtMPC = self.dt * self.iterationsBetweenMPC
         self.default_iterations_between_mpc = self.iterationsBetweenMPC
         print("[Convex MPC] dt: %.3f iterations: %d, dtMPC: %.3f" % (self.dt, self.iterationsBetweenMPC, self.dtMPC))

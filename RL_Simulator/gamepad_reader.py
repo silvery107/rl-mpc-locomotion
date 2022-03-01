@@ -4,15 +4,15 @@ import inputs
 # from inputs import get_gamepad
 import threading
 import time
+from MPC_Controller.Parameters import Parameters
 
 from MPC_Controller.utils import GaitType
 from MPC_Controller.FSM_states.FSM_State import FSM_StateName
 
 
 MAX_ABS_VAL = 32768
-ALLOWED_MODES = [FSM_StateName.PASSIVE, FSM_StateName.RECOVERY_STAND, FSM_StateName.LOCOMOTION]
-ALLOWED_GAITS = [GaitType.TROT, GaitType.BOUND, GaitType.PRONK, GaitType.PACE, GaitType.STAND]
-
+ALLOWED_MODES = [FSM_StateName.RECOVERY_STAND, FSM_StateName.LOCOMOTION]
+ALLOWED_GAITS = [x for x in GaitType]
 
 def _interpolate(raw_reading, max_raw_reading, new_scale):
   return raw_reading / max_raw_reading * new_scale
@@ -52,7 +52,7 @@ class Gamepad:
     self._gait_generator = itertools.cycle(ALLOWED_GAITS)
     self._gait = next(self._gait_generator)
     self._mode_generator = itertools.cycle(ALLOWED_MODES)
-    self._mode = next(self._mode_generator)
+    self._mode = Parameters.control_mode
 
     # Controller states
     self.vx, self.vy, self.wz = 0., 0., 0.

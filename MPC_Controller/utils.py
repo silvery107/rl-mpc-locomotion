@@ -19,7 +19,10 @@ class GaitType(Enum):
     BOUND = 1
     PRONK = 2
     PACE = 3
-    STAND = 4
+    # STAND = 4
+    # GALLOP = 5
+    # WALK = 6
+    # TROTRUN = 7
 
 def coordinateRotation(axis:CoordinateAxis, theta:float) -> np.ndarray:
     s = sin(float(theta))
