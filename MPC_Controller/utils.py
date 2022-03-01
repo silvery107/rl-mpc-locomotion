@@ -19,10 +19,23 @@ class GaitType(Enum):
     BOUND = 1
     PRONK = 2
     PACE = 3
-    # STAND = 4
-    # GALLOP = 5
-    # WALK = 6
-    # TROTRUN = 7
+    STAND = 4
+    GALLOP = 5
+    WALK = 6
+    TROTRUN = 7
+
+class FSM_StateName(Enum):
+    INVALID = 99
+    PASSIVE = 0
+    LOCOMOTION = 4
+    RECOVERY_STAND = 6
+
+class FSM_OperatingMode(Enum):
+    TEST = 0
+    NORMAL = 1
+    TRANSITIONING = auto()
+    # ESTOP = auto()
+    # EDAMP = auto()
 
 def coordinateRotation(axis:CoordinateAxis, theta:float) -> np.ndarray:
     s = sin(float(theta))

@@ -18,15 +18,7 @@ from MPC_Controller.Parameters import Parameters
 from MPC_Controller.FSM_states.ControlFSMData import ControlFSMData
 from MPC_Controller.FSM_states.FSM_State_Locomotion import FSM_State_Locomotion
 from MPC_Controller.DesiredStateCommand import DesiredStateCommand
-from enum import Enum, auto
-
-class FSM_OperatingMode(Enum):
-    TEST = 0
-    NORMAL = 1
-    TRANSITIONING = auto()
-    # ESTOP = auto()
-    # EDAMP = auto()
-
+from MPC_Controller.utils import FSM_OperatingMode
 
 class FSM_StatesList:
     def __init__(self) -> None:
@@ -59,7 +51,7 @@ class ControlFSM:
         self.nextStateName:FSM_StateName = None
 
         self.printIter = 0
-        self.printNum = 10000 # N*(0.001s) in simulation time
+        self.printNum = 1000 # N*(0.01s) in simulation time
         self.iter = 0
 
         # ! may need a SafetyChecker
@@ -75,9 +67,12 @@ class ControlFSM:
         # Initialize to not be in transition
         self.nextState = self.currentState
         # Initialize FSM mode to normal operation
-        self.operatingMode = FSM_OperatingMode(Parameters.operatingMode)
+        self.operatingMode = Parameters.operatingMode
 
     def runFSM(self):
+        # Check the robot state for safe operation
+        # operatingMode = safetyPreCheck();
+
         if self.operatingMode == FSM_OperatingMode.TEST:
             self.currentState.run()
 
@@ -95,9 +90,10 @@ class ControlFSM:
                 # Print transition initialized info
                 self.printInfo(1)
             else:
+                # Run the iteration for the current state normally
                 self.currentState.run()
 
-        # Check the robot state for safe operation
+        # Run the transition code while transition is occuring
         elif self.operatingMode == FSM_OperatingMode.TRANSITIONING:
             self.transitionData = self.currentState.transition()
 
@@ -170,7 +166,11 @@ class ControlFSM:
                 print("[CONTROL FSM] Printing FSM Info...")
                 print("---------------------------------------------------------")
                 print("Iteration: " + str(self.iter))
-                # TODO print Operating Mode
+                if self.operatingMode == FSM_OperatingMode.NORMAL:
+                    print("Operating Mode:: NORMAL in "+self.currentState.stateString)
+                elif self.operatingMode == FSM_OperatingMode.TRANSITIONING:
+                    print("Operating Mode: TRANSITIONING from "+self.currentState.stateString+" to "+self.nextState.stateString)
+
                 self.printIter = 0
         
         # Initializing FSM State transition

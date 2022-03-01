@@ -310,6 +310,15 @@ class ConvexMPCLocomotion:
         elif gaitNumber == 4:
             gait = self.standing
 
+        elif gaitNumber == 5:
+            gait = self.galloping
+
+        elif gaitNumber == 6:
+            gait = self.walking
+
+        elif gaitNumber == 7:
+            gait = self.trotRunning
+
         self.current_gait = gaitNumber
         gait.setIterations(self.iterationsBetweenMPC, self.iterationCounter)
 
