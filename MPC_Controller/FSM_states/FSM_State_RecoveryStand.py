@@ -31,8 +31,8 @@ class FSM_State_RecoveyrStand(FSM_State):
         
         # Folding
         # * test passed
-        self.fold_ramp_iter = 40
-        self.fold_settle_iter = 70
+        self.fold_ramp_iter = 45
+        self.fold_settle_iter = 75
         self.fold_jpos = np.array([0.0, -1.4, 2.7,
                                    -0.0, -1.4, 2.7,
                                    0.0, -1.4, 2.7,
@@ -41,8 +41,8 @@ class FSM_State_RecoveyrStand(FSM_State):
 
         # Stand Up 
         # * test passed
-        self.standup_ramp_iter = 25
-        self.standup_settle_iter = 25
+        self.standup_ramp_iter = 30
+        self.standup_settle_iter = 30
         self.stand_jpos = np.array([0., -.8, 1.6,
                                     0., -.8, 1.6,
                                     0., -.8, 1.6,
