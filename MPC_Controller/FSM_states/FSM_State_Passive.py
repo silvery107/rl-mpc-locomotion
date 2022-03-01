@@ -1,5 +1,5 @@
 from MPC_Controller.FSM_states.ControlFSMData import ControlFSMData
-from MPC_Controller.FSM_states.FSM_State import K_PASSIVE, K_RECOVERY_STAND, FSM_State, FSM_StateName
+from MPC_Controller.FSM_states.FSM_State import FSM_State, FSM_StateName
 from MPC_Controller.Parameters import Parameters
 
 class FSM_State_Passive(FSM_State):
@@ -51,16 +51,17 @@ class FSM_State_Passive(FSM_State):
         self.iter += 1
 
         # Switch FSM control mode
-        if Parameters.control_mode == K_PASSIVE:
+        if Parameters.control_mode == FSM_StateName.PASSIVE:
             pass
 
-        elif Parameters.control_mode == K_RECOVERY_STAND:
+        elif Parameters.control_mode == FSM_StateName.RECOVERY_STAND:
             self.nextStateName = FSM_StateName.RECOVERY_STAND
             
         else:
             print("[CONTROL FSM] Bad Request: Cannot transition from "
-                    + K_PASSIVE + " to "
-                    + Parameters.control_mode)
+                + self.stateName.name
+                + " to "
+                + Parameters.control_mode.name)
         return self.nextStateName
 
     def transition(self):

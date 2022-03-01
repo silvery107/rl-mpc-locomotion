@@ -14,6 +14,13 @@ class CoordinateAxis(Enum):
     Y = auto()
     Z = auto()
 
+class GaitType(Enum):
+    TROT = 0
+    BOUND = 1
+    PRONK = 2
+    PACE = 3
+    STAND = 4
+
 def coordinateRotation(axis:CoordinateAxis, theta:float) -> np.ndarray:
     s = sin(float(theta))
     c = cos(float(theta))

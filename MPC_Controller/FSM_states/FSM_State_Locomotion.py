@@ -7,7 +7,7 @@ from MPC_Controller.convex_MPC.ConvexMPCLocomotion import ConvexMPCLocomotion
 from MPC_Controller.FSM_states.ControlFSMData import ControlFSMData
 from MPC_Controller.Parameters import Parameters
 from MPC_Controller.common.Quadruped import RobotType
-from MPC_Controller.FSM_states.FSM_State import K_LOCOMOTION, K_PASSIVE, K_RECOVERY_STAND, FSM_State, FSM_StateName
+from MPC_Controller.FSM_states.FSM_State import FSM_State, FSM_StateName
 from MPC_Controller.utils import DTYPE, deg2rad, rad2deg
 
 class FSM_State_Locomotion(FSM_State):
@@ -69,23 +69,24 @@ class FSM_State_Locomotion(FSM_State):
         """
         self.iter += 1
         if self.locomotionSafe():
-            if Parameters.control_mode == K_LOCOMOTION:
+            if Parameters.control_mode == FSM_StateName.LOCOMOTION:
                 pass
 
-            elif Parameters.control_mode == K_PASSIVE:
+            elif Parameters.control_mode == FSM_StateName.PASSIVE:
                 # Requested change to PASSIVE
                 self.nextStateName = FSM_StateName.PASSIVE
                 # Transition time is immediate
                 self.transitionDuration = 0.0
 
-            elif Parameters.control_mode == K_RECOVERY_STAND:
+            elif Parameters.control_mode == FSM_StateName.RECOVERY_STAND:
                 self.nextStateName = FSM_StateName.RECOVERY_STAND
                 self.transitionDuration = 0.0
             
             else:
                 print("[CONTROL FSM] Bad Request: Cannot transition from "
-                      + K_LOCOMOTION + " to "
-                      + Parameters.control_mode)
+                    + self.stateName.name
+                    + " to "
+                    + Parameters.control_mode.name)
         else:
             self.nextStateName = FSM_StateName.RECOVERY_STAND
             self.transitionDuration = 0.0

@@ -270,7 +270,7 @@ class ConvexMPCLocomotion:
     def run(self, data:ControlFSMData):
         # Command Setup
         self.__SetupCommand(data)
-        gaitNumber = Parameters.cmpc_gait
+        gaitNumber = Parameters.cmpc_gait.value
         seResult = data._stateEstimator.getResult()
 
         # Check if transition to standing

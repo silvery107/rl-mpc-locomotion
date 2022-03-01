@@ -9,15 +9,15 @@ from MPC_Controller.FSM_states.TransitionData import TransitionData
 from abc import abstractmethod
 
 # Normal robot states
-K_PASSIVE = 0
-K_LOCOMOTION = 4
-K_RECOVERY_STAND = 6
+# K_PASSIVE = 0
+# K_LOCOMOTION = 4
+# K_RECOVERY_STAND = 6
 
 class FSM_StateName(Enum):
-    INVALID = auto()
-    PASSIVE = auto()
-    LOCOMOTION = auto()
-    RECOVERY_STAND = auto()
+    INVALID = 99
+    PASSIVE = 0
+    LOCOMOTION = 4
+    RECOVERY_STAND = 6
 
 class FSM_State:
     """
