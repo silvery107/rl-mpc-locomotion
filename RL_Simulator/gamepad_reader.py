@@ -1,12 +1,17 @@
+import itertools
 from absl import app
-from absl import flags
 import inputs
-from inputs import get_gamepad
+# from inputs import get_gamepad
 import threading
 import time
 
-FLAGS = flags.FLAGS
+from MPC_Controller.utils import GaitType
+from MPC_Controller.FSM_states.FSM_State import FSM_StateName
+
+
 MAX_ABS_VAL = 32768
+ALLOWED_MODES = [FSM_StateName.PASSIVE, FSM_StateName.RECOVERY_STAND, FSM_StateName.LOCOMOTION]
+ALLOWED_GAITS = [GaitType.TROT, GaitType.BOUND, GaitType.PRONK, GaitType.PACE, GaitType.STAND]
 
 
 def _interpolate(raw_reading, max_raw_reading, new_scale):
@@ -44,11 +49,15 @@ class Gamepad:
     self._rb_pressed = False
     self._lj_pressed = False
 
+    self._gait_generator = itertools.cycle(ALLOWED_GAITS)
+    self._gait = next(self._gait_generator)
+    self._mode_generator = itertools.cycle(ALLOWED_MODES)
+    self._mode = next(self._mode_generator)
+
     # Controller states
     self.vx, self.vy, self.wz = 0., 0., 0.
-    self._gait_number = 0
     self._FSM_switch = False
-    self.estop_flagged = False
+    self._estop_flagged = False
     self.is_running = True
 
     self.read_thread = threading.Thread(target=self.read_loop)
@@ -73,13 +82,17 @@ class Gamepad:
     """Update command based on event readings."""
     if event.ev_type == 'Key' and event.code == 'BTN_TL':
       self._lb_pressed = bool(event.state)
-      self._FSM_switch = self._lb_pressed
+      if not self._estop_flagged and event.state == 0:
+        self._gait = next(self._gait_generator)
+
     elif event.ev_type == 'Key' and event.code == 'BTN_TR':
       self._rb_pressed = bool(event.state)
+      if not self._estop_flagged and event.state == 0:
+        self._mode = next(self._mode_generator)
+
     elif event.ev_type == 'Key' and event.code == 'BTN_THUMBL':
       self._lj_pressed = bool(event.state)
-    elif event.ev_type == 'Absolute' and event.code == 'ABS_HAT0X':
-      self._gait_number += event.state
+
     elif event.ev_type == 'Absolute' and event.code == 'ABS_X':
       # Left Joystick L/R axis
       self.vy = _interpolate(-event.state, MAX_ABS_VAL, self._vel_scale_y)
@@ -89,25 +102,23 @@ class Gamepad:
     elif event.ev_type == 'Absolute' and event.code == 'ABS_RX':
       self.wz = _interpolate(-event.state, MAX_ABS_VAL, self._vel_scale_rot)
     
-    if self.estop_flagged and self._lj_pressed:
-      self.estop_flagged = False
+    if self._estop_flagged and self._lj_pressed:
+      self._estop_flagged = False
       print("Estop Released.")
 
     if self._lb_pressed and self._rb_pressed:
       print("EStop Flagged, press LEFT joystick to release.")
-      self.estop_flagged = True
+      self._estop_flagged = True
       self.vx, self.vy, self.wz = 0., 0., 0.
 
   def get_command(self):
-    return (self.vx, self.vy, 0), self.wz, self.estop_flagged
+    return (self.vx, self.vy, 0), self.wz, self._estop_flagged
 
   def get_gait(self):
-    if self._gait_number < 0:
-      self._gait_number = 0
-    return self._gait_number
+    return self._gait
 
-  def get_FSM_switch(self):
-    return self._FSM_switch
+  def get_mode(self):
+    return self._mode
 
   def stop(self):
     self.is_running = False
