@@ -55,6 +55,11 @@
 - TODO 写个机器人初始化姿态控制即可, 然后把手柄控制器加上, 准备进入 RL 阶段 2.27
 - 手柄控制完成, 增加了 pronk, bound, pace 步态和对应的手柄按键逻辑 2.28
 - recovery stand 和 passive FSM 写好了, 还需要 debug 一下 2.28
+- TODO 调通 FSM 后把transition data 换成 done (已完成)
+- mpc stand 有问题, locomotion transition 有问题
+- Recovery stand 调试完成 3.1
+- mpc stand 需要更换参考轨迹, locomotion transition 到 recovery 的时候自动转移和手动转移冲突了 3.1
+- TODO 还差一个地面法向量估计算法设计 
 
 ### Roadmap
 
