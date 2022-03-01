@@ -1,13 +1,11 @@
 import itertools
 from absl import app
 import inputs
-# from inputs import get_gamepad
 import threading
 import time
 from MPC_Controller.Parameters import Parameters
 
-from MPC_Controller.utils import GaitType
-from MPC_Controller.FSM_states.FSM_State import FSM_StateName
+from MPC_Controller.utils import GaitType, FSM_StateName
 
 
 MAX_ABS_VAL = 32768
@@ -127,9 +125,9 @@ class Gamepad:
 def main(_):
   gamepad = Gamepad()
   while True:
-    # print("Vx: {}, Vy: {}, Wz: {}, Estop: {}".format(gamepad.vx, gamepad.vy,
-    #                                                  gamepad.wz,
-    #                                                  gamepad.estop_flagged))
+    print("Vx: {}, Vy: {}, Wz: {}, Estop: {}".format(gamepad.vx, gamepad.vy,
+                                                     gamepad.wz,
+                                                     gamepad._estop_flagged))
     time.sleep(0.1)
 
 

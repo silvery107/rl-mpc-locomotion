@@ -1,7 +1,4 @@
-
-
-from MPC_Controller.FSM_states.FSM_State import FSM_StateName
-from MPC_Controller.utils import GaitType
+from MPC_Controller.utils import GaitType, FSM_OperatingMode, FSM_StateName
 
 
 class Parameters:
@@ -17,5 +14,5 @@ class Parameters:
     cmpc_gait = GaitType.TROT # 1 bound, 2 pronk, 3 pace, 4 stand, else trot
 
     control_mode = FSM_StateName.PASSIVE # 0 passive, 4 locomotion, 6 recovery stand
-    operatingMode = 1 # 0 no transition and safe check, 1 normal
+    operatingMode = FSM_OperatingMode.NORMAL # 0 no transition and safe check, 1 normal
     controller_dt = 0.01 # 100 Hz
