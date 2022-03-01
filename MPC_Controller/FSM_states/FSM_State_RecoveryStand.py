@@ -28,34 +28,38 @@ class FSM_State_RecoveyrStand(FSM_State):
         self.zero_vec3 = np.zeros((3,1), dtype=DTYPE)
 
         # goal configuration
-
+        
         # Folding
-        self.fold_ramp_iter = 400
-        self.fold_settle_iter = 700
-        self.fold_jpos = np.array([-0.0, -1.4, 2.7,
-                                   0.0, -1.4, 2.7,
+        # * test passed
+        self.fold_ramp_iter = 40
+        self.fold_settle_iter = 70
+        self.fold_jpos = np.array([0.0, -1.4, 2.7,
                                    -0.0, -1.4, 2.7,
-                                   0.0, -1.4, 2.7],
+                                   0.0, -1.4, 2.7,
+                                   -0.0, -1.4, 2.7],
                                    dtype=DTYPE).reshape((4,3,1))
-        # Stand Up
-        self.standup_ramp_iter = 250
-        self.standup_settle_iter = 250
+
+        # Stand Up 
+        # * test passed
+        self.standup_ramp_iter = 25
+        self.standup_settle_iter = 25
         self.stand_jpos = np.array([0., -.8, 1.6,
                                     0., -.8, 1.6,
                                     0., -.8, 1.6,
-                                    0., -.8, 1.6,],
+                                    0., -.8, 1.6],
                                     dtype=DTYPE).reshape((4,3,1))
+
         # Rolling
-        self.rollover_ramp_iter = 150
-        self.rollover_settle_iter = 150
-        self.rolling_jpos = np.array([1.5, -1.6, 2.77,
-                                      1.3, -3.1, 2.77,
+        # * test passed
+        self.rollover_ramp_iter = 15
+        self.rollover_settle_iter = 15
+        self.rolling_jpos = np.array([1.3, -3.1, 2.77,
                                       1.5, -1.6, 2.77,
-                                      1.3, -3.1, 2.77,],
+                                      1.3, -3.1, 2.77,
+                                      1.5, -1.6, 2.77],
                                      dtype=DTYPE).reshape((4,3,1))
 
         self.initial_jpos = np.zeros((4,3,1), dtype=DTYPE)
-        # self.initial_jpos = [np.zeros((3,1), dtype=DTYPE) for _ in range(4)]
 
 
     def onEnter(self):
@@ -65,9 +69,13 @@ class FSM_State_RecoveyrStand(FSM_State):
         # Reset the transition data
         self.transitionData.zero()
 
+        # Reset iteration counter
+        self.iter = 0
+        self._state_iter = 0
+
         # initial configuration, position
-        for i in range(4):
-            self.initial_jpos[i] = self._data._legController.datas[i].q
+        for leg in range(4):
+            self.initial_jpos[leg] = self._data._legController.datas[leg].q
 
         body_height = self._data._stateEstimator.getResult().position[2]
 
@@ -148,8 +156,6 @@ class FSM_State_RecoveyrStand(FSM_State):
         else:
             print("[CONTROL FSM] Something went wrong in transition")
 
-
-
         # Return the transition data to the FSM
         return self.transitionData
 
@@ -191,7 +197,8 @@ class FSM_State_RecoveyrStand(FSM_State):
             self._flag = FoldLegs
             self._motion_start_iter = self._state_iter + 1
 
-            print("[Recovery Balance - Warning] body height is still too low (%f) or UpsideDown (%d); Folding legs"%(body_height, self._UpsideDown()))
+            print("[Recovery Balance - Warning] body height is still too low (%f) or UpsideDown (%d); Folding legs"
+                %(body_height, self._UpsideDown()))
         else:
             for leg in range(4):
                 self._SetJPosInterPts(curr_iter, self.standup_ramp_iter,
@@ -202,7 +209,7 @@ class FSM_State_RecoveyrStand(FSM_State):
     def _FoldLegs(self, curr_iter:int):
         for leg in range(4):
             self._SetJPosInterPts(curr_iter, self.rollover_ramp_iter, leg,
-                                  self.initial_jpos[leg], self.rolling_jpos[leg])
+                                  self.initial_jpos[leg], self.fold_jpos[leg])
         if curr_iter >= self.fold_ramp_iter + self.fold_settle_iter:
             if self._UpsideDown():
                 self._flag = RollOver
