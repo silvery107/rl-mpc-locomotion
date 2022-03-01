@@ -1,6 +1,8 @@
+import numpy as np
 from MPC_Controller.FSM_states.ControlFSMData import ControlFSMData
 from MPC_Controller.FSM_states.FSM_State import FSM_State, FSM_StateName
 from MPC_Controller.Parameters import Parameters
+from MPC_Controller.utils import DTYPE
 
 class FSM_State_Passive(FSM_State):
     """
@@ -31,7 +33,14 @@ class FSM_State_Passive(FSM_State):
         """
          * Calls the functions to be executed on each control loop iteration.
         """
-        self.testTransition()
+        if self.iter<10:
+            qDes = np.array([0.0, 0.01, 0.01], dtype=DTYPE).reshape((3,1))
+            qdDes = np.zeros((3,1), dtype=DTYPE)
+            for leg in range(4):
+                self.jointPDControl(leg, qDes, qdDes)
+
+        else:
+            pass
     
     def onExit(self):
         """
@@ -74,8 +83,4 @@ class FSM_State_Passive(FSM_State):
         # Finish Transition
         self.transitionData.done = True
         # Return the transition data to the FSM
-        return self.transitionData
-
-    def testTransition(self):
-        self.transitionData.done = True
         return self.transitionData
