@@ -29,10 +29,10 @@ def acquire_sim(gym, dt):
     sim_params.physx.num_velocity_iterations = 1
     sim_params.physx.contact_offset = 0.02
     sim_params.physx.rest_offset = 0.0
-    sim_params.physx.bounce_threshold_velocity = 0.2
-    sim_params.physx.max_depenetration_velocity = 100.0
-    sim_params.physx.default_buffer_size_multiplier = 5.0
-    sim_params.physx.max_gpu_contact_pairs = 8388608 # 8*1024*1024
+    # sim_params.physx.bounce_threshold_velocity = 0.2
+    # sim_params.physx.max_depenetration_velocity = 100.0
+    # sim_params.physx.default_buffer_size_multiplier = 5.0
+    # sim_params.physx.max_gpu_contact_pairs = 8388608 # 8*1024*1024
 
 
     # 0: CC_NEVER (don't collect contact info), 1: CC_LAST_SUBSTEP (collect only contacts on last substep), 2: CC_ALL_SUBSTEPS (default - all contacts)
@@ -43,9 +43,8 @@ def acquire_sim(gym, dt):
     # configure the ground plane
     plane_params = gymapi.PlaneParams()
     plane_params.normal = gymapi.Vec3(0, 0, 1)  # z-up!
-    # plane_params.distance = 0
-    plane_params.static_friction = 1
-    plane_params.dynamic_friction = 1
+    plane_params.static_friction = 0.6
+    plane_params.dynamic_friction = 0.6
     plane_params.restitution = 0    # control the elasticity of collisions (amount of bounce)
     # create the ground plane
     gym.add_ground(sim, plane_params)
@@ -67,11 +66,11 @@ def load_asset(gym, sim, robot, fix_base_link):
     asset_options.fix_base_link = fix_base_link
     asset_options.use_mesh_materials = True
     asset_options.flip_visual_attachments = False if asset_file==XIAOTIAN or asset_file==MINI_CHEETAH or asset_file==A1 else True
-    asset_options.density = 0.001
-    asset_options.angular_damping = 0.0
-    asset_options.linear_damping = 0.0
-    asset_options.thickness = 0.01
-    asset_options.disable_gravity = False
+    # asset_options.density = 0.001
+    # asset_options.angular_damping = 0.0
+    # asset_options.linear_damping = 0.0
+    # asset_options.thickness = 0.01
+    # asset_options.disable_gravity = False
     asset_options.armature = 0.01   # added to the diagonal elements of inertia tensors
                                     # for all of the asset’s rigid bodies/links. 
                                     # Could improve simulation stability
