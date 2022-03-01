@@ -5,7 +5,7 @@ sys.path.append("..")
 from enum import Enum, auto
 import numpy as np
 from MPC_Controller.FSM_states.ControlFSMData import ControlFSMData
-from MPC_Controller.FSM_states.TransitionData import TransitionData
+# from MPC_Controller.FSM_states.TransitionData import TransitionData
 from MPC_Controller.utils import FSM_StateName
 from abc import abstractmethod
 
@@ -33,7 +33,8 @@ class FSM_State:
         self.stateName = stateNameIn
         self.nextStateName:FSM_StateName = None
         self.stateString = stateStringIn
-        self.transitionData = TransitionData()
+        # self.transitionData = TransitionData()
+        self.transitionDone = False
         self.transitionDuration = 0.0
         print("[FSM_State] Initialized FSM state:", self.stateString)
 
@@ -53,7 +54,7 @@ class FSM_State:
         return FSM_StateName.INVALID
 
     def transition(self):
-        return self.transitionData
+        return self.transitionDone
 
     def jointPDControl(self, leg:int, qDes:np.ndarray, qdDes:np.ndarray, kpMat=None, kdMat=None):
         """

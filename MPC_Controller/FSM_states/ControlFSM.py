@@ -7,7 +7,7 @@ import sys
 
 from MPC_Controller.FSM_states.FSM_State_Passive import FSM_State_Passive
 from MPC_Controller.FSM_states.FSM_State_RecoveryStand import FSM_State_RecoveyrStand
-from MPC_Controller.FSM_states.TransitionData import TransitionData
+# from MPC_Controller.FSM_states.TransitionData import TransitionData
 sys.path.append("..")
 
 from MPC_Controller.FSM_states.FSM_State import FSM_State, FSM_StateName
@@ -49,7 +49,8 @@ class ControlFSM:
         self.currentState:FSM_State = None
         self.nextState:FSM_State = None
         self.nextStateName:FSM_StateName = None
-
+        
+        self.transitionDone = False
         self.printIter = 0
         self.printNum = 1000 # N*(0.01s) in simulation time
         self.iter = 0
@@ -95,13 +96,14 @@ class ControlFSM:
 
         # Run the transition code while transition is occuring
         elif self.operatingMode == FSM_OperatingMode.TRANSITIONING:
-            self.transitionData = self.currentState.transition()
+            # self.transitionData = self.currentState.transition()
+            self.transitionDone = self.currentState.transition()
 
             # TODO Check the robot state for safe operation
             # safetyPostCheck()
 
             # Run the state transition
-            if self.transitionData.done:
+            if self.transitionDone:
                 # Exit the current state cleanly
                 self.currentState.onExit()
 

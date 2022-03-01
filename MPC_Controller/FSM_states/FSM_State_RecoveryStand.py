@@ -67,7 +67,8 @@ class FSM_State_RecoveyrStand(FSM_State):
         self.nextStateName = self.stateName
 
         # Reset the transition data
-        self.transitionData.zero()
+        # self.transitionData.zero()
+        self.transitionDone = False
 
         # Reset iteration counter
         self.iter = 0
@@ -148,16 +149,18 @@ class FSM_State_RecoveyrStand(FSM_State):
         # Finish Transition
 
         if self.nextStateName==FSM_StateName.PASSIVE:
-            self.transitionData.done = True
+            # self.transitionData.done = True
+            self.transitionDone = True
 
         elif self.nextStateName==FSM_StateName.LOCOMOTION:
-            self.transitionData.done = True
+            # self.transitionData.done = True
+            self.transitionDone = True
 
         else:
             print("[CONTROL FSM] Something went wrong in transition")
 
         # Return the transition data to the FSM
-        return self.transitionData
+        return self.transitionDone
 
     def _UpsideDown(self):
         if self._data._stateEstimator.getResult().rBody[2,2]<0:

@@ -45,7 +45,8 @@ class FSM_State_Locomotion(FSM_State):
         # Default is to not transition
         self.nextStateName = self.stateName
         # Reset the transition data
-        self.transitionData.zero()
+        # self.transitionData.zero()
+        self.transitionDone = False
 
         self.cMPC.initialize()
         print("[FSM LOCOMOTION] On Enter")
@@ -102,15 +103,17 @@ class FSM_State_Locomotion(FSM_State):
         """
         if self.nextStateName == FSM_StateName.PASSIVE:
             self.turnOffAllSafetyChecks()
-            self.transitionData.done = True
+            # self.transitionData.done = True
+            self.transitionDone = True
 
         elif self.nextStateName == FSM_StateName.RECOVERY_STAND:
-            self.transitionData.done = True
+            # self.transitionData.done = True
+            self.transitionDone = True
         
         else:
             print("[CONTROL FSM] Something went wrong in transition")
 
-        return self.transitionData
+        return self.transitionDone
 
     def locomotionSafe(self):
         seResult = self._data._stateEstimator.getResult()
