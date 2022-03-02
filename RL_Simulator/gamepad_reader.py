@@ -36,7 +36,7 @@ class Gamepad:
       vel_scale_rot: maximum absolute yaw-dot command.
     """
     if not inputs.devices.gamepads:
-      raise Exception("Please plug in your xbox gamepad!")
+      raise inputs.UnpluggedError("No gamepad found.")
 
     self.gamepad = inputs.devices.gamepads[0]
     self._vel_scale_x = vel_scale_x
@@ -117,6 +117,16 @@ class Gamepad:
 
   def get_mode(self):
     return self._mode
+
+  def fake_event(self, ev_type, code, value):
+    eventinfo = {
+      "ev_type": ev_type,
+      "state": value,
+      "timestamp": 0.0,
+      "code": code
+    }
+    event = inputs.InputEvent(self.gamepad, eventinfo)
+    self.update_command(event)
 
   def stop(self):
     self.is_running = False
