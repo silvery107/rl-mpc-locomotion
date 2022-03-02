@@ -54,9 +54,9 @@ class FSM_State_RecoveyrStand(FSM_State):
         self.rollover_ramp_iter = 15
         self.rollover_settle_iter = 15
         self.rolling_jpos = np.array([1.3, -3.1, 2.77,
-                                      1.5, -1.6, 2.77,
+                                      0.0, -1.6, 2.77,
                                       1.3, -3.1, 2.77,
-                                      1.5, -1.6, 2.77],
+                                      0.0, -1.6, 2.77],
                                      dtype=DTYPE).reshape((4,3,1))
 
         self.initial_jpos = np.zeros((4,3,1), dtype=DTYPE)
