@@ -16,13 +16,13 @@ class CoordinateAxis(Enum):
 
 class GaitType(Enum):
     TROT = 0
-    BOUND = 1
-    PRONK = 2
-    PACE = 3
-    STAND = 4
+    TROTRUN = 7
     GALLOP = 5
     WALK = 6
-    TROTRUN = 7
+    PACE = 3
+    PRONK = 2
+    BOUND = 1
+    STAND = 4
 
 class FSM_StateName(Enum):
     INVALID = 99
