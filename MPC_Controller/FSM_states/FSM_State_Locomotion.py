@@ -45,7 +45,6 @@ class FSM_State_Locomotion(FSM_State):
         # Default is to not transition
         self.nextStateName = self.stateName
         # Reset the transition data
-        # self.transitionData.zero()
         self.transitionDone = False
 
         self.cMPC.initialize()
@@ -76,12 +75,9 @@ class FSM_State_Locomotion(FSM_State):
             elif Parameters.control_mode == FSM_StateName.PASSIVE:
                 # Requested change to PASSIVE
                 self.nextStateName = FSM_StateName.PASSIVE
-                # Transition time is immediate
-                self.transitionDuration = 0.0
 
             elif Parameters.control_mode == FSM_StateName.RECOVERY_STAND:
                 self.nextStateName = FSM_StateName.RECOVERY_STAND
-                self.transitionDuration = 0.0
             
             else:
                 print("[CONTROL FSM] Bad Request: Cannot transition from "
@@ -90,7 +86,8 @@ class FSM_State_Locomotion(FSM_State):
                     + Parameters.control_mode.name)
         else:
             self.nextStateName = FSM_StateName.RECOVERY_STAND
-            self.transitionDuration = 0.0
+            # TODO change to a individual indicator may be better
+            Parameters.locomotionUnsafe = True
         
         return self.nextStateName
 
@@ -103,11 +100,9 @@ class FSM_State_Locomotion(FSM_State):
         """
         if self.nextStateName == FSM_StateName.PASSIVE:
             self.turnOffAllSafetyChecks()
-            # self.transitionData.done = True
             self.transitionDone = True
 
         elif self.nextStateName == FSM_StateName.RECOVERY_STAND:
-            # self.transitionData.done = True
             self.transitionDone = True
         
         else:

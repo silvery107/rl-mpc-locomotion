@@ -2,19 +2,9 @@ import sys
 
 from MPC_Controller.utils import DTYPE, CASTING
 sys.path.append("..")
-from enum import Enum, auto
 import numpy as np
 from MPC_Controller.FSM_states.ControlFSMData import ControlFSMData
-# from MPC_Controller.FSM_states.TransitionData import TransitionData
 from MPC_Controller.utils import FSM_StateName
-from abc import abstractmethod
-
-# Normal robot states
-# K_PASSIVE = 0
-# K_LOCOMOTION = 4
-# K_RECOVERY_STAND = 6
-
-
 
 class FSM_State:
     """
@@ -33,22 +23,20 @@ class FSM_State:
         self.stateName = stateNameIn
         self.nextStateName:FSM_StateName = None
         self.stateString = stateStringIn
-        # self.transitionData = TransitionData()
         self.transitionDone = False
-        self.transitionDuration = 0.0
         print("[FSM_State] Initialized FSM state:", self.stateString)
 
-    @abstractmethod
     def onEnter(self):
-        pass
+        raise NotImplementedError
+        
 
-    @abstractmethod
+    # @abstractmethod
     def run(self):
-        pass
+        raise NotImplementedError
     
-    @abstractmethod
+    # @abstractmethod
     def onExit(self):
-        pass
+        raise NotImplementedError
 
     def checkTransition(self):
         return FSM_StateName.INVALID
