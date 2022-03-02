@@ -135,7 +135,7 @@ class Gamepad:
 def main(_):
   gamepad = Gamepad()
   while True:
-    print("Vx: {}, Vy: {}, Wz: {}, Estop: {}".format(gamepad.vx, gamepad.vy,
+    print("Vx: {:.3f}, Vy: {:.3f}, Wz: {:.3f}, Estop: {}".format(gamepad.vx, gamepad.vy,
                                                      gamepad.wz,
                                                      gamepad._estop_flagged))
     time.sleep(0.1)
