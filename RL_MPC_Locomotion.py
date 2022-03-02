@@ -54,6 +54,16 @@ while not gym.query_viewer_has_closed(viewer):
 
     current_time = gym.get_sim_time(sim)
 
+    # run controller
+    for i in range(num_envs):
+        controllers[i].run(gym, envs[i], actors[i])
+
+    if Parameters.locomotionUnsafe:
+        gamepad.fake_event(ev_type='Key',code='BTN_TR',value=0)
+        Parameters.locomotionUnsafe = False
+
+    # robotRunner.run(gym, envs[0], actors[0])
+
     if use_gamepad:
         lin_speed, ang_speed, e_stop = gamepad.get_command()
         Parameters.cmpc_gait = gamepad.get_gait()
@@ -63,11 +73,6 @@ while not gym.query_viewer_has_closed(viewer):
             DesiredStateCommand.x_vel_cmd = lin_speed[0]
             DesiredStateCommand.y_vel_cmd = lin_speed[1]
             DesiredStateCommand.yaw_turn_rate = ang_speed
-
-    # run controller
-    for i in range(num_envs):
-        controllers[i].run(gym, envs[i], actors[i])
-    # robotRunner.run(gym, envs[0], actors[0])
 
     # update the viewer
     gym.step_graphics(sim)
