@@ -34,13 +34,13 @@ class RobotRunner:
         self._stateEstimator = StateEstimatorContainer()
 
         # init desired state command
-        self._desiredStateCommand = DesiredStateCommand()
+        # self._desiredStateCommand = DesiredStateCommand()
         
         # Controller initializations
         self._controlFSM = ControlFSM(self._quadruped, 
                                       self._stateEstimator, 
-                                      self._legController,
-                                      self._desiredStateCommand)
+                                      self._legController)#,
+                                    #   self._desiredStateCommand)
 
 
     def run(self, gym, env, actor):
@@ -52,7 +52,7 @@ class RobotRunner:
         self._legController.updateData(gym, env, actor)
         self._legController.zeroCommand()
         self._legController.setEnable(True)
-        self._legController.setMaxTorque(100)
+        # self._legController.setMaxTorque(100)
 
         # update robot states
         self._stateEstimator.update(gym, env, actor, self._quadruped._bodyName)

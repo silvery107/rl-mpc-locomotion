@@ -31,13 +31,13 @@ class ControlFSM:
     def __init__(self,
                  _quadruped:Quadruped,
                  _stateEstimator:StateEstimatorContainer,
-                 _legController:LegController,
-                 _desiredStateCommand:DesiredStateCommand):
+                 _legController:LegController):#,
+                #  _desiredStateCommand:DesiredStateCommand):
         self.data = ControlFSMData()
         self.data._quadruped = _quadruped
         self.data._stateEstimator = _stateEstimator
         self.data._legController = _legController
-        self.data._desiredStateCommand = _desiredStateCommand
+        # self.data._desiredStateCommand = _desiredStateCommand
 
         self.statesList = FSM_StatesList()
         self.statesList.invalid = None
