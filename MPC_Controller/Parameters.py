@@ -15,6 +15,6 @@ class Parameters:
 
     control_mode = FSM_StateName.PASSIVE # 0 passive, 4 locomotion, 6 recovery stand
     operatingMode = FSM_OperatingMode.NORMAL # 0 no transition and safe check, 1 normal
-    controller_dt = 0.01 # 100 Hz
+    controller_dt = 0.002 # in sec
 
     locomotionUnsafe = False # global indicator for switching contorl mode

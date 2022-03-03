@@ -6,7 +6,7 @@ from MPC_Controller.common.Quadruped import RobotType
 from RL_Simulator import gamepad_reader
 
 from isaacgym import gymapi
-from RL_Simulator.utils import acquire_sim, create_envs, add_viewer, add_force_sensor
+from RL_Simulator.utils import acquire_sim, create_envs, add_viewer, get_force_sensor
 
 use_gamepad = True
 robot = RobotType.A1
@@ -20,7 +20,7 @@ envs_per_row = 2
 env_spacing = 0.5
 # one actor per env 
 envs, actors = create_envs(gym, sim, robot, num_envs, envs_per_row, env_spacing)
-# force_sensors = add_force_sensor(gym, num_envs, envs, actor_handles)
+force_sensors = get_force_sensor(gym, envs, actors)
 cam_pos = gymapi.Vec3(0.5, 0.6, 0.7) # w.r.t target env
 viewer = add_viewer(gym, sim, envs[0], cam_pos)
 

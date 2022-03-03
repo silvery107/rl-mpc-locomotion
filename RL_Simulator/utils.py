@@ -9,6 +9,8 @@ ALIENGO = "aliengo_description/xacro/aliengo.urdf"
 A1 = "a1_description/a1.urdf"
 XIAOTIAN = "Xiaotian-ROS/urdf/xiaotian_description.urdf"
 
+FOOT_IDX = [4, 8, 12, 16]
+
 fix_base_link = False
 init_height = 0.5
 
@@ -18,25 +20,26 @@ def acquire_sim(gym, dt):
 
     # set common parameters
     sim_params.dt = dt # control timestep
-    sim_params.substeps = 1 # physics simulation timestep
+    sim_params.substeps = 2 # physics simulation timestep
     sim_params.up_axis = gymapi.UP_AXIS_Z
     sim_params.gravity = gymapi.Vec3(0.0, 0.0, -9.81)
     # sim_params.use_gpu_pipeline = True
 
     # set PhysX-specific parameters
     sim_params.physx.use_gpu = True
-    sim_params.physx.solver_type = 1
-    sim_params.physx.num_position_iterations = 4
-    sim_params.physx.num_velocity_iterations = 1
-    sim_params.physx.contact_offset = 0.02
+    sim_params.physx.solver_type = 1 # TGS
+    sim_params.physx.num_position_iterations = 6 #4 improve solver convergence
+    sim_params.physx.num_velocity_iterations = 1 # keep default
+    # shapes whose distance is less than the sum of their contactOffset values will generate contacts
+    sim_params.physx.contact_offset = 0.01 # 0.02
+    # two shapes will come to rest at a distance equal to the sum of their restOffset values
     sim_params.physx.rest_offset = 0.0
-    # sim_params.physx.bounce_threshold_velocity = 0.2
-    # sim_params.physx.max_depenetration_velocity = 100.0
+    # A contact with a relative velocity below this will not bounce.
+    sim_params.physx.bounce_threshold_velocity = 0.2
+    # The maximum velocity permitted to be introduced by the solver to correct for penetrations in contacts.
+    sim_params.physx.max_depenetration_velocity = 100.0
     # sim_params.physx.default_buffer_size_multiplier = 5.0
     # sim_params.physx.max_gpu_contact_pairs = 8388608 # 8*1024*1024
-
-
-    # 0: CC_NEVER (don't collect contact info), 1: CC_LAST_SUBSTEP (collect only contacts on last substep), 2: CC_ALL_SUBSTEPS (default - all contacts)
 
     # create sim with these parameters
     sim = gym.create_sim(compute_device=0, graphics_device=0, type=gymapi.SIM_PHYSX, params=sim_params)
@@ -44,8 +47,8 @@ def acquire_sim(gym, dt):
     # configure the ground plane
     plane_params = gymapi.PlaneParams()
     plane_params.normal = gymapi.Vec3(0, 0, 1)  # z-up!
-    plane_params.static_friction = 0.6
-    plane_params.dynamic_friction = 0.6
+    plane_params.static_friction = 1
+    plane_params.dynamic_friction = 1
     plane_params.restitution = 0    # control the elasticity of collisions (amount of bounce)
     # create the ground plane
     gym.add_ground(sim, plane_params)
@@ -79,19 +82,14 @@ def load_asset(gym, sim, robot, fix_base_link):
     asset = gym.load_asset(sim, ASSET_ROOT, asset_file, asset_options) # or load_asset_urdf
     return asset
 
-def add_viewer(gym, sim, env, cam_pos):
-    # add viewer
-    cam_props = gymapi.CameraProperties()
-    viewer = gym.create_viewer(sim, cam_props)
-    # Look at the env
-    # cam_pos = gymapi.Vec3(1.5, 1, 3)
-    cam_target = gymapi.Vec3(0, 0, 0.0)
-    gym.viewer_camera_look_at(viewer, env, cam_pos, cam_target)
-    return viewer
 
 def create_envs(gym, sim, robot, num_envs, envs_per_row, env_spacing):
     # load robot from urdf
     asset = load_asset(gym, sim, robot, fix_base_link)
+
+    # attach force sensor on robot foot
+    create_asset_force_sensor(gym, asset)
+
     # set up the env grid
     env_lower = gymapi.Vec3(-env_spacing, -env_spacing, 0.0)
     env_upper = gymapi.Vec3(env_spacing, env_spacing, env_spacing)
@@ -117,18 +115,32 @@ def create_envs(gym, sim, robot, num_envs, envs_per_row, env_spacing):
     
     return envs, actor_handles
 
-def add_force_sensor(gym, num_envs, envs, actor_handles):
-    # add force sensors
+def create_asset_force_sensor(gym, asset):
     sensor_pose = gymapi.Transform(gymapi.Vec3(0.0, 0.0, 0.0))
-    # ! attention here, foot ids are not static for each robot
-    foot_ids = [5, 9, 13, 17]
-    # cache some common handles for later use
-    force_sensors = []
-    # create and populate the environments
-    for idx in range(num_envs):
-        for id in foot_ids:
-            foot_handle = gym.get_actor_rigid_body_handle(envs[idx], actor_handles[idx], id)
-            sensor = gym.create_force_sensor(envs[idx], foot_handle, sensor_pose)
-            force_sensors.append(sensor)
-    return force_sensors
+    
+    sensor_props = gymapi.ForceSensorProperties()
+    sensor_props.enable_forward_dynamics_forces = True
+    sensor_props.enable_constraint_solver_forces = True
+    sensor_props.use_world_frame = False
 
+    for id in FOOT_IDX:
+        gym.create_asset_force_sensor(asset, id, sensor_pose, sensor_props)
+
+def get_force_sensor(gym, envs, actor_handles):
+    sensors = []
+    for env, actor_handle in zip(envs, actor_handles):
+        num_sensors = gym.get_actor_force_sensor_count(env, actor_handle)
+        for i in range(num_sensors):
+            sensor = gym.get_actor_force_sensor(env, actor_handle, i)
+            sensors.append(sensor)
+
+    return sensors
+
+def add_viewer(gym, sim, env, cam_pos):
+    # add viewer
+    cam_props = gymapi.CameraProperties()
+    viewer = gym.create_viewer(sim, cam_props)
+    # Look at the env
+    cam_target = gymapi.Vec3(0, 0, 0.0)
+    gym.viewer_camera_look_at(viewer, env, cam_pos, cam_target)
+    return viewer
