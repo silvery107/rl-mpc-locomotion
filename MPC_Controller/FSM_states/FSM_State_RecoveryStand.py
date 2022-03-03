@@ -31,8 +31,8 @@ class FSM_State_RecoveyrStand(FSM_State):
         
         # Folding
         # * test passed
-        self.fold_ramp_iter = 45 / (Parameters.controller_dt*100)
-        self.fold_settle_iter = 75 / (Parameters.controller_dt*100)
+        self.fold_ramp_iter = int(45 / (Parameters.controller_dt*100))
+        self.fold_settle_iter = int(75 / (Parameters.controller_dt*100))
         self.fold_jpos = np.array([0.0, -1.4, 2.7,
                                    -0.0, -1.4, 2.7,
                                    0.0, -1.4, 2.7,
@@ -41,8 +41,8 @@ class FSM_State_RecoveyrStand(FSM_State):
 
         # Stand Up 
         # * test passed
-        self.standup_ramp_iter = 30 / (Parameters.controller_dt*100)
-        self.standup_settle_iter = 30 / (Parameters.controller_dt*100)
+        self.standup_ramp_iter = int(30 / (Parameters.controller_dt*100))
+        self.standup_settle_iter = int(30 / (Parameters.controller_dt*100))
         self.stand_jpos = np.array([0., -.8, 1.6,
                                     0., -.8, 1.6,
                                     0., -.8, 1.6,
@@ -51,8 +51,8 @@ class FSM_State_RecoveyrStand(FSM_State):
 
         # Rolling
         # * test passed
-        self.rollover_ramp_iter = 15 / (Parameters.controller_dt*100)
-        self.rollover_settle_iter = 15 / (Parameters.controller_dt*100)
+        self.rollover_ramp_iter = int(15 / (Parameters.controller_dt*100))
+        self.rollover_settle_iter = int(15 / (Parameters.controller_dt*100))
         self.rolling_jpos = np.array([1.3, -3.1, 2.77,
                                       0.0, -1.6, 2.77,
                                       1.3, -3.1, 2.77,

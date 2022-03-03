@@ -48,6 +48,8 @@ print("[Simulator Driver] First run of robot controller...")
 
 count = 0
 render_fps = 30
+render_count = int(1/render_fps/Parameters.controller_dt)
+
 # simulation loop
 while not gym.query_viewer_has_closed(viewer):
     # step the physics
@@ -76,13 +78,13 @@ while not gym.query_viewer_has_closed(viewer):
 
     # robotRunner.run(gym, envs[0], actors[0])
 
-    if count % int(1/render_fps*1000) == 0:
+    if count % render_count == 0:
         # update the viewer
         gym.step_graphics(sim)
         gym.draw_viewer(viewer, sim, True)
         
         # Wait for dt to elapse in real time.
-        # gym.sync_frame_time(sim)
+        gym.sync_frame_time(sim)
         count = 0
 
     count += 1

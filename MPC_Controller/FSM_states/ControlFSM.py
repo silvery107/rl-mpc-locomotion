@@ -52,7 +52,7 @@ class ControlFSM:
         
         self.transitionDone = False
         self.printIter = 0
-        self.printNum = 1000 # N*(0.01s) in simulation time
+        self.printNum = int(1000/(Parameters.controller_dt*100)) # N*(0.01s) in simulation time
         self.iter = 0
 
         # ! may need a SafetyChecker
@@ -165,8 +165,8 @@ class ControlFSM:
         if opt == 0:
             self.printIter += 1
             if self.printIter == self.printNum:
-                print("[CONTROL FSM] Printing FSM Info...")
                 print("---------------------------------------------------------")
+                print("[CONTROL FSM] Printing FSM Info...")
                 print("Iteration: " + str(self.iter))
                 if self.operatingMode == FSM_OperatingMode.NORMAL:
                     print("Operating Mode:: NORMAL in "+self.currentState.stateString)
