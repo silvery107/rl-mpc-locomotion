@@ -10,7 +10,7 @@ from RL_Simulator.utils import acquire_sim, create_envs, add_viewer, add_force_s
 
 use_gamepad = True
 robot = RobotType.A1
-dt =  0.01
+dt =  Parameters.controller_dt
 gym = gymapi.acquire_gym()
 sim = acquire_sim(gym, dt)
 
@@ -29,7 +29,7 @@ for idx in range(num_envs):
     # configure the joints for effort control mode (once)
     props = gym.get_actor_dof_properties(envs[idx], actors[idx])
     props["driveMode"].fill(gymapi.DOF_MODE_EFFORT)
-    props["stiffness"].fill(0.1)
+    props["stiffness"].fill(0.0)
     props["damping"].fill(0.0)
     gym.set_actor_dof_properties(envs[idx], actors[idx], props)
 
@@ -45,14 +45,16 @@ if use_gamepad:
     gamepad = gamepad_reader.Gamepad(vel_scale_x=2.0, vel_scale_y=1., vel_scale_rot=1.)
 
 print("[Simulator Driver] First run of robot controller...")
+
+count = 0
+render_fps = 30
 # simulation loop
 while not gym.query_viewer_has_closed(viewer):
-
     # step the physics
     gym.simulate(sim)
     gym.fetch_results(sim, True)
 
-    current_time = gym.get_sim_time(sim)
+    # current_time = gym.get_sim_time(sim)
 
     if use_gamepad:
         lin_speed, ang_speed, e_stop = gamepad.get_command()
@@ -74,12 +76,16 @@ while not gym.query_viewer_has_closed(viewer):
 
     # robotRunner.run(gym, envs[0], actors[0])
 
-    # update the viewer
-    gym.step_graphics(sim)
-    gym.draw_viewer(viewer, sim, True)
-    
-    # Wait for dt to elapse in real time.
-    gym.sync_frame_time(sim)
+    if count % int(1/render_fps*1000) == 0:
+        # update the viewer
+        gym.step_graphics(sim)
+        gym.draw_viewer(viewer, sim, True)
+        
+        # Wait for dt to elapse in real time.
+        # gym.sync_frame_time(sim)
+        count = 0
+
+    count += 1
 
 if use_gamepad:
     gamepad.stop()

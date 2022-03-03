@@ -1,6 +1,7 @@
 import math
 import numpy as np
 from math import sin, cos
+from MPC_Controller.Parameters import Parameters
 from MPC_Controller.common.Quadruped import Quadruped
 from MPC_Controller.utils import DTYPE, getSideSign
 from isaacgym import gymapi
@@ -114,20 +115,6 @@ class LegController:
             # v
             self.datas[leg].v = self.datas[leg].J @ self.datas[leg].qd
 
-    def getLegIdx(self, idx_in):
-        # MIT   0 1 2 3
-        # Isaac 1 0 3 2
-        return idx_in
-
-        if idx_in == 0:
-            return 1
-        elif idx_in == 1:
-            return 0
-        elif idx_in == 2:
-            return 3
-        elif idx_in == 3:
-            return 2
-
     def updateCommand(self, gym, env, actor):
         """
         update leg commands for simulator
@@ -153,7 +140,7 @@ class LegController:
                 legTorques[leg*3:(leg+1)*3] = legTorque.flatten()
         
         # print("leg 0 effort %.3f %.3f %.3f"%(legTorques[0], legTorques[1], legTorques[2]))
-        gym.apply_actor_dof_efforts(env, actor, legTorques)       
+        gym.apply_actor_dof_efforts(env, actor, legTorques / (Parameters.controller_dt*100))       
 
 
     def computeLegJacobianAndPosition(self, leg:int):
