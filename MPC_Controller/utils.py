@@ -17,10 +17,10 @@ class CoordinateAxis(Enum):
 class GaitType(Enum):
     TROT = 0
     TROTRUN = 7
-    GALLOP = 5
+    # GALLOP = 5
     WALK = 6
     PACE = 3
-    PRONK = 2
+    # PRONK = 2
     BOUND = 1
     STAND = 4
 
@@ -61,6 +61,10 @@ class Quaternion:
         return np.array([self.w,self.x,self.y,self.z], dtype=DTYPE).reshape((4,1))
 
 def quat_to_rpy(q:Quaternion) -> np.ndarray:
+    """
+    * Convert a quaternion to RPY. Return
+    * angles in (roll, pitch, yaw).
+    """
     rpy = np.zeros((3,1), dtype=DTYPE)
     as_ = np.min([-2.*(q.x*q.z-q.w*q.y),.99999])
     # roll
@@ -72,6 +76,11 @@ def quat_to_rpy(q:Quaternion) -> np.ndarray:
     return rpy
 
 def quat_to_rot(q:Quaternion) -> np.ndarray:
+    """
+    * Convert a quaternion to a rotation matrix.  This matrix represents a
+    * coordinate transformation into the frame which has the orientation specified
+    * by the quaternion
+    """
     e0 = q.w
     e1 = q.x
     e2 = q.y
