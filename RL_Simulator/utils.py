@@ -31,7 +31,7 @@ def acquire_sim(gym, dt):
     sim_params.physx.num_position_iterations = 6 #4 improve solver convergence
     sim_params.physx.num_velocity_iterations = 1 # keep default
     # shapes whose distance is less than the sum of their contactOffset values will generate contacts
-    sim_params.physx.contact_offset = 0.01 # 0.02
+    sim_params.physx.contact_offset = 0.02 # 0.02
     # two shapes will come to rest at a distance equal to the sum of their restOffset values
     sim_params.physx.rest_offset = 0.0
     # A contact with a relative velocity below this will not bounce.
