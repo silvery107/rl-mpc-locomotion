@@ -1,13 +1,15 @@
 import math
 import sys
 import time
+
 sys.path.append("..")
+
+from MPC_Controller.DesiredStateCommand import DesiredStateCommand
 import numpy as np
 from MPC_Controller.convex_MPC.Gait import OffsetDurationGait
 from MPC_Controller.FSM_states.ControlFSMData import ControlFSMData
-from MPC_Controller.common.Quadruped import RobotType
 from MPC_Controller.common.FootSwingTrajectory import FootSwingTrajectory
-from MPC_Controller.utils import K_MAX_GAIT_SEGMENTS, coordinateRotation, CoordinateAxis, DTYPE, CASTING, getSideSign
+from MPC_Controller.utils import K_MAX_GAIT_SEGMENTS, coordinateRotation, CoordinateAxis, DTYPE, getSideSign
 
 from MPC_Controller.Parameters import Parameters
 if Parameters.cmpc_solver_type == 1:
@@ -101,6 +103,9 @@ class ConvexMPCLocomotion:
         self.Kd_stance:np.ndarray = None
 
     def initialize(self):
+        self.__x_vel_des = 0.0
+        self.__y_vel_des = 0.0
+        self.__yaw_turn_rate = 0.0
         self.firstSwing = [True for _ in range(4)]
         self.firstRun = True
 
@@ -111,20 +116,16 @@ class ConvexMPCLocomotion:
     def __SetupCommand(self, data:ControlFSMData):
 
         self.__body_height = data._quadruped._bodyHeight
-        x_vel_cmd = 0.0
-        y_vel_cmd = 0.0
         filter = 0.1
 
-        self.__yaw_turn_rate = data._desiredStateCommand.yaw_turn_rate
-        y_vel_cmd = data._desiredStateCommand.y_vel_cmd
-        x_vel_cmd = data._desiredStateCommand.x_vel_cmd
+        x_vel_cmd = DesiredStateCommand.x_vel_cmd
+        y_vel_cmd = DesiredStateCommand.y_vel_cmd
+        self.__yaw_turn_rate = DesiredStateCommand.yaw_turn_rate
 
         self.__x_vel_des = self.__x_vel_des*(1-filter) + x_vel_cmd*filter
         self.__y_vel_des = self.__y_vel_des*(1-filter) + y_vel_cmd*filter
 
         self.__yaw_des = data._stateEstimator.getResult().rpy[2].item() + self.dt*self.__yaw_turn_rate
-        self.__roll_des = 0.0
-        self.__pitch_des = 0.0
 
     def solveDenseMPC(self, mpcTable:list, data:ControlFSMData):
         seResult = data._stateEstimator.getResult()
@@ -151,6 +152,7 @@ class ConvexMPCLocomotion:
         vxy = np.array([seResult.vWorld[0], seResult.vWorld[1], 0], dtype=DTYPE).reshape((3,1))
         self.dtMPC = self.dt*self.iterationsBetweenMPC
         if Parameters.cmpc_solver_type == 2:
+            # TODO solver 初始化可以移到 init 去
             self._cpp_mpc = mpc.ConvexMpc(data._quadruped._bodyMass, 
                                           list(data._quadruped._bodyInertia),
                                           num_legs,
@@ -179,19 +181,59 @@ class ConvexMPCLocomotion:
             mpc.update_problem_data(p, v, q, w, rpy, r_feet, yaw, weights, self.trajAll, alpha, mpcTable)
         
         elif Parameters.cmpc_solver_type==2:
+            # *Normal Vector of ground
+            gravity_projection_vec = np.array([0, 0, 1],dtype=DTYPE)
+            # gravity_projection_vec = seResult.ground_normal
+            
+            # *MIT's way of states
+            # v_des_robot = np.array([self.__x_vel_des, self.__y_vel_des, 0], dtype=DTYPE).reshape((3,1))
+            # v_des_world = seResult.rBody.T @ v_des_robot
+
+            # com_roll_pitch_yaw = seResult.rpy.flatten()
+            # com_position = seResult.position.flatten()
+            # com_angular_velocity = seResult.omegaWorld.flatten()
+            # com_velocity = seResult.vWorld.flatten()
+
+            # desired_com_roll_pitch_yaw = np.array([self.rpy_comp[0], self.rpy_comp[1], self.__yaw_des], dtype=DTYPE)
+            # desired_com_position = np.array([self.world_position_desired[0], self.world_position_desired[1], self.__body_height], dtype=DTYPE)
+            # desired_com_velocity = np.array([v_des_world[0], v_des_world[1], 0.0],dtype=DTYPE)
+            # desired_com_angular_velocity = np.array([0, 0, self.__yaw_turn_rate], dtype=DTYPE)
+
+            # *Google's way of states
+            com_roll_pitch_yaw = np.array([seResult.rpyBody[0], seResult.rpyBody[1], 0], dtype=DTYPE)
+            com_position = np.array([0, 0, p[2]], dtype=DTYPE)
+            com_angular_velocity = seResult.omegaBody.flatten()
+            com_velocity = seResult.vBody.flatten()
+
+            desired_com_position = np.array([0., 0., self.__body_height], dtype=DTYPE)
+            desired_com_velocity = np.array([self.__x_vel_des, self.__y_vel_des, 0], dtype=DTYPE)
+            desired_com_roll_pitch_yaw = np.zeros(3, dtype=DTYPE) # walk parallel to the ground
+            desired_com_angular_velocity = np.array([0, 0, self.__yaw_turn_rate], dtype=DTYPE)
+
+            print("------------------------------------------")
+            print("Com Pos: {: .4f}, {: .4f}, {: .4f}".format(*com_position))
+            print("Com Vel: {: .4f}, {: .4f}, {: .4f}".format(*com_velocity))
+            print("Com Ang: {: .4f}, {: .4f}, {: .4f}".format(*com_angular_velocity))
+            print("Com RPY: {: .4f}, {: .4f}, {: .4f}".format(*np.rad2deg(com_roll_pitch_yaw)))
+            print("------------------------------------------")
+            print("Des Pos: {: .4f}, {: .4f}, {: .4f}".format(*desired_com_position))
+            print("Des Vel: {: .4f}, {: .4f}, {: .4f}".format(*desired_com_velocity))
+            print("Des Ang: {: .4f}, {: .4f}, {: .4f}".format(*desired_com_angular_velocity))
+            print("Des RPY: {: .4f}, {: .4f}, {: .4f}".format(*np.rad2deg(desired_com_roll_pitch_yaw)))
+
             predicted_contact_forces = self._cpp_mpc.compute_contact_forces(
-                p.flatten(), #! com_position (set x y to 0.0)
-                v.flatten(), #com_velocity
-                rpy.flatten(), #! com_roll_pitch_yaw (set yaw to 0.0)
-                np.array([0,0,1],dtype=DTYPE),  # Normal Vector of ground
-                w.flatten(), #com_angular_velocity
+                com_position, # com_position (set x y to 0.0)
+                com_velocity, # com_velocity
+                com_roll_pitch_yaw, # com_roll_pitch_yaw (set yaw to 0.0)
+                gravity_projection_vec,  # Normal Vector of ground
+                com_angular_velocity, # com_angular_velocity
                 np.asarray(mpcTable, dtype=DTYPE),  # Foot contact states
-                np.array(r_feet.flatten(), dtype=DTYPE),  #foot_positions_base_frame
-                data._quadruped._friction_coeffs,  #foot_friction_coeffs
-                np.array([0., 0., self.__body_height], dtype=DTYPE),  #desired_com_position
-                np.array([self.__x_vel_des, self.__y_vel_des, 0], dtype=DTYPE),  #desired_com_velocity
-                np.zeros(3, dtype=DTYPE),  #desired_com_roll_pitch_yaw
-                np.array([0, 0, self.__yaw_turn_rate], dtype=DTYPE)  #desired_com_angular_velocity
+                np.array(r_feet.flatten(), dtype=DTYPE),  # foot_positions_base_frame
+                data._quadruped._friction_coeffs,  # foot_friction_coeffs
+                desired_com_position,  # desired_com_position
+                desired_com_velocity,  # desired_com_velocity
+                desired_com_roll_pitch_yaw,  # desired_com_roll_pitch_yaw
+                desired_com_angular_velocity  # desired_com_angular_velocity
             )
 
         for leg in range(4):
@@ -248,17 +290,21 @@ class ConvexMPCLocomotion:
 
                 self.world_position_desired[0] = xStart
                 self.world_position_desired[1] = yStart
-
+                
                 trajInitial = [
+                    # roll pitch yaw
                     self.rpy_comp[0],
                     self.rpy_comp[1],
                     self.__yaw_des,
-                    xStart,
-                    yStart,
+                    # position
+                    self.world_position_desired[0],
+                    self.world_position_desired[1],
                     self.__body_height,
+                    # angular velocity
                     0,
                     0,
                     self.__yaw_turn_rate,
+                    # velocity
                     v_des_world[0],
                     v_des_world[1],
                     0
@@ -276,7 +322,6 @@ class ConvexMPCLocomotion:
                         self.trajAll[12*i + 2] = self.trajAll[12 * (i - 1) + 2] + self.dtMPC * self.__yaw_turn_rate
 
             self.solveDenseMPC(mpcTable, data)
-
 
 
     def run(self, data:ControlFSMData):
@@ -369,11 +414,11 @@ class ConvexMPCLocomotion:
 
             self.firstRun = False
 
-        # foot placement
+        # !! TODO foot placement 我觉得应该是这里的问题 是不是还是和腿的下标有关系 ????
         for l in range(4):
             self.swingTimes[l] = gait.getCurrentSwingTime(self.dtMPC, l)
 
-        interleave_y = [-0.08, 0.08, 0.02, -0.02]
+        interleave_y = [0.08, -0.08, -0.02, 0.02] # 这里调过了
         interleave_gain = -0.2
         v_abs = math.fabs(v_des_robot[0])
 
@@ -430,7 +475,6 @@ class ConvexMPCLocomotion:
         for foot in range(4):
             contactState = contactStates[foot]
             swingState = swingStates[foot]
-            # swingState = 0
             if swingState > 0: #* foot is in swing
                 if self.firstSwing[foot]:
                     self.firstSwing[foot] = False
