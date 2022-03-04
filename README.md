@@ -59,13 +59,14 @@
 - mpc stand 有问题, locomotion transition 有问题
 - Recovery stand 调试完成 3.1
 - locomotion transition 到 recovery 的时候自动转移和手动转移冲突了 3.1
-- TODO mpc stand 需要更换参考轨迹
+- TODO mpc stand 需要更换参考轨迹 (弃用)
 - TODO 还差一个地面法向量估计算法 (已完成)
 - 全局自动转移通过虚拟按键解决 3.2
 - RL train 的时候个体自动转移: 加一个私有域存当前的control mode, 或者在 locomotion unsafe 的时候直接 reset, 固定gait type
 - 摔倒以后会乱跑了, com 状态给错了, 给的是 world 状态, 指令全成了朝仿真器坐标朝向 3.2
 - TODO 触地检测 用力传感器做, 配合状态变换完成地面法向量估计
 - 加了力传感器, 身体系和世界系没有对齐的时候就会乱跑, 趋于一个对齐的参考轨迹, 坐标变换有问题 3.3
+- MPC stand 要配合WBC的task才有用 决定放弃 stand 步态 3.4
 
 ### Roadmap
 
