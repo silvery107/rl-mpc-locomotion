@@ -1,17 +1,18 @@
 import numpy as np
 from isaacgym import gymapi
 from MPC_Controller.state_estimate.moving_window_filter import MovingWindowFilter
-from MPC_Controller.utils import quat_to_rot, quat_to_rpy, Quaternion, DTYPE
+from MPC_Controller.utils import quat_to_rot, quat_to_rpy, Quaternion, DTYPE, rot_to_rpy, rpy_to_rot
 
 class StateEstimate:
     def __init__(self):
         self.position = np.zeros((3,1), dtype=DTYPE)
         self.vWorld = np.zeros((3,1), dtype=DTYPE)
         self.omegaWorld = np.zeros((3,1), dtype=DTYPE)
-        self.orientation = Quaternion(1, 0.0, 0.0, 0.0)
+        self.orientation = Quaternion(1, 0, 0, 0)
 
         self.rBody = np.zeros((3,3), dtype=DTYPE)
         self.rpy = np.zeros((3,1), dtype=DTYPE)
+        self.rpy_body = np.zeros((3,1), dtype=DTYPE)
 
         self._ground_normal = np.zeros(3, dtype=DTYPE)
 
@@ -50,14 +51,19 @@ class StateEstimatorContainer:
         self.result.orientation.y = body_states["pose"]["r"]["y"]
         self.result.orientation.z = body_states["pose"]["r"]["z"]
 
-        self.result.rpy = quat_to_rpy(self.result.orientation)
+        # all good here
         self.result.rBody = quat_to_rot(self.result.orientation)
-
         self.result.vBody = self.result.rBody @ self.result.vWorld
         self.result.omegaBody = self.result.rBody @ self.result.omegaWorld
 
-        # np.copyto(self.result.rpy, quat_to_rpy(self.result.orientation))
-        # np.copyto(self.result.rBody, quat_to_rot(self.result.orientation))
+        #  RPY of body in the world frame
+        self.result.rpy = quat_to_rpy(self.result.orientation) #!!! 就是他有问题
+
+        base_R_world = rpy_to_rot([0,0,self.result.rpy[2]])
+        body_R_base = self.result.rBody @ base_R_world.T
+
+        # RPY of body in yaw aligned base frame
+        self.result.rpy_body = rot_to_rpy(body_R_base)
 
     def _compute_ground_normal(self, contact_foot_positions):
         """Computes the surface orientation in robot frame based on foot positions.
