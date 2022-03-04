@@ -1,7 +1,7 @@
 import numpy as np
 from math import sin, cos
 from MPC_Controller.utils import DTYPE, CASTING, Quaternion
-from MPC_Controller.StateEstimatorContainer import quat_to_rot
+from MPC_Controller.state_estimate.StateEstimatorContainer import quat_to_rot
 
 class RobotState:
 

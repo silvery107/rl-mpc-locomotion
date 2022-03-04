@@ -1,6 +1,6 @@
 import numpy as np
 from isaacgym import gymapi
-from MPC_Controller.moving_window_filter import MovingWindowFilter
+from MPC_Controller.state_estimate.moving_window_filter import MovingWindowFilter
 from MPC_Controller.utils import quat_to_rot, quat_to_rpy, Quaternion, DTYPE
 
 class StateEstimate:
@@ -55,9 +55,6 @@ class StateEstimatorContainer:
 
         self.result.vBody = self.result.rBody @ self.result.vWorld
         self.result.omegaBody = self.result.rBody @ self.result.omegaWorld
-        
-        # self.result.vWorld = self.result.vBody.copy()
-        # self.result.omegaWorld = self.result.omegaBody.copy()
 
         # np.copyto(self.result.rpy, quat_to_rpy(self.result.orientation))
         # np.copyto(self.result.rBody, quat_to_rot(self.result.orientation))

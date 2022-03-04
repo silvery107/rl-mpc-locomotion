@@ -2,7 +2,7 @@ from MPC_Controller.common.Quadruped import Quadruped
 from MPC_Controller.common.LegController import LegController
 from MPC_Controller.FSM_states.ControlFSM import ControlFSM
 # from MPC_Controller.Parameters import Parameters
-from MPC_Controller.StateEstimatorContainer import StateEstimatorContainer
+from MPC_Controller.state_estimate.StateEstimatorContainer import StateEstimatorContainer
 from MPC_Controller.DesiredStateCommand import DesiredStateCommand
 
 class RobotController:
