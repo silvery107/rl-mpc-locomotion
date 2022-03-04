@@ -117,26 +117,26 @@ class FSM_State_Locomotion(FSM_State):
         max_pitch = 40
 
         if fabs(seResult.rpy[0]>deg2rad(max_roll)):
-            print("Unsafe locomotion: roll is %.3f degrees (max %.3f)"%(rad2deg(seResult.rpy[0]), max_roll))
+            print("[FSM LOCOMOTION] Unsafe locomotion: roll is %.3f degrees (max %.3f)"%(rad2deg(seResult.rpy[0]), max_roll))
             return False
         
         if fabs(seResult.rpy[1]) > deg2rad(max_pitch):
-            print("Unsafe locomotion: pitch is %.3f degrees (max %.3f)\n"% (rad2deg(seResult.rpy[1]), max_pitch))
+            print("[FSM LOCOMOTION] Unsafe locomotion: pitch is %.3f degrees (max %.3f)\n"% (rad2deg(seResult.rpy[1]), max_pitch))
             return False
         
         for leg in range(4):
             p_leg = self._data._legController.datas[leg].p
             if p_leg[2]>0:
-                print("Unsafe locomotion: leg %d is above hip (%.3f m)"%(leg, p_leg[2]))
+                print("[FSM LOCOMOTION] Unsafe locomotion: leg %d is above hip (%.3f m)"%(leg, p_leg[2]))
                 return False
             
             if fabs(p_leg[1]>0.18):
-                print("Unsafe locomotion: leg %d's y-position is bad (%.3f m)"%(leg, p_leg[1]))
+                print("[FSM LOCOMOTION] Unsafe locomotion: leg %d's y-position is bad (%.3f m)"%(leg, p_leg[1]))
                 return False
             
             v_leg = norm(self._data._legController.datas[leg].v)
             if fabs(v_leg) > 9.0:
-                print("Unsafe locomotion: leg %d is moving too quickly (%.3f m/s)"%(leg, v_leg))
+                print("[FSM LOCOMOTION] Unsafe locomotion: leg %d is moving too quickly (%.3f m/s)"%(leg, v_leg))
                 return False
         
         return True
