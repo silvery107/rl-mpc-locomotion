@@ -3,12 +3,13 @@ import numpy as np
 from enum import Enum, auto
 from math import sin, cos
 
+# Constants
 DTYPE = np.float32
 CASTING = "same_kind"
-# SIDE_SIGN = [-1, 1, -1, 1]
 SIDE_SIGN = [1, -1, 1, -1]
 K_MAX_GAIT_SEGMENTS = 40
 
+# Enumerate classes
 class CoordinateAxis(Enum):
     X = auto()
     Y = auto()
@@ -22,7 +23,7 @@ class GaitType(Enum):
     PACE = 3
     # PRONK = 2
     BOUND = 1
-    STAND = 4
+    # STAND = 4
 
 class FSM_StateName(Enum):
     INVALID = 99
@@ -37,6 +38,7 @@ class FSM_OperatingMode(Enum):
     # ESTOP = auto()
     # EDAMP = auto()
 
+# Orientation tools
 def coordinateRotation(axis:CoordinateAxis, theta:float) -> np.ndarray:
     s = sin(float(theta))
     c = cos(float(theta))
@@ -51,7 +53,7 @@ def coordinateRotation(axis:CoordinateAxis, theta:float) -> np.ndarray:
     return R
 
 class Quaternion:
-    def __init__(self, w:float, x:float, y:float, z:float):
+    def __init__(self, w:float=1, x:float=0, y:float=0, z:float=0):
         self.w = float(w)
         self.x = float(x)
         self.y = float(y)
@@ -93,6 +95,55 @@ def quat_to_rot(q:Quaternion) -> np.ndarray:
                   dtype=DTYPE).reshape((3,3))
     return R.T
 
+def rpy_to_rot(rpy):
+    """
+    convert RPY to a rotation matrix
+    """
+    R = coordinateRotation(CoordinateAxis.X, rpy[0]) @\
+        coordinateRotation(CoordinateAxis.Y, rpy[1]) @\
+        coordinateRotation(CoordinateAxis.Z, rpy[2])
+    return R
+
+def rot_to_quat(rot:np.ndarray):
+    """
+    * Convert a coordinate transformation matrix to an orientation quaternion.
+    """
+    q = Quaternion()
+    r = rot.T.copy() # important
+    tr = np.trace(r)
+    if tr>0.0:
+        S = math.sqrt(tr + 1.0) * 2.0
+        q.w = 0.25 * S
+        q.x = (r[2,1] - r[1,2])/S
+        q.y = (r[0,2] - r[2,0])/S
+        q.z = (r[1,0] - r[0,1])/S
+
+    elif (r[0, 0] > r[1, 1]) and (r[0, 0] > r[2, 2]):
+        S = math.sqrt(1.0 + r[0,0] - r[1,1] - r[2,2]) * 2.0
+        q.w = (r[2,1] - r[1,2])/S
+        q.x = 0.25 * S
+        q.y = (r[0,1] + r[1,0])/S
+        q.z = (r[0,2] + r[2,0])/S
+
+    elif r[1,1]>r[2,2]:
+        S = math.sqrt(1.0 + r[1,1] -r[0,0] -r[2,2]) * 2.0
+        q.w = (r[0,2] - r[2,0])/S
+        q.x = (r[0,1] + r[1,0])/S
+        q.y = 0.25 * S
+        q.z = (r[1,2] + r[2,1])/S
+        
+    else:
+        S = math.sqrt(1.0 + r[2,2] - r[0,0] - r[1,1]) * 2.0
+        q.w = (r[1,0] - r[0,1])/S
+        q.x = (r[0,2] + r[2,0])/S
+        q.y = (r[1,2] + r[2,1])/S
+        q.z = 0.25 * S
+    
+    return q
+    
+def rot_to_rpy(rot:np.ndarray):
+    return quat_to_rpy(rot_to_quat(rot))
+
 def deg2rad(deg:float):
     return deg*math.pi/180
 
@@ -125,6 +176,7 @@ def cubicBezierSecondDerivative(y0:np.ndarray, yf:np.ndarray, x:float):
     bezier = 6.0 - 12.0 * x
     return bezier * yDiff
 
+# Others
 def getSideSign(leg:int):
     """
     Get if the i-th leg is on the left (+) or right (-) of the robot
