@@ -1,3 +1,4 @@
+from unittest import result
 import numpy as np
 from isaacgym import gymapi
 from MPC_Controller.state_estimate.moving_window_filter import MovingWindowFilter
@@ -12,9 +13,9 @@ class StateEstimate:
 
         self.rBody = np.zeros((3,3), dtype=DTYPE)
         self.rpy = np.zeros((3,1), dtype=DTYPE)
-        self.rpy_body = np.zeros((3,1), dtype=DTYPE)
+        self.rpyBody = np.zeros((3,1), dtype=DTYPE)
 
-        self._ground_normal = np.zeros(3, dtype=DTYPE)
+        self.ground_normal = np.zeros(3, dtype=DTYPE)
 
         self.vBody = np.zeros((3,1), dtype=DTYPE)
         self.omegaBody = np.zeros((3,1), dtype=DTYPE)
@@ -63,7 +64,13 @@ class StateEstimatorContainer:
         body_R_base = self.result.rBody @ base_R_world.T
 
         # RPY of body in yaw aligned base frame
-        self.result.rpy_body = rot_to_rpy(body_R_base)
+        self.result.rpyBody = rot_to_rpy(body_R_base)
+
+        # cheat mode
+        # self.result.position = np.array([0, 0, self.result.position[2]], dtype=DTYPE).reshape((3,1))
+        # self.result.vWorld = self.result.vBody
+        # self.result.omegaWorld = self.result.omegaBody
+        # self.result.rpy = self.result.rpyBody
 
     def _compute_ground_normal(self, contact_foot_positions):
         """Computes the surface orientation in robot frame based on foot positions.
@@ -78,4 +85,4 @@ class StateEstimatorContainer:
 
         _ground_normal = self._ground_normal_filter.calculate_average(normal_vec)
         _ground_normal /= np.linalg.norm(_ground_normal)
-        self.result._ground_normal = _ground_normal
+        self.result.ground_normal = _ground_normal
