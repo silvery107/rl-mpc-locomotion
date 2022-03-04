@@ -50,16 +50,22 @@
 - mini cheetah trot 完全成功，多机器人mpc成功，抗扰动鲁棒性也不错，调整了body mass 和 inertia 来稳定控制器，目前是100Hz 2.20
 - aliengo 似乎朝向错了
 - 增加了a1支持, 但是 aliengo和 a1 都在往地上走, 很奇怪 2.20
-- TODO 对比两组 a1 的控制器输入输出来找bug 2.26
+- TODO 对比两组 a1 的控制器输入输出来找bug 2.26 (已完成)
 - debug 完成, aliengo 和 a1 都可以走了, bug 在于宇树 hip、knee 电机正方向和 mit 相反且为 revolute 关节, 对应反向并改为 continuous 关节即可 2.27
-- TODO 写个机器人初始化姿态控制即可, 然后把手柄控制器加上, 准备进入 RL 阶段 2.27
+- TODO 写个机器人初始化姿态控制即可, 然后把手柄控制器加上 2.27 (已完成)
 - 手柄控制完成, 增加了 pronk, bound, pace 步态和对应的手柄按键逻辑 2.28
 - recovery stand 和 passive FSM 写好了, 还需要 debug 一下 2.28
 - TODO 调通 FSM 后把transition data 换成 done (已完成)
 - mpc stand 有问题, locomotion transition 有问题
 - Recovery stand 调试完成 3.1
-- mpc stand 需要更换参考轨迹, locomotion transition 到 recovery 的时候自动转移和手动转移冲突了 3.1
-- TODO 还差一个地面法向量估计算法设计 
+- locomotion transition 到 recovery 的时候自动转移和手动转移冲突了 3.1
+- TODO mpc stand 需要更换参考轨迹
+- TODO 还差一个地面法向量估计算法 (已完成)
+- 全局自动转移通过虚拟按键解决 3.2
+- RL train 的时候个体自动转移: 加一个私有域存当前的control mode, 或者在 locomotion unsafe 的时候直接 reset, 固定gait type
+- 摔倒以后会乱跑了, com 状态给错了, 给的是 world 状态, 指令全成了朝仿真器坐标朝向 3.2
+- TODO 触地检测 用力传感器做, 配合状态变换完成地面法向量估计
+- 加了力传感器, 身体系和世界系没有对齐的时候就会乱跑, 趋于一个对齐的参考轨迹, 坐标变换有问题 3.3
 
 ### Roadmap
 
