@@ -15,8 +15,8 @@ class StateEstimate:
 
         self._ground_normal = np.zeros(3, dtype=DTYPE)
 
-        # self.omegaBody = np.zeros((3,1), dtype=DTYPE)
-        # self.vBody = np.zeros((3,1), dtype=DTYPE)
+        self.vBody = np.zeros((3,1), dtype=DTYPE)
+        self.omegaBody = np.zeros((3,1), dtype=DTYPE)
         # self.aBody = np.zeros((3,1), dtype=DTYPE)
         # self.aWorld = np.zeros((3,1), dtype=DTYPE)
         # self.contactEstimate = np.zeros((4,1), dtype=DTYPE)
@@ -41,7 +41,7 @@ class StateEstimatorContainer:
         body_states = gym.get_actor_rigid_body_states(env, actor, gymapi.STATE_ALL)[body_idx]
 
         for idx in range(3):
-            self.result.position[idx] = body_states["pose"]["p"][idx] if idx==2 else 0.0 # positions (Vec3: x, y, z)
+            self.result.position[idx] = body_states["pose"]["p"][idx] # positions (Vec3: x, y, z)
             self.result.vWorld[idx] = body_states["vel"]["linear"][idx] # linear velocities (Vec3: x, y, z)
             self.result.omegaWorld[idx] = body_states["vel"]["angular"][idx] # angular velocities (Vec3: x, y, z)
 
@@ -51,8 +51,14 @@ class StateEstimatorContainer:
         self.result.orientation.z = body_states["pose"]["r"]["z"]
 
         self.result.rpy = quat_to_rpy(self.result.orientation)
-        self.result.rpy[2] = 0.0
         self.result.rBody = quat_to_rot(self.result.orientation)
+
+        self.result.vBody = self.result.rBody @ self.result.vWorld
+        self.result.omegaBody = self.result.rBody @ self.result.omegaWorld
+        
+        # self.result.vWorld = self.result.vBody.copy()
+        # self.result.omegaWorld = self.result.omegaBody.copy()
+
         # np.copyto(self.result.rpy, quat_to_rpy(self.result.orientation))
         # np.copyto(self.result.rBody, quat_to_rot(self.result.orientation))
 
@@ -66,6 +72,7 @@ class StateEstimatorContainer:
         normal_vec /= np.linalg.norm(normal_vec)
         if normal_vec[2] < 0:
             normal_vec = -normal_vec
+
         _ground_normal = self._ground_normal_filter.calculate_average(normal_vec)
         _ground_normal /= np.linalg.norm(_ground_normal)
-        return _ground_normal
+        self.result._ground_normal = _ground_normal
