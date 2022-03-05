@@ -2,6 +2,7 @@ from re import A
 from isaacgym import gymapi
 import math
 from MPC_Controller.common.Quadruped import RobotType
+from isaacgym.terrain_utils import *
 
 ASSET_ROOT = "assets"
 MINI_CHEETAH = "mini_cheetah/mini_cheetah.urdf"
@@ -51,7 +52,8 @@ def acquire_sim(gym, dt):
     plane_params.dynamic_friction = 1
     plane_params.restitution = 0    # control the elasticity of collisions (amount of bounce)
     # create the ground plane
-    gym.add_ground(sim, plane_params)
+    # gym.add_ground(sim, plane_params)
+    add_uneven_terrains(gym, sim)
     return sim
 
 def load_asset(gym, sim, robot, fix_base_link):
@@ -144,3 +146,31 @@ def add_viewer(gym, sim, env, cam_pos):
     cam_target = gymapi.Vec3(0, 0, 0.0)
     gym.viewer_camera_look_at(viewer, env, cam_pos, cam_target)
     return viewer
+
+def add_uneven_terrains(gym, sim):
+    # terrains
+    num_terains = 4
+    terrain_width = 12.
+    terrain_length = 12.
+    horizontal_scale = 0.25  # [m]
+    vertical_scale = 0.005  # [m]
+    num_rows = int(terrain_width/horizontal_scale)
+    num_cols = int(terrain_length/horizontal_scale)
+    heightfield = np.zeros((num_terains*num_rows, num_cols), dtype=np.int16)
+    
+    def new_sub_terrain(): return SubTerrain(width=num_rows, length=num_cols, vertical_scale=vertical_scale, horizontal_scale=horizontal_scale)
+
+    heightfield[0:1*num_rows, :] = random_uniform_terrain(new_sub_terrain(), min_height=-0.1, max_height=0.1, step=0.2, downsampled_scale=0.5).height_field_raw
+    heightfield[1*num_rows:2*num_rows, :] = sloped_terrain(new_sub_terrain(), slope=-0.5).height_field_raw
+    heightfield[2*num_rows:3*num_rows, :] = stairs_terrain(new_sub_terrain(), step_width=0.75, step_height=-0.35).height_field_raw
+    heightfield[2*num_rows:3*num_rows, :] = heightfield[2*num_rows:3*num_rows, :][::-1]
+    heightfield[3*num_rows:4*num_rows, :] = pyramid_stairs_terrain(new_sub_terrain(), step_width=0.75, step_height=-0.5).height_field_raw
+
+    # add the terrain as a triangle mesh
+    vertices, triangles = convert_heightfield_to_trimesh(heightfield, horizontal_scale=horizontal_scale, vertical_scale=vertical_scale, slope_threshold=1.5)
+    tm_params = gymapi.TriangleMeshParams()
+    tm_params.nb_vertices = vertices.shape[0]
+    tm_params.nb_triangles = triangles.shape[0]
+    tm_params.transform.p.x = -1.
+    tm_params.transform.p.y = -1.
+    gym.add_triangle_mesh(sim, vertices.flatten(), triangles.flatten(), tm_params)
