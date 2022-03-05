@@ -8,7 +8,7 @@ class Parameters:
     
     cmpc_print_solver_time = False
     cmpc_print_update_time = False
-    cmpc_print_states = False
+    cmpc_print_states = True
 
     cmpc_py_solver = 1 # 0 cvxopt, 1 osqp
     cmpc_solver_type = 2 # 0 mit py solver, 1 mit cpp solver, 2 google cpp solver
@@ -20,4 +20,4 @@ class Parameters:
 
     locomotionUnsafe = False # global indicator for switching contorl mode
 
-    print_FSM_info = False
+    FSM_print_info = False

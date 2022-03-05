@@ -161,7 +161,7 @@ class ControlFSM:
         *
         * @param printing mode option for regular or an event
         """
-        if not Parameters.print_FSM_info:
+        if not Parameters.FSM_print_info:
             return
             
         if opt == 0:
