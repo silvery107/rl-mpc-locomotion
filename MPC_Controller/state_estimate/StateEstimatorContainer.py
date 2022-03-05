@@ -19,6 +19,7 @@ class StateEstimate:
 
         self.vBody = np.zeros((3,1), dtype=DTYPE)
         self.omegaBody = np.zeros((3,1), dtype=DTYPE)
+
         # self.aBody = np.zeros((3,1), dtype=DTYPE)
         # self.aWorld = np.zeros((3,1), dtype=DTYPE)
         # self.contactEstimate = np.zeros((4,1), dtype=DTYPE)
@@ -30,10 +31,11 @@ class StateEstimatorContainer:
         self.result = StateEstimate()
         self._phase = np.zeros((4,1), dtype=DTYPE)
         self._ground_normal_filter = MovingWindowFilter(window_size=10)
-    #     self.contactPhase = self._phase
+        self._contactPhase = self._phase
+        self._foot_contact_history:np.ndarray = None
 
-    # def setContactPhase(self, phase:np.ndarray):
-    #     self.contactPhase = phase
+    def setContactPhase(self, phase:np.ndarray):
+        self._contactPhase = phase
 
     def getResult(self):
         return self.result
@@ -69,13 +71,14 @@ class StateEstimatorContainer:
         # change position to base frame
         self.result.position = np.array([0, 0, self.result.position[2]], dtype=DTYPE).reshape((3,1))
 
-    def _compute_ground_normal(self, contact_foot_positions):
+    def _compute_ground_normal(self, foot_positions:np.ndarray):
         """
         Computes the surface orientation in robot frame based on foot positions.
         Solves a least squares problem, see the following paper for details:
         https://ieeexplore.ieee.org/document/7354099
         """
-        contact_foot_positions = np.array(contact_foot_positions)
+        self._update_contact_history(foot_positions)
+        contact_foot_positions = self._foot_contact_history.reshape((4,3)) # reshape from (4,3,1) to (4,3)
         normal_vec = np.linalg.lstsq(contact_foot_positions, np.ones(4))[0]
         normal_vec /= np.linalg.norm(normal_vec)
         if normal_vec[2] < 0:
@@ -84,3 +87,14 @@ class StateEstimatorContainer:
         _ground_normal = self._ground_normal_filter.calculate_average(normal_vec)
         _ground_normal /= np.linalg.norm(_ground_normal)
         self.result.ground_normal = _ground_normal
+
+    def _init_contact_history(self, foot_positions:np.ndarray, height:float):
+        self._foot_contact_history = foot_positions.copy()
+        self._foot_contact_history[:, 2] = - height
+
+    def _update_contact_history(self, foot_positions:np.ndarray):
+        foot_contacts = self._contactPhase.flatten().copy()
+        foot_positions_ = foot_positions.copy()
+        for leg_id in range(4):
+            if foot_contacts[leg_id]:
+                self._foot_contact_history[leg_id] = foot_positions_[leg_id]

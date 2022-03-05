@@ -1,13 +1,14 @@
 import sys
 sys.path.append("..")
-import numpy as np
+
 from math import fabs
 from numpy.linalg import norm
-from MPC_Controller.convex_MPC.ConvexMPCLocomotion import ConvexMPCLocomotion
-from MPC_Controller.FSM_states.ControlFSMData import ControlFSMData
+# from MPC_Controller.deprecated.ConvexMPCLocomotion_copy import ConvexMPCLocomotion
 from MPC_Controller.Parameters import Parameters
 from MPC_Controller.common.Quadruped import RobotType
+from MPC_Controller.FSM_states.ControlFSMData import ControlFSMData
 from MPC_Controller.FSM_states.FSM_State import FSM_State, FSM_StateName
+from MPC_Controller.convex_MPC.ConvexMPCLocomotion import ConvexMPCLocomotion
 from MPC_Controller.utils import DTYPE, deg2rad, rad2deg
 
 class FSM_State_Locomotion(FSM_State):

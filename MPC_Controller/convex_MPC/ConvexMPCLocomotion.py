@@ -6,12 +6,12 @@ sys.path.append("..")
 
 import numpy as np
 import MPC_Controller.convex_MPC.mpc_osqp as mpc
-from MPC_Controller.DesiredStateCommand import DesiredStateCommand
+from MPC_Controller.Parameters import Parameters
 from MPC_Controller.convex_MPC.Gait import OffsetDurationGait
+from MPC_Controller.DesiredStateCommand import DesiredStateCommand
 from MPC_Controller.FSM_states.ControlFSMData import ControlFSMData
 from MPC_Controller.common.FootSwingTrajectory import FootSwingTrajectory
 from MPC_Controller.utils import NUM_LEGS, coordinateRotation, CoordinateAxis, DTYPE, getSideSign
-from MPC_Controller.Parameters import Parameters
 
 
 class ConvexMPCLocomotion:
@@ -59,6 +59,8 @@ class ConvexMPCLocomotion:
         self.f_ff = np.zeros((4,3,1), dtype=DTYPE)
         # self.f_ff = [np.zeros((3,1), dtype=DTYPE) for _ in range(4)]
 
+        self.foot_positions:np.ndarray = None
+
         self.current_gait = 0
         self._x_vel_des = 0.0
         self._y_vel_des = 0.0
@@ -102,27 +104,28 @@ class ConvexMPCLocomotion:
 
     def __SetupCommand(self, data:ControlFSMData):
 
-        self.__body_height = data._quadruped._bodyHeight
+        self._body_height = data._quadruped._bodyHeight
 
-        filter = 0.1
-        x_vel_cmd = DesiredStateCommand.x_vel_cmd
-        y_vel_cmd = DesiredStateCommand.y_vel_cmd
-        self._x_vel_des = self._x_vel_des*(1-filter) + x_vel_cmd*filter
-        self._y_vel_des = self._y_vel_des*(1-filter) + y_vel_cmd*filter
+        # filter = 0.1
+        # x_vel_cmd = DesiredStateCommand.x_vel_cmd
+        # y_vel_cmd = DesiredStateCommand.y_vel_cmd
+        # self._x_vel_des = self._x_vel_des*(1-filter) + x_vel_cmd*filter
+        # self._y_vel_des = self._y_vel_des*(1-filter) + y_vel_cmd*filter
+        
+        self._x_vel_des = DesiredStateCommand.x_vel_cmd
+        self._y_vel_des = DesiredStateCommand.y_vel_cmd
 
         self._yaw_turn_rate = DesiredStateCommand.yaw_turn_rate
 
     def solveDenseMPC(self, mpcTable:list, data:ControlFSMData):
         seResult = data._stateEstimator.getResult()
-        r_feet = np.array([self.pFoot[i] - seResult.position for i in range(4)], dtype=DTYPE).reshape((3,4))
-
-        self.dtMPC = self.dt*self.iterationsBetweenMPC
+        # self.dtMPC = self.dt*self.iterationsBetweenMPC
 
         timer = time.time()
 
         # *Normal Vector of ground
-        gravity_projection_vec = np.array([0, 0, 1],dtype=DTYPE)
-        # gravity_projection_vec = seResult.ground_normal
+        # gravity_projection_vec = np.array([0, 0, 1],dtype=DTYPE)
+        gravity_projection_vec = seResult.ground_normal
         
         # *Google's way of states
         com_roll_pitch_yaw = np.array([seResult.rpyBody[0], seResult.rpyBody[1], 0], dtype=DTYPE)
@@ -130,22 +133,24 @@ class ConvexMPCLocomotion:
         com_angular_velocity = seResult.omegaBody.flatten()
         com_velocity = seResult.vBody.flatten()
 
-        desired_com_position = np.array([0., 0., self.__body_height], dtype=DTYPE)
+        desired_com_position = np.array([0., 0., self._body_height], dtype=DTYPE)
         desired_com_velocity = np.array([self._x_vel_des, self._y_vel_des, 0], dtype=DTYPE)
         desired_com_roll_pitch_yaw = np.zeros(3, dtype=DTYPE) # walk parallel to the ground
         desired_com_angular_velocity = np.array([0, 0, self._yaw_turn_rate], dtype=DTYPE)
 
         if Parameters.cmpc_print_states:
             print("------------------------------------------")
-            print("Com RPY: {: .4f}, {: .4f}, {: .4f}".format(*np.rad2deg(com_roll_pitch_yaw)))
-            print("Com Pos: {: .4f}, {: .4f}, {: .4f}".format(*com_position))
-            print("Com Ang: {: .4f}, {: .4f}, {: .4f}".format(*com_angular_velocity))
-            print("Com Vel: {: .4f}, {: .4f}, {: .4f}".format(*com_velocity))
+            print("COM RPY: {: .4f}, {: .4f}, {: .4f}".format(*np.rad2deg(com_roll_pitch_yaw)))
+            print("COM Pos: {: .4f}, {: .4f}, {: .4f}".format(*com_position))
+            print("COM Ang: {: .4f}, {: .4f}, {: .4f}".format(*com_angular_velocity))
+            print("COM Vel: {: .4f}, {: .4f}, {: .4f}".format(*com_velocity))
             print("------------------------------------------")
-            print("Des RPY: {: .4f}, {: .4f}, {: .4f}".format(*np.rad2deg(desired_com_roll_pitch_yaw)))
-            print("Des Pos: {: .4f}, {: .4f}, {: .4f}".format(*desired_com_position))
-            print("Des Ang: {: .4f}, {: .4f}, {: .4f}".format(*desired_com_angular_velocity))
-            print("Des Vel: {: .4f}, {: .4f}, {: .4f}".format(*desired_com_velocity))
+            print("DES RPY: {: .4f}, {: .4f}, {: .4f}".format(*np.rad2deg(desired_com_roll_pitch_yaw)))
+            print("DES Pos: {: .4f}, {: .4f}, {: .4f}".format(*desired_com_position))
+            print("DES Ang: {: .4f}, {: .4f}, {: .4f}".format(*desired_com_angular_velocity))
+            print("DES Vel: {: .4f}, {: .4f}, {: .4f}".format(*desired_com_velocity))
+            print("------------------------------------------")
+            print("GND Vec: {: .4f}, {: .4f}, {: .4f}".format(*gravity_projection_vec))
 
         predicted_contact_forces = self._cpp_mpc.compute_contact_forces(
             com_position, # com_position (set x y to 0.0)
@@ -154,7 +159,7 @@ class ConvexMPCLocomotion:
             gravity_projection_vec,  # Normal Vector of ground
             com_angular_velocity, # com_angular_velocity
             np.asarray(mpcTable, dtype=DTYPE),  # Foot contact states
-            np.array(r_feet.flatten(), dtype=DTYPE),  # foot_positions_base_frame
+            np.array(self.foot_positions.flatten(), dtype=DTYPE),  # foot_positions_base_frame
             data._quadruped._friction_coeffs,  # foot_friction_coeffs
             desired_com_position,  # desired_com_position
             desired_com_velocity,  # desired_com_velocity
@@ -182,19 +187,14 @@ class ConvexMPCLocomotion:
         gait = self.trotting
         if gaitNumber == 1:
             gait = self.bounding
-
         elif gaitNumber == 2:
             gait = self.pronking
-
         elif gaitNumber == 3:
             gait = self.pacing
-
         elif gaitNumber == 5:
             gait = self.galloping
-
         elif gaitNumber == 6:
             gait = self.walking
-
         elif gaitNumber == 7:
             gait = self.trotRunning
 
@@ -210,15 +210,18 @@ class ConvexMPCLocomotion:
             # np.copyto(self.pFoot[i], seResult.position + \
                                         # (data._quadruped.getHipLocation(i)+
                                         # data._legController.datas[i].p))
-        
-        # first time initialization
+        self.foot_positions = np.array([self.pFoot[i] - seResult.position for i in range(4)], dtype=DTYPE).reshape((4,3,1))
+
+        # * first time initialization
         if self.firstRun:
             self.firstRun = False
+            data._stateEstimator._init_contact_history(self.foot_positions, self._body_height)
             for i in range(4):
                 self.footSwingTrajectories[i].setHeight(0.05)
                 self.footSwingTrajectories[i].setInitialPosition(self.pFoot[i])
                 self.footSwingTrajectories[i].setFinalPosition(self.pFoot[i])
 
+        data._stateEstimator._compute_ground_normal(self.foot_positions)
 
         # * foot placement
         for l in range(4):
@@ -271,14 +274,17 @@ class ConvexMPCLocomotion:
         self.Kd_stance = self.Kd
 
         # gait
-        # contactStates = gait.getContactState()
+        contactStates = gait.getContactState()
         swingStates = gait.getSwingState()
         mpcTable = gait.getMpcTable()
+
+        # * update MPC
         self.updateMPCIfNeeded(mpcTable, data)
-        # se_contactState = np.array([0,0,0,0], dtype=DTYPE).reshape((4,1))
+
+        se_contactState = np.array([0,0,0,0], dtype=DTYPE).reshape((4,1))
 
         for foot in range(4):
-            # contactState = contactStates[foot]
+            contactState = contactStates[foot]
             swingState = swingStates[foot]
             if swingState > 0: #* foot is in swing
                 if self.firstSwing[foot]:
@@ -327,6 +333,6 @@ class ConvexMPCLocomotion:
                 # np.copyto(data._legController.commands[foot].forceFeedForward, self.f_ff[foot], casting=CASTING)
                 # np.copyto(data._legController.commands[foot].kdJoint, np.identity(3, dtype=DTYPE)*0.2, casting=CASTING)
 
-                # se_contactState[foot] = contactState
+                se_contactState[foot] = contactState
 
-        # data._stateEstimator.setContactPhase(se_contactState)
+        data._stateEstimator.setContactPhase(se_contactState)
