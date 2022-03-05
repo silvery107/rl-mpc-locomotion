@@ -7,7 +7,7 @@ class Parameters:
     cmpc_alpha = 1e-5
     
     cmpc_print_solver_time = False
-    cmpc_print_total_time = False
+    cmpc_print_update_time = False
     cmpc_print_states = False
 
     cmpc_py_solver = 1 # 0 cvxopt, 1 osqp

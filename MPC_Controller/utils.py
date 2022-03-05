@@ -8,6 +8,7 @@ DTYPE = np.float32
 CASTING = "same_kind"
 SIDE_SIGN = [1, -1, 1, -1]
 K_MAX_GAIT_SEGMENTS = 40
+NUM_LEGS = 4
 
 # Enumerate classes
 class CoordinateAxis(Enum):
@@ -18,8 +19,8 @@ class CoordinateAxis(Enum):
 class GaitType(Enum):
     TROT = 0
     TROTRUN = 7
-    # GALLOP = 5
-    WALK = 6
+    GALLOP = 5
+    # WALK = 6
     PACE = 3
     # PRONK = 2
     BOUND = 1

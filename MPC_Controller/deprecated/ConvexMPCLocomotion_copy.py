@@ -242,7 +242,7 @@ class ConvexMPCLocomotion:
 
                 self.f_ff[leg] = - seResult.rBody @ f
 
-        if Parameters.cmpc_print_total_time:
+        if Parameters.cmpc_print_update_time:
             print("MPC Update Time %.3f s\n"%(time.time()-timer))
 
     def updateMPCIfNeeded(self, mpcTable:list, data:ControlFSMData):
