@@ -63,14 +63,6 @@ class ConvexMPCLocomotion:
         self.default_iterations_between_mpc = self.iterationsBetweenMPC
         print("[Convex MPC] dt: %.3f iterations: %d, dtMPC: %.3f" % (self.dt, self.iterationsBetweenMPC, self.dtMPC))
         
-        if Parameters.cmpc_solver_type != 2:
-            mpc.setup_problem(self.dtMPC, self.horizonLength, mu=0.4, fmax=120)
-        # else:
-        #     self._cpp_mpc = mpc.ConvexMpc(body_mass, body_inertia_list,
-        #                                     num_legs,
-        #                                     self.horizonLength,
-        #                                     self.dtMPC, Parameters.yuxiang_weights, 1e-5,
-        #                                     mpc.QPOASES)
 
         self.rpy_comp = np.zeros((3,1),dtype=DTYPE)
         self.rpy_int = np.zeros((3,1),dtype=DTYPE)
@@ -102,7 +94,20 @@ class ConvexMPCLocomotion:
         self.Kd:np.ndarray = None
         self.Kd_stance:np.ndarray = None
 
-    def initialize(self):
+    def initialize(self, data:ControlFSMData):
+        if Parameters.cmpc_solver_type == 2:
+            self._cpp_mpc = mpc.ConvexMpc(data._quadruped._bodyMass, 
+                                list(data._quadruped._bodyInertia),
+                                num_legs,
+                                self.horizonLength,
+                                self.dtMPC, 
+                                data._quadruped._mpc_weights, 
+                                1e-5,
+                                mpc.QPOASES)
+        else:
+            mpc.setup_problem(self.dtMPC, self.horizonLength, mu=0.4, fmax=120)
+            mpc.update_x_drag(self.x_comp_integral)
+
         self.__x_vel_des = 0.0
         self.__y_vel_des = 0.0
         self.__yaw_turn_rate = 0.0
@@ -151,19 +156,6 @@ class ConvexMPCLocomotion:
         pz_err = p[2] - self.__body_height
         vxy = np.array([seResult.vWorld[0], seResult.vWorld[1], 0], dtype=DTYPE).reshape((3,1))
         self.dtMPC = self.dt*self.iterationsBetweenMPC
-        if Parameters.cmpc_solver_type == 2:
-            # TODO solver 初始化可以移到 init 去
-            self._cpp_mpc = mpc.ConvexMpc(data._quadruped._bodyMass, 
-                                          list(data._quadruped._bodyInertia),
-                                          num_legs,
-                                          self.horizonLength,
-                                          self.dtMPC, 
-                                          data._quadruped._mpc_weights, 
-                                          1e-5,
-                                          mpc.QPOASES)
-        else:
-            mpc.setup_problem(self.dtMPC, self.horizonLength, mu=0.4, fmax=120)
-            mpc.update_x_drag(self.x_comp_integral)
 
         if vxy[0]>0.3 or vxy[0]<-0.3:
             self.x_comp_integral += Parameters.cmpc_x_drag * pz_err * self.dtMPC / vxy[0]
@@ -187,7 +179,7 @@ class ConvexMPCLocomotion:
             
             # *MIT's way of states
             # v_des_robot = np.array([self.__x_vel_des, self.__y_vel_des, 0], dtype=DTYPE).reshape((3,1))
-            # v_des_world = seResult.rBody.T @ v_des_robot
+            # v_des_world = v_des_robot
 
             # com_roll_pitch_yaw = seResult.rpy.flatten()
             # com_position = seResult.position.flatten()
@@ -256,8 +248,9 @@ class ConvexMPCLocomotion:
             seResult = data._stateEstimator.getResult()
             p = seResult.position
             v_des_robot = np.array([self.__x_vel_des, self.__y_vel_des, 0], dtype=DTYPE).reshape((3,1))
-            v_des_world = seResult.rBody.T @ v_des_robot
-            
+            # *v_des_world = seResult.rBody.T @ v_des_robot
+            v_des_world = v_des_robot
+
             if self.current_gait==4: # stand gait
                 trajInitial = [self.__roll_des,
                                self.__pitch_des,
@@ -373,8 +366,11 @@ class ConvexMPCLocomotion:
             self.__body_height = 0.29
         
         # integrate position setpoint
+        # *v_des_robot = np.array([self.__x_vel_des, self.__y_vel_des, 0], dtype=DTYPE).reshape((3,1))
+        # v_des_world = seResult.rBody.T @ v_des_robot
+        # v_robot = seResult.vWorld
         v_des_robot = np.array([self.__x_vel_des, self.__y_vel_des, 0], dtype=DTYPE).reshape((3,1))
-        v_des_world = seResult.rBody.T @ v_des_robot
+        v_des_world = v_des_robot
         v_robot = seResult.vWorld
         
         # Integral-esque pitch and roll compensation
@@ -391,8 +387,11 @@ class ConvexMPCLocomotion:
         self.rpy_comp[1] = v_robot[0]*self.rpy_int[1]
 
         for i in range(4):
+            # *self.pFoot[i] = seResult.position + \
+            #                 seResult.rBody.T @ (data._quadruped.getHipLocation(i)+
+            #                 data._legController.datas[i].p)
             self.pFoot[i] = seResult.position + \
-                            seResult.rBody.T @ (data._quadruped.getHipLocation(i)+
+                            (data._quadruped.getHipLocation(i)+
                             data._legController.datas[i].p)
             # np.copyto(self.pFoot[i], seResult.position + \
             #                          seResult.rBody.T @ (data._quadruped.getHipLocation(i)+
@@ -438,7 +437,8 @@ class ConvexMPCLocomotion:
 
             des_vel = np.array([self.__x_vel_des, self.__y_vel_des, 0.0], dtype=DTYPE).reshape((3,1))
 
-            Pf = seResult.position + seResult.rBody.T @ (pYawCorrected + des_vel * self.swingTimeRemaining[i])
+            # *Pf = seResult.position + seResult.rBody.T @ (pYawCorrected + des_vel * self.swingTimeRemaining[i])
+            Pf = seResult.position + (pYawCorrected + des_vel * self.swingTimeRemaining[i])
 
             p_rel_max = 0.3
             pfx_rel = seResult.vWorld[0] * (0.5 + Parameters.cmpc_bonus_swing) * stance_time + \
@@ -483,9 +483,13 @@ class ConvexMPCLocomotion:
                 self.footSwingTrajectories[foot].computeSwingTrajectoryBezier(swingState, self.swingTimes[foot].item())
                 pDesFootWorld = self.footSwingTrajectories[foot].getPosition()
                 vDesFootWorld = self.footSwingTrajectories[foot].getVelocity()
-                pDesLeg = seResult.rBody @ (pDesFootWorld - seResult.position) \
+                # *pDesLeg = seResult.rBody @ (pDesFootWorld - seResult.position) \
+                #           - data._quadruped.getHipLocation(foot)
+                # vDesLeg = seResult.rBody @ (vDesFootWorld - seResult.vWorld)
+
+                pDesLeg = (pDesFootWorld - seResult.position) \
                           - data._quadruped.getHipLocation(foot)
-                vDesLeg = seResult.rBody @ (vDesFootWorld - seResult.vWorld)
+                vDesLeg = (vDesFootWorld - seResult.vWorld)
 
                 data._legController.commands[foot].pDes = pDesLeg
                 data._legController.commands[foot].vDes = vDesLeg
@@ -500,9 +504,13 @@ class ConvexMPCLocomotion:
                 self.firstSwing[foot] = True
                 pDesFootWorld = self.footSwingTrajectories[foot].getPosition()
                 vDesFootWorld = self.footSwingTrajectories[foot].getVelocity()
-                pDesLeg = seResult.rBody @ (pDesFootWorld - seResult.position) \
+                # *pDesLeg = seResult.rBody @ (pDesFootWorld - seResult.position) \
+                #           - data._quadruped.getHipLocation(foot)
+                # vDesLeg = seResult.rBody @ (vDesFootWorld - seResult.vWorld)
+
+                pDesLeg = (pDesFootWorld - seResult.position) \
                           - data._quadruped.getHipLocation(foot)
-                vDesLeg = seResult.rBody @ (vDesFootWorld - seResult.vWorld)
+                vDesLeg = (vDesFootWorld - seResult.vWorld)
                 
                 data._legController.commands[foot].pDes = pDesLeg
                 data._legController.commands[foot].vDes = vDesLeg

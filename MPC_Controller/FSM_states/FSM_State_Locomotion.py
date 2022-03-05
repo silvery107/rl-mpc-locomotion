@@ -47,7 +47,7 @@ class FSM_State_Locomotion(FSM_State):
         # Reset the transition data
         self.transitionDone = False
 
-        self.cMPC.initialize()
+        self.cMPC.initialize(self._data)
         print("[FSM LOCOMOTION] On Enter")
 
     def run(self):
