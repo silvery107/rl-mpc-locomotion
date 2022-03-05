@@ -66,14 +66,12 @@ class StateEstimatorContainer:
         # RPY of body in yaw aligned base frame
         self.result.rpyBody = rot_to_rpy(body_R_base)
 
-        # cheat mode
-        # self.result.position = np.array([0, 0, self.result.position[2]], dtype=DTYPE).reshape((3,1))
-        # self.result.vWorld = self.result.vBody
-        # self.result.omegaWorld = self.result.omegaBody
-        # self.result.rpy = self.result.rpyBody
+        # change position to base frame
+        self.result.position = np.array([0, 0, self.result.position[2]], dtype=DTYPE).reshape((3,1))
 
     def _compute_ground_normal(self, contact_foot_positions):
-        """Computes the surface orientation in robot frame based on foot positions.
+        """
+        Computes the surface orientation in robot frame based on foot positions.
         Solves a least squares problem, see the following paper for details:
         https://ieeexplore.ieee.org/document/7354099
         """
