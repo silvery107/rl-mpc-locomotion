@@ -1,6 +1,4 @@
-from re import A
 from isaacgym import gymapi
-import math
 from MPC_Controller.common.Quadruped import RobotType
 from isaacgym.terrain_utils import *
 
@@ -39,21 +37,15 @@ def acquire_sim(gym, dt):
     sim_params.physx.bounce_threshold_velocity = 0.2
     # The maximum velocity permitted to be introduced by the solver to correct for penetrations in contacts.
     sim_params.physx.max_depenetration_velocity = 100.0
-    # sim_params.physx.default_buffer_size_multiplier = 5.0
-    # sim_params.physx.max_gpu_contact_pairs = 8388608 # 8*1024*1024
 
     # create sim with these parameters
     sim = gym.create_sim(compute_device=0, graphics_device=0, type=gymapi.SIM_PHYSX, params=sim_params)
     # gym.prepare_sim(sim)
-    # configure the ground plane
-    plane_params = gymapi.PlaneParams()
-    plane_params.normal = gymapi.Vec3(0, 0, 1)  # z-up!
-    plane_params.static_friction = 1
-    plane_params.dynamic_friction = 1
-    plane_params.restitution = 0    # control the elasticity of collisions (amount of bounce)
-    # create the ground plane
-    # gym.add_ground(sim, plane_params)
-    add_uneven_terrains(gym, sim)
+
+    add_ground(gym, sim)
+    add_terrain(gym, sim, "slope")
+    # add_uneven_terrains(gym, sim)
+    
     return sim
 
 def load_asset(gym, sim, robot, fix_base_link):
@@ -90,7 +82,7 @@ def create_envs(gym, sim, robot, num_envs, envs_per_row, env_spacing):
     asset = load_asset(gym, sim, robot, fix_base_link)
 
     # attach force sensor on robot foot
-    create_asset_force_sensor(gym, asset)
+    # create_asset_force_sensor(gym, asset)
 
     # set up the env grid
     env_lower = gymapi.Vec3(-env_spacing, -env_spacing, 0.0)
@@ -147,16 +139,60 @@ def add_viewer(gym, sim, env, cam_pos):
     gym.viewer_camera_look_at(viewer, env, cam_pos, cam_target)
     return viewer
 
+def add_ground(gym, sim):
+    # configure the ground plane
+    plane_params = gymapi.PlaneParams()
+    plane_params.normal = gymapi.Vec3(0, 0, 1)  # z-up!
+    plane_params.static_friction = 1
+    plane_params.dynamic_friction = 1
+    plane_params.restitution = 0    # control the elasticity of collisions (amount of bounce)
+    # create the ground plane
+    gym.add_ground(sim, plane_params)
+
+def add_terrain(gym, sim, name="slope"):
+    # terrains
+    num_terrains = 1
+    terrain_width = 10.
+    terrain_length = 10.
+    horizontal_scale = 0.25  # [m]
+    vertical_scale = 0.005  # [m]
+    num_rows = int(terrain_width/horizontal_scale)
+    num_cols = int(terrain_length/horizontal_scale)
+    heightfield = np.zeros((num_terrains*num_rows, num_cols), dtype=np.int16)
+    
+    def new_sub_terrain(): return SubTerrain(width=num_rows, length=num_cols, vertical_scale=vertical_scale, horizontal_scale=horizontal_scale)
+
+    if name=="slope":
+        heightfield[0: num_rows, :] = sloped_terrain(new_sub_terrain(), slope=0.1).height_field_raw
+    elif name=="uniform":
+        heightfield[0: num_rows, :] = random_uniform_terrain(new_sub_terrain(), min_height=-0.1, max_height=0.1, step=0.2, downsampled_scale=0.5).height_field_raw
+    elif name=="stair":
+        heightfield[0: num_rows, :] = stairs_terrain(new_sub_terrain(), step_width=0.75, step_height=0.1).height_field_raw
+        # heightfield[0: num_rows, :] = heightfield[0: num_rows, :][::-1]
+    else:
+        raise NotImplementedError("Not support terrains!")
+
+    # add the terrain as a triangle mesh
+    vertices, triangles = convert_heightfield_to_trimesh(heightfield, horizontal_scale=horizontal_scale, vertical_scale=vertical_scale, slope_threshold=1.5)
+    tm_params = gymapi.TriangleMeshParams()
+    tm_params.nb_vertices = vertices.shape[0]
+    tm_params.nb_triangles = triangles.shape[0]
+    tm_params.transform.p.x = 1.
+    tm_params.transform.p.y = -terrain_width/2
+    if name=="stair":
+        tm_params.transform.p.z = -0.09
+    gym.add_triangle_mesh(sim, vertices.flatten(), triangles.flatten(), tm_params)
+
 def add_uneven_terrains(gym, sim):
     # terrains
-    num_terains = 4
+    num_terrains = 4
     terrain_width = 12.
     terrain_length = 12.
     horizontal_scale = 0.25  # [m]
     vertical_scale = 0.005  # [m]
     num_rows = int(terrain_width/horizontal_scale)
     num_cols = int(terrain_length/horizontal_scale)
-    heightfield = np.zeros((num_terains*num_rows, num_cols), dtype=np.int16)
+    heightfield = np.zeros((num_terrains*num_rows, num_cols), dtype=np.int16)
     
     def new_sub_terrain(): return SubTerrain(width=num_rows, length=num_cols, vertical_scale=vertical_scale, horizontal_scale=horizontal_scale)
 
@@ -172,5 +208,5 @@ def add_uneven_terrains(gym, sim):
     tm_params.nb_vertices = vertices.shape[0]
     tm_params.nb_triangles = triangles.shape[0]
     tm_params.transform.p.x = -1.
-    tm_params.transform.p.y = -1.
+    tm_params.transform.p.y = -terrain_width/2 - 1.
     gym.add_triangle_mesh(sim, vertices.flatten(), triangles.flatten(), tm_params)
