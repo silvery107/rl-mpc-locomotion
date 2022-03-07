@@ -135,10 +135,10 @@ class FSM_State_Locomotion(FSM_State):
                 print("[FSM LOCOMOTION] Unsafe locomotion: leg %d's y-position is bad (%.3f m)"%(leg, p_leg[1]))
                 return False
             
-            v_leg = norm(self._data._legController.datas[leg].v)
-            if fabs(v_leg) > 9.0:
-                print("[FSM LOCOMOTION] Unsafe locomotion: leg %d is moving too quickly (%.3f m/s)"%(leg, v_leg))
-                return False
+            # v_leg = norm(self._data._legController.datas[leg].v)
+            # if fabs(v_leg) > 9.0:
+            #     print("[FSM LOCOMOTION] Unsafe locomotion: leg %d is moving too quickly (%.3f m/s)"%(leg, v_leg))
+            #     return False
         
         return True
 
