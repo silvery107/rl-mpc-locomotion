@@ -51,7 +51,7 @@
       <inertia ixx="0.01683993" ixy="0.0" ixz="0.0" iyy="0.056579028" iyz="0.0" izz="0.064713601"/>
     </inertial>
   </link>
-  <joint name="imu_joint" type="fixed">
+  <!-- <joint name="imu_joint" type="fixed">
     <parent link="trunk"/>
     <child link="imu_link"/>
     <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -75,7 +75,7 @@
         <box size=".001 .001 .001"/>
       </geometry>
     </collision>
-  </link>
+  </link> -->
   <joint name="FR_hip_joint" type="revolute">
     <origin rpy="0 0 0" xyz="0.183 -0.047 0"/>
     <parent link="trunk"/>
