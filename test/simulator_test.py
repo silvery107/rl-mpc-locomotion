@@ -1,5 +1,10 @@
 import numpy as np
-from enum import Enum, auto
+
+import os
+import inspect
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+os.sys.path.insert(0, parentdir)
 
 from MPC_Controller.RobotRunner import RobotRunner
 from MPC_Controller.deprecated.RobotController import RobotController
@@ -12,7 +17,7 @@ from MPC_Controller.Parameters import Parameters
 from isaacgym import gymapi
 from RL_Simulator.utils import *
 
-robot = RobotType.ALIENGO
+robot = RobotType.MINI_CHEETAH
 dt =  1 / 60
 gym = gymapi.acquire_gym()
 sim = acquire_sim(gym, dt)
