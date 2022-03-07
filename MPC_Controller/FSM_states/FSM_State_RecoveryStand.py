@@ -51,7 +51,7 @@ class FSM_State_RecoveyrStand(FSM_State):
 
         # Rolling
         # * test passed
-        self.rollover_ramp_iter = int(15 / (Parameters.controller_dt*100))
+        self.rollover_ramp_iter = int(13 / (Parameters.controller_dt*100))
         self.rollover_settle_iter = int(15 / (Parameters.controller_dt*100))
         self.rolling_jpos = np.array([1.3, -3.1, 2.77,
                                       0.0, -1.6, 2.77,

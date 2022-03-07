@@ -39,9 +39,9 @@ class Gamepad:
       raise inputs.UnpluggedError("No gamepad found.")
 
     self.gamepad = inputs.devices.gamepads[0]
-    self._vel_scale_x = vel_scale_x
-    self._vel_scale_y = vel_scale_y
-    self._vel_scale_rot = vel_scale_rot
+    self._vel_scale_x = float(vel_scale_x)
+    self._vel_scale_y = float(vel_scale_y)
+    self._vel_scale_rot = float(vel_scale_rot)
     self._max_acc = max_acc
     self._lb_pressed = False
     self._rb_pressed = False
