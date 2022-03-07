@@ -41,10 +41,6 @@ def acquire_sim(gym, dt):
     # create sim with these parameters
     sim = gym.create_sim(compute_device=0, graphics_device=0, type=gymapi.SIM_PHYSX, params=sim_params)
     # gym.prepare_sim(sim)
-
-    add_ground(gym, sim)
-    add_terrain(gym, sim, "slope")
-    # add_uneven_terrains(gym, sim)
     
     return sim
 
@@ -149,38 +145,50 @@ def add_ground(gym, sim):
     # create the ground plane
     gym.add_ground(sim, plane_params)
 
-def add_terrain(gym, sim, name="slope"):
+def add_terrain(gym, sim, name="slope", x_offset=2., invert=False):
     # terrains
     num_terrains = 1
-    terrain_width = 10.
-    terrain_length = 10.
-    horizontal_scale = 0.25  # [m]
-    vertical_scale = 0.005  # [m]
+    terrain_width = 2.
+    terrain_length = 2.8
+    horizontal_scale = 0.05  # [m] resolution in x
+    vertical_scale = 0.005  # [m] resolution in z
     num_rows = int(terrain_width/horizontal_scale)
     num_cols = int(terrain_length/horizontal_scale)
     heightfield = np.zeros((num_terrains*num_rows, num_cols), dtype=np.int16)
+
+    step_height = 0.07
+    step_width = 0.3
+    num_steps = terrain_width / step_width
+    height = step_height * num_steps
+    slope = height / terrain_width
+    # num_stairs = height / step_height
+    # step_width = terrain_length / num_stairs
     
     def new_sub_terrain(): return SubTerrain(width=num_rows, length=num_cols, vertical_scale=vertical_scale, horizontal_scale=horizontal_scale)
-
     if name=="slope":
-        heightfield[0: num_rows, :] = sloped_terrain(new_sub_terrain(), slope=0.1).height_field_raw
-    elif name=="uniform":
-        heightfield[0: num_rows, :] = random_uniform_terrain(new_sub_terrain(), min_height=-0.1, max_height=0.1, step=0.2, downsampled_scale=0.5).height_field_raw
+        heightfield[0: num_rows, :] = sloped_terrain(new_sub_terrain(), slope=slope).height_field_raw
     elif name=="stair":
-        heightfield[0: num_rows, :] = stairs_terrain(new_sub_terrain(), step_width=0.75, step_height=0.1).height_field_raw
-        # heightfield[0: num_rows, :] = heightfield[0: num_rows, :][::-1]
+        heightfield[0: num_rows, :] = stairs_terrain(new_sub_terrain(), step_width=step_width, step_height=step_height).height_field_raw
+    elif name=="pyramid":
+        heightfield[0: num_rows, :] = pyramid_stairs_terrain(new_sub_terrain(), step_width=step_width, step_height=step_height).height_field_raw
     else:
         raise NotImplementedError("Not support terrains!")
+
+    if invert:
+        heightfield[0: num_rows, :] = heightfield[0: num_rows, :][::-1]
 
     # add the terrain as a triangle mesh
     vertices, triangles = convert_heightfield_to_trimesh(heightfield, horizontal_scale=horizontal_scale, vertical_scale=vertical_scale, slope_threshold=1.5)
     tm_params = gymapi.TriangleMeshParams()
     tm_params.nb_vertices = vertices.shape[0]
     tm_params.nb_triangles = triangles.shape[0]
-    tm_params.transform.p.x = 1.
-    tm_params.transform.p.y = -terrain_width/2
+    tm_params.transform.p.x = x_offset
+    tm_params.transform.p.y = -1
     if name=="stair":
         tm_params.transform.p.z = -0.09
+    elif name=="pyramid":
+        tm_params.transform.p.z = 0.01
+
     gym.add_triangle_mesh(sim, vertices.flatten(), triangles.flatten(), tm_params)
 
 def add_uneven_terrains(gym, sim):
@@ -188,8 +196,8 @@ def add_uneven_terrains(gym, sim):
     num_terrains = 4
     terrain_width = 12.
     terrain_length = 12.
-    horizontal_scale = 0.25  # [m]
-    vertical_scale = 0.005  # [m]
+    horizontal_scale = 0.25  # [m] resolution in x
+    vertical_scale = 0.005  # [m] resolution in z
     num_rows = int(terrain_width/horizontal_scale)
     num_cols = int(terrain_length/horizontal_scale)
     heightfield = np.zeros((num_terrains*num_rows, num_cols), dtype=np.int16)

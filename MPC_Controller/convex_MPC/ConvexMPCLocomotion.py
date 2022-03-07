@@ -2,6 +2,8 @@ import math
 import sys
 import time
 
+from MPC_Controller.common.Quadruped import RobotType
+
 sys.path.append("..")
 
 import numpy as np
@@ -114,6 +116,8 @@ class ConvexMPCLocomotion:
         
         self._x_vel_des = DesiredStateCommand.x_vel_cmd
         self._y_vel_des = DesiredStateCommand.y_vel_cmd
+        # if data._quadruped._robotType == RobotType.MINI_CHEETAH:
+        #     self._y_vel_des -= 0.125
 
         self._yaw_turn_rate = DesiredStateCommand.yaw_turn_rate
 
@@ -238,7 +242,8 @@ class ConvexMPCLocomotion:
             else:
                 self.swingTimeRemaining[i] -= self.dt
 
-            self.footSwingTrajectories[i].setHeight(self._body_height/2)
+            # self.footSwingTrajectories[i].setHeight(0.2)
+            self.footSwingTrajectories[i].setHeight(self._body_height/3)
             
             offset = np.array([0, getSideSign(i)*0.065, 0], dtype=DTYPE).reshape((3,1))
             pRobotFrame = data._quadruped.getHipLocation(i) + offset

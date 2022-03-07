@@ -28,7 +28,7 @@ class FSM_State_Locomotion(FSM_State):
                 27/(1000.0*Parameters.controller_dt))
         elif _controlFSMData._quadruped._robotType == RobotType.A1:
             self.cMPC = ConvexMPCLocomotion(Parameters.controller_dt,
-                27/(1000.0*Parameters.controller_dt))
+                29/(1000.0*Parameters.controller_dt))
         else:
             raise Exception("Invalid RobotType")
         
@@ -135,10 +135,10 @@ class FSM_State_Locomotion(FSM_State):
                 print("[FSM LOCOMOTION] Unsafe locomotion: leg %d's y-position is bad (%.3f m)"%(leg, p_leg[1]))
                 return False
             
-            v_leg = norm(self._data._legController.datas[leg].v)
-            if fabs(v_leg) > 11.0:
-                print("[FSM LOCOMOTION] Unsafe locomotion: leg %d is moving too quickly (%.3f m/s)"%(leg, v_leg))
-                return False
+            # v_leg = norm(self._data._legController.datas[leg].v)
+            # if fabs(v_leg) > 11.0:
+            #     print("[FSM LOCOMOTION] Unsafe locomotion: leg %d is moving too quickly (%.3f m/s)"%(leg, v_leg))
+            #     return False
         
         return True
 

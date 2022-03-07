@@ -1,27 +1,29 @@
-import numpy as np
 from MPC_Controller.DesiredStateCommand import DesiredStateCommand
 from MPC_Controller.Parameters import Parameters
 from MPC_Controller.RobotRunner import RobotRunner
 from MPC_Controller.common.Quadruped import RobotType
 from RL_Simulator import gamepad_reader
-
 from isaacgym import gymapi
-from RL_Simulator.utils import acquire_sim, create_envs, add_viewer, get_force_sensor
+from RL_Simulator.utils import acquire_sim, add_ground, add_terrain, add_uneven_terrains, create_envs, add_viewer, get_force_sensor
 
 use_gamepad = True
 robot = RobotType.A1
 dt =  Parameters.controller_dt
 gym = gymapi.acquire_gym()
 sim = acquire_sim(gym, dt)
+add_ground(gym, sim)
+# add_terrain(gym, sim, "slope")
+# add_terrain(gym, sim, "stair", 3.95, True)
+# add_uneven_terrains(gym, sim)
 
 # set up the env grid
-num_envs = 4
+num_envs = 1
 envs_per_row = 2
 env_spacing = 0.5
 # one actor per env 
 envs, actors = create_envs(gym, sim, robot, num_envs, envs_per_row, env_spacing)
-force_sensors = get_force_sensor(gym, envs, actors)
-cam_pos = gymapi.Vec3(0.5, 0.6, 0.7) # w.r.t target env
+# force_sensors = get_force_sensor(gym, envs, actors)
+cam_pos = gymapi.Vec3(1,1,3) # w.r.t target env
 viewer = add_viewer(gym, sim, envs[0], cam_pos)
 
 controllers = []
@@ -39,10 +41,8 @@ for idx in range(num_envs):
     controllers.append(robotRunner)
 
 # Setup MPC Controller
-# robotRunner = RobotRunner()
-# robotRunner.init(robot)
 if use_gamepad:
-    gamepad = gamepad_reader.Gamepad(vel_scale_x=2.0, vel_scale_y=1., vel_scale_rot=1.)
+    gamepad = gamepad_reader.Gamepad(vel_scale_x=2, vel_scale_y=2, vel_scale_rot=2)
 
 print("[Simulator Driver] First run of robot controller...")
 
@@ -75,8 +75,6 @@ while not gym.query_viewer_has_closed(viewer):
     if Parameters.locomotionUnsafe:
         gamepad.fake_event(ev_type='Key',code='BTN_TR',value=0)
         Parameters.locomotionUnsafe = False
-
-    # robotRunner.run(gym, envs[0], actors[0])
 
     if count % render_count == 0:
         # update the viewer
