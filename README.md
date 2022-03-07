@@ -65,24 +65,29 @@
 - RL train 的时候个体自动转移: 加一个私有域存当前的control mode, 或者在 locomotion unsafe 的时候直接 reset, 固定gait type
 - 摔倒以后会乱跑了, com 状态给错了, 给的是 world 状态, 指令全成了朝仿真器坐标朝向 3.2
 - TODO 触地检测 用力传感器做, 配合状态变换完成地面法向量估计
+- 调节渲染间隔 把力控提到 1k Hz 3.3
 - 加了力传感器, 身体系和世界系没有对齐的时候就会乱跑, 趋于一个对齐的参考轨迹, 坐标变换有问题 3.3
 - MPC stand 要配合WBC的task才有用 决定放弃 stand 步态 3.4
+- 坐标变换修好了, 把所有世界系的指令换成身体系了 3.5
+- 地面法向量估计写好了 3.5
+- TODO 设计 RL 算法: step, update, reset, action ... observation, rewards ...
+- 已完成 uneven terrain 搭建, 目前身体高度估计错误, 同时状态没有变换到和地面法向量对齐的坐标系 3.5
+- 修正了坐标变换和身体高度估计, 但是法向量估计有问题, 长时间在斜坡踏步会导致估计反向 3.6
 
 ### Roadmap
-
 - [Quadruped](MPC_Controller/common/Quadruped.py),
 - [RobotRunner](MPC_Controller/RobotRunner.py) ->
     - [LegController](MPC_Controller/common/LegController.py),
-    - [DesiredStateCommand](MPC_Controller/DesiredStateCommand.py),
-    - [StateEstimatorContainer](MPC_Controller/StateEstimatorContainer.py),
-    - [Parameters](MPC_Controller/Parameters.py),
+    - [StateEstimatorContainer](MPC_Controller/state_estimate/StateEstimatorContainer.py),
     - [ControlFSM](MPC_Controller/FSM_states/ControlFSM.py) ->
+        - [FSM_State_RecoveryStand](MPC_Controller/FSM_states/FSM_State_RecoveryStand.py)
         - [FSM_State_Locomotion](MPC_Controller/FSM_states/FSM_State_Locomotion.py) ->
             - [ConvexMPCLocomotion](MPC_Controller/convex_MPC/ConvexMPCLocomotion.py) ->
-                - [convexMPC_interface](MPC_Controller/convex_MPC/convexMPC_interface.py) ->
-                    - [SolverMPC in Python](MPC_Controller/convex_MPC/SolverMPC.py)
-                - [mpc_osqp in C](MPC_Controller/convex_MPC/mpc_osqp.cc)
-                - [SolverMPC in C++](MPC_Controller/convex_MPC/SolverMPC.cpp)
+                - [FootSwingTrajectory](MPC_Controller/common/FootSwingTrajectory.py),
+                - [Gait](MPC_Controller/convex_MPC/Gait.py)
+                - [SolverMPC in C](MPC_Controller/convex_MPC/mpc_osqp.cc)
+
+- [Gamepad Reader](RL_Simulator/gamepad_reader.py)
 
 ## User Notes
 
