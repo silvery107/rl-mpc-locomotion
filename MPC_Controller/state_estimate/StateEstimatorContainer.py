@@ -25,12 +25,13 @@ class StateEstimatorContainer:
 
     def __init__(self, quadruped:Quadruped):
         self.result = StateEstimate()
+        self._quadruped = quadruped
         self._phase = np.zeros((4,1), dtype=DTYPE)
         self._ground_normal_filter = MovingWindowFilter(window_size=10)
         self._contactPhase = self._phase
         self._foot_contact_history:np.ndarray = None
+
         self.ground_R_body_frame:np.ndarray = None
-        self._quadruped = quadruped
         self.body_height:float = self._quadruped._bodyHeight
         self.result.position[2] = self.body_height
 
@@ -70,9 +71,6 @@ class StateEstimatorContainer:
         # RPY of body in yaw aligned ground frame
         self.result.rpyBody = rot_to_rpy(self.ground_R_body_frame)
 
-        # ! change position to ground frame 这里不对
-        # self.result.position = np.array([0, 0, self.result.position[2]], dtype=DTYPE).reshape((3,1))
-
     def _init_contact_history(self, foot_positions:np.ndarray):
         self._foot_contact_history = foot_positions.copy()
         self._foot_contact_history[:, 2] = - self.body_height
@@ -94,7 +92,7 @@ class StateEstimatorContainer:
         height_in_ground_frame = np.sum(foot_heights * foot_contacts) / np.sum(foot_contacts)
         self.result.position[2] = height_in_ground_frame
         
-    def _compute_normal_and_com_position_in_ground_frame(self, foot_positions:np.ndarray):
+    def _compute_ground_normal_and_com_position(self, foot_positions:np.ndarray):
         """
         Computes the surface orientation in robot frame based on foot positions.
         Solves a least squares problem, see the following paper for details:

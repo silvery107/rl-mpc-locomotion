@@ -221,7 +221,7 @@ class ConvexMPCLocomotion:
                 self.footSwingTrajectories[i].setInitialPosition(self.pFoot[i])
                 self.footSwingTrajectories[i].setFinalPosition(self.pFoot[i])
 
-        data._stateEstimator._compute_normal_and_com_position_in_ground_frame(self.foot_positions)
+        data._stateEstimator._compute_ground_normal_and_com_position(self.foot_positions)
 
         # * foot placement
         for l in range(4):
@@ -238,7 +238,7 @@ class ConvexMPCLocomotion:
             else:
                 self.swingTimeRemaining[i] -= self.dt
 
-            self.footSwingTrajectories[i].setHeight(0.2)
+            self.footSwingTrajectories[i].setHeight(self._body_height/2)
             
             offset = np.array([0, getSideSign(i)*0.065, 0], dtype=DTYPE).reshape((3,1))
             pRobotFrame = data._quadruped.getHipLocation(i) + offset
