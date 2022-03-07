@@ -64,7 +64,7 @@
 - 全局自动转移通过虚拟按键解决 3.2
 - RL train 的时候个体自动转移: 加一个私有域存当前的control mode, 或者在 locomotion unsafe 的时候直接 reset, 固定gait type
 - 摔倒以后会乱跑了, com 状态给错了, 给的是 world 状态, 指令全成了朝仿真器坐标朝向 3.2
-- TODO 触地检测 用力传感器做, 配合状态变换完成地面法向量估计
+- TODO 触地检测 用力传感器做, 配合状态变换完成地面法向量估计 (已完成)
 - 调节渲染间隔 把力控提到 1k Hz 3.3
 - 加了力传感器, 身体系和世界系没有对齐的时候就会乱跑, 趋于一个对齐的参考轨迹, 坐标变换有问题 3.3
 - MPC stand 要配合WBC的task才有用 决定放弃 stand 步态 3.4
@@ -73,6 +73,7 @@
 - TODO 设计 RL 算法: step, update, reset, action ... observation, rewards ...
 - 已完成 uneven terrain 搭建, 目前身体高度估计错误, 同时状态没有变换到和地面法向量对齐的坐标系 3.5
 - 修正了坐标变换和身体高度估计, 但是法向量估计有问题, 长时间在斜坡踏步会导致估计反向 3.6
+- 修正了位置估计bug, 实现上下斜坡、台阶 3.7
 
 ### Roadmap
 - [Quadruped](MPC_Controller/common/Quadruped.py),
