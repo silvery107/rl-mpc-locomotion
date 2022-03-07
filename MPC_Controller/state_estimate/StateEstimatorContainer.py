@@ -1,7 +1,8 @@
-from unittest import result
 import numpy as np
 from isaacgym import gymapi
+from MPC_Controller.common.Quadruped import Quadruped
 from MPC_Controller.state_estimate.moving_window_filter import MovingWindowFilter
+from MPC_Controller.state_estimate.orientation_tools import get_rot_from_normals
 from MPC_Controller.utils import quat_to_rot, quat_to_rpy, Quaternion, DTYPE, rot_to_rpy, rpy_to_rot
 
 class StateEstimate:
@@ -15,24 +16,23 @@ class StateEstimate:
         self.rpy = np.zeros((3,1), dtype=DTYPE)
         self.rpyBody = np.zeros((3,1), dtype=DTYPE)
 
-        self.ground_normal = np.zeros(3, dtype=DTYPE)
+        self.ground_normal = np.array([0,0,1], dtype=DTYPE)
 
         self.vBody = np.zeros((3,1), dtype=DTYPE)
         self.omegaBody = np.zeros((3,1), dtype=DTYPE)
 
-        # self.aBody = np.zeros((3,1), dtype=DTYPE)
-        # self.aWorld = np.zeros((3,1), dtype=DTYPE)
-        # self.contactEstimate = np.zeros((4,1), dtype=DTYPE)
-
-
 class StateEstimatorContainer:
 
-    def __init__(self):
+    def __init__(self, quadruped:Quadruped):
         self.result = StateEstimate()
         self._phase = np.zeros((4,1), dtype=DTYPE)
         self._ground_normal_filter = MovingWindowFilter(window_size=10)
         self._contactPhase = self._phase
         self._foot_contact_history:np.ndarray = None
+        self.ground_R_body_frame:np.ndarray = None
+        self._quadruped = quadruped
+        self.body_height:float = self._quadruped._bodyHeight
+        self.result.position[2] = self.body_height
 
     def setContactPhase(self, phase:np.ndarray):
         self._contactPhase = phase
@@ -45,7 +45,7 @@ class StateEstimatorContainer:
         body_states = gym.get_actor_rigid_body_states(env, actor, gymapi.STATE_ALL)[body_idx]
 
         for idx in range(3):
-            self.result.position[idx] = body_states["pose"]["p"][idx] # positions (Vec3: x, y, z)
+            # self.result.position[idx] = body_states["pose"]["p"][idx] # positions (Vec3: x, y, z)
             self.result.vWorld[idx] = body_states["vel"]["linear"][idx] # linear velocities (Vec3: x, y, z)
             self.result.omegaWorld[idx] = body_states["vel"]["angular"][idx] # angular velocities (Vec3: x, y, z)
 
@@ -55,42 +55,27 @@ class StateEstimatorContainer:
         self.result.orientation.z = body_states["pose"]["r"]["z"]
 
         # all good here
-        self.result.rBody = quat_to_rot(self.result.orientation)
+        self.result.rBody = quat_to_rot(self.result.orientation) # world_R_body_frame
         self.result.vBody = self.result.rBody @ self.result.vWorld
         self.result.omegaBody = self.result.rBody @ self.result.omegaWorld
 
         #  RPY of body in the world frame
         self.result.rpy = quat_to_rpy(self.result.orientation)
 
-        base_R_world = rpy_to_rot([0,0,self.result.rpy[2]])
-        body_R_base = self.result.rBody @ base_R_world.T
+        # world_R_ground_frame = rpy_to_rot([0,0,self.result.rpy[2]])
+        world_R_ground_frame = get_rot_from_normals(np.array([0,0,1], dtype=DTYPE),
+                                                    self.result.ground_normal)
+        self.ground_R_body_frame = self.result.rBody @ world_R_ground_frame.T
 
-        # RPY of body in yaw aligned base frame
-        self.result.rpyBody = rot_to_rpy(body_R_base)
+        # RPY of body in yaw aligned ground frame
+        self.result.rpyBody = rot_to_rpy(self.ground_R_body_frame)
 
-        # change position to base frame
-        self.result.position = np.array([0, 0, self.result.position[2]], dtype=DTYPE).reshape((3,1))
+        # ! change position to ground frame 这里不对
+        # self.result.position = np.array([0, 0, self.result.position[2]], dtype=DTYPE).reshape((3,1))
 
-    def _compute_ground_normal(self, foot_positions:np.ndarray):
-        """
-        Computes the surface orientation in robot frame based on foot positions.
-        Solves a least squares problem, see the following paper for details:
-        https://ieeexplore.ieee.org/document/7354099
-        """
-        self._update_contact_history(foot_positions)
-        contact_foot_positions = self._foot_contact_history.reshape((4,3)) # reshape from (4,3,1) to (4,3)
-        normal_vec = np.linalg.lstsq(contact_foot_positions, np.ones(4))[0]
-        normal_vec /= np.linalg.norm(normal_vec)
-        if normal_vec[2] < 0:
-            normal_vec = -normal_vec
-
-        _ground_normal = self._ground_normal_filter.calculate_average(normal_vec)
-        _ground_normal /= np.linalg.norm(_ground_normal)
-        self.result.ground_normal = _ground_normal
-
-    def _init_contact_history(self, foot_positions:np.ndarray, height:float):
+    def _init_contact_history(self, foot_positions:np.ndarray):
         self._foot_contact_history = foot_positions.copy()
-        self._foot_contact_history[:, 2] = - height
+        self._foot_contact_history[:, 2] = - self.body_height
 
     def _update_contact_history(self, foot_positions:np.ndarray):
         foot_contacts = self._contactPhase.flatten().copy()
@@ -98,3 +83,32 @@ class StateEstimatorContainer:
         for leg_id in range(4):
             if foot_contacts[leg_id]:
                 self._foot_contact_history[leg_id] = foot_positions_[leg_id]
+
+    def _update_com_position_ground_frame(self, foot_positions:np.ndarray):
+        foot_contacts = self._contactPhase.flatten().copy()
+        if np.sum(foot_contacts) == 0:
+            return np.array((0, 0, self.body_height))
+        else:
+            foot_positions_ground_frame = (foot_positions.reshape((4,3)).dot(self.ground_R_body_frame.T))
+            foot_heights = -foot_positions_ground_frame[:, 2]
+        height_in_ground_frame = np.sum(foot_heights * foot_contacts) / np.sum(foot_contacts)
+        self.result.position[2] = height_in_ground_frame
+        
+    def _compute_normal_and_com_position_in_ground_frame(self, foot_positions:np.ndarray):
+        """
+        Computes the surface orientation in robot frame based on foot positions.
+        Solves a least squares problem, see the following paper for details:
+        https://ieeexplore.ieee.org/document/7354099
+        """
+        self._update_com_position_ground_frame(foot_positions)
+        self._update_contact_history(foot_positions)
+
+        contact_foot_positions = self._foot_contact_history.reshape((4,3)) # reshape from (4,3,1) to (4,3)
+        normal_vec = np.linalg.lstsq(contact_foot_positions, np.ones(4), rcond=None)[0]
+        normal_vec /= np.linalg.norm(normal_vec)
+        if normal_vec[2] < 0:
+            normal_vec = -normal_vec
+
+        _ground_normal = self._ground_normal_filter.calculate_average(normal_vec)
+        _ground_normal /= np.linalg.norm(_ground_normal)
+        self.result.ground_normal = _ground_normal

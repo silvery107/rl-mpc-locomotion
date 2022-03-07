@@ -31,7 +31,7 @@ class RobotRunner:
         self._legController = LegController(self._quadruped)
 
         # init state estimator
-        self._stateEstimator = StateEstimatorContainer()
+        self._stateEstimator = StateEstimatorContainer(self._quadruped)
 
         # init desired state command
         # self._desiredStateCommand = DesiredStateCommand()

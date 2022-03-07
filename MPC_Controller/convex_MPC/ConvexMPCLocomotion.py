@@ -98,7 +98,7 @@ class ConvexMPCLocomotion:
         self.firstSwing = [True for _ in range(4)]
         self.firstRun = True
 
-    def recomputer_timing(self, iterations_per_mpc:int):
+    def recomputerTiming(self, iterations_per_mpc:int):
         self.iterationsBetweenMPC = iterations_per_mpc
         self.dtMPC = self.dt*iterations_per_mpc
 
@@ -144,11 +144,11 @@ class ConvexMPCLocomotion:
             print("COM Pos: {: .4f}, {: .4f}, {: .4f}".format(*com_position))
             print("COM Ang: {: .4f}, {: .4f}, {: .4f}".format(*com_angular_velocity))
             print("COM Vel: {: .4f}, {: .4f}, {: .4f}".format(*com_velocity))
-            print("------------------------------------------")
-            print("DES RPY: {: .4f}, {: .4f}, {: .4f}".format(*np.rad2deg(desired_com_roll_pitch_yaw)))
-            print("DES Pos: {: .4f}, {: .4f}, {: .4f}".format(*desired_com_position))
-            print("DES Ang: {: .4f}, {: .4f}, {: .4f}".format(*desired_com_angular_velocity))
-            print("DES Vel: {: .4f}, {: .4f}, {: .4f}".format(*desired_com_velocity))
+            # print("------------------------------------------")
+            # print("DES RPY: {: .4f}, {: .4f}, {: .4f}".format(*np.rad2deg(desired_com_roll_pitch_yaw)))
+            # print("DES Pos: {: .4f}, {: .4f}, {: .4f}".format(*desired_com_position))
+            # print("DES Ang: {: .4f}, {: .4f}, {: .4f}".format(*desired_com_angular_velocity))
+            # print("DES Vel: {: .4f}, {: .4f}, {: .4f}".format(*desired_com_velocity))
             print("------------------------------------------")
             print("GND Vec: {: .4f}, {: .4f}, {: .4f}".format(*gravity_projection_vec))
 
@@ -201,7 +201,7 @@ class ConvexMPCLocomotion:
         self.current_gait = gaitNumber
         gait.setIterations(self.iterationsBetweenMPC, self.iterationCounter)
 
-        self.recomputer_timing(self.default_iterations_between_mpc)
+        self.recomputerTiming(self.default_iterations_between_mpc)
 
         for i in range(4):
             self.pFoot[i] = seResult.position + \
@@ -215,13 +215,13 @@ class ConvexMPCLocomotion:
         # * first time initialization
         if self.firstRun:
             self.firstRun = False
-            data._stateEstimator._init_contact_history(self.foot_positions, self._body_height)
+            data._stateEstimator._init_contact_history(self.foot_positions)
             for i in range(4):
                 self.footSwingTrajectories[i].setHeight(0.05)
                 self.footSwingTrajectories[i].setInitialPosition(self.pFoot[i])
                 self.footSwingTrajectories[i].setFinalPosition(self.pFoot[i])
 
-        data._stateEstimator._compute_ground_normal(self.foot_positions)
+        data._stateEstimator._compute_normal_and_com_position_in_ground_frame(self.foot_positions)
 
         # * foot placement
         for l in range(4):
@@ -238,7 +238,7 @@ class ConvexMPCLocomotion:
             else:
                 self.swingTimeRemaining[i] -= self.dt
 
-            self.footSwingTrajectories[i].setHeight(0.1)
+            self.footSwingTrajectories[i].setHeight(0.2)
             
             offset = np.array([0, getSideSign(i)*0.065, 0], dtype=DTYPE).reshape((3,1))
             pRobotFrame = data._quadruped.getHipLocation(i) + offset
