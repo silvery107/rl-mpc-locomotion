@@ -11,8 +11,8 @@ from MPC_Controller.convex_MPC.Gait import OffsetDurationGait
 from MPC_Controller.DesiredStateCommand import DesiredStateCommand
 from MPC_Controller.FSM_states.ControlFSMData import ControlFSMData
 from MPC_Controller.common.FootSwingTrajectory import FootSwingTrajectory
-from MPC_Controller.utils import NUM_LEGS, coordinateRotation, CoordinateAxis, DTYPE, getSideSign
-
+from MPC_Controller.utils import NUM_LEGS, CoordinateAxis, DTYPE, getSideSign
+from MPC_Controller.math_utils.orientation_tools import coordinateRotation
 
 class ConvexMPCLocomotion:
     def __init__(self, _dt:float, _iterationsBetweenMPC:int):
