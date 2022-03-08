@@ -132,7 +132,7 @@
 - [QP Solver Installation and Testing](docs/6-qp_solver.md)
 
 ## Gallery
-
+    <video src="videos/MPC_stair_show.mp4" width=500 controls="controls" muted="muted"></video>
 <img src="images/4_cheetah_trot.gif" width=500>
 <img src="images/aliengo_trot.gif" width=500>
 <img src="images/aliengo_train.png" width=500>
