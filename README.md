@@ -132,6 +132,9 @@
 - [QP Solver Installation and Testing](docs/6-qp_solver.md)
 
 ## Gallery
+    
+
+https://user-images.githubusercontent.com/44640904/157265160-ffc0c7b1-ef05-48a6-ad8e-8d93ae7ccfc3.mp4
 
 <img src="images/4_cheetah_trot.gif" width=500>
 <img src="images/aliengo_trot.gif" width=500>
