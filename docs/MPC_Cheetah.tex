@@ -95,6 +95,29 @@ $$
     \end{array}\right]
 \end{aligned}
 $$
+\section{ZOOH Discretization}
+
+Given a linear system $\dot{x} = Ax+Bu$ and its solution 
+$$
+\mathbf{x}(t)=e^{\mathbf{A}\left(t-t_{0}\right)} \mathbf{x}\left(t_{0}\right)+\int_{t_{0}}^{t} e^{\mathbf{A}(t-\tau)} \mathbf{B u}(\tau) d \tau
+$$
+Let $t_{0}=t_{k}, t=t_{k+1}$, and $t_{k+1}-t_{k}=T$. Therefore,
+$$
+\begin{aligned}
+\mathbf{x}_{k+1} &=e^{\mathbf{A} T} \mathbf{x}_{k}+\int_{t_{k}}^{t_{k+1}} e^{\mathbf{A}\left(t_{k+1}-\tau\right)} \mathbf{B u}(\tau) d \tau \\
+&=e^{\mathbf{A} T} \mathbf{x}_{k}+\int_{t_{k}}^{t_{k+1}} e^{\mathbf{A}\left(t_{k+1}-\tau\right)} \mathbf{B} d \tau \mathbf{u}_{k}
+\end{aligned}
+$$
+Let $\tau^{\prime}=t_{k+1}-\tau$, we have
+$$
+\int_{t_{k}}^{t_{k+1}} e^{\mathbf{A}\left(t_{k+1}-\tau\right)} \mathbf{B} d \tau=\int_{T}^{0} e^{\mathbf{A} \tau^{\prime}}\left(-d \tau^{\prime}\right) \mathbf{B}=\int_{0}^{T} e^{\mathbf{A} \tau} d \tau \mathbf{B}
+$$
+Thus,
+$\mathbf{x}_{k+1} =\mathbf{A}_{d} \mathbf{x}_{k}+\mathbf{B}_{d} \mathbf{u}_{k}$
+, where 
+$\mathbf{A}_{d} =e^{\mathbf{A} T}$ 
+and 
+$\mathbf{B}_{d} =\int_{0}^{T} e^{\mathbf{A} \tau} d \tau \mathbf{B}$
 
 
 \section{QP Formulation}
