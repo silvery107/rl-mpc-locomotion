@@ -92,10 +92,10 @@
   <li>MPC stand 要配合WBC的task才有用 决定放弃 stand 步态 3.4
   <li>坐标变换修好了, 把所有世界系的指令换成身体系了 3.5
   <li>地面法向量估计写好了 3.5
-  <li>TODO 设计 RL 算法: step, update, reset, action ... observation, rewards ...
   <li>已完成 uneven terrain 搭建, 目前身体高度估计错误, 同时状态没有变换到和地面法向量对齐的坐标系 3.5
   <li>修正了坐标变换和身体高度估计, 但是法向量估计有问题, 长时间在斜坡踏步会导致估计反向 3.6
   <li>修正了位置估计bug, 实现上下斜坡、台阶 3.7
+  <li>TODO 设计 RL 算法: step, update, reset, action ... observation, rewards ...
   </ul>
 </details>
 
