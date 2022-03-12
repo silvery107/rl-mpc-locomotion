@@ -135,5 +135,4 @@ dmypy.json
 .tmp.*
 *.ini
 third_party/
-RL_Simulator/utils/
 runs/
