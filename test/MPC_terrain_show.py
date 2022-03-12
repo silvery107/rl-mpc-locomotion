@@ -10,7 +10,7 @@ from MPC_Controller.RobotRunner import RobotRunner
 from MPC_Controller.common.Quadruped import RobotType
 from RL_Simulator import gamepad_reader
 from isaacgym import gymapi
-from RL_Simulator.utils import *
+from RL_Simulator.sim_utils import *
 
 use_gamepad = True
 # robot = RobotType.A1
