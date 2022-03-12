@@ -4,7 +4,7 @@ from MPC_Controller.RobotRunner import RobotRunner
 from MPC_Controller.common.Quadruped import RobotType
 from RL_Simulator import gamepad_reader
 from isaacgym import gymapi
-from RL_Simulator.utils import acquire_sim, add_ground, add_terrain, add_uneven_terrains, create_envs, add_viewer, get_force_sensor
+from RL_Simulator.sim_utils import acquire_sim, add_ground, add_terrain, add_uneven_terrains, create_envs, add_viewer, get_force_sensor
 
 use_gamepad = True
 robot = RobotType.A1
@@ -23,7 +23,7 @@ env_spacing = 0.5
 # one actor per env 
 envs, actors = create_envs(gym, sim, robot, num_envs, envs_per_row, env_spacing)
 # force_sensors = get_force_sensor(gym, envs, actors)
-cam_pos = gymapi.Vec3(1,1,3) # w.r.t target env
+cam_pos = gymapi.Vec3(2,2,2) # w.r.t target env
 viewer = add_viewer(gym, sim, envs[0], cam_pos)
 
 controllers = []
@@ -42,7 +42,7 @@ for idx in range(num_envs):
 
 # Setup MPC Controller
 if use_gamepad:
-    gamepad = gamepad_reader.Gamepad(vel_scale_x=2, vel_scale_y=2, vel_scale_rot=2)
+    gamepad = gamepad_reader.Gamepad(vel_scale_x=2, vel_scale_y=1.5, vel_scale_rot=2)
 
 print("[Simulator Driver] First run of robot controller...")
 
