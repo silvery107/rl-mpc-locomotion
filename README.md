@@ -6,7 +6,7 @@
 
 <img src="images/controller_blocks.png" width=700>
 
-## Development Log
+## Development Logs
 <details>
   <summary>Dec 3, 2019 -- Jan 7, 2022</summary>
   <ul>
@@ -21,6 +21,7 @@
   <li>矩阵和列表的等号赋值是不安全的
   </ul>
 </details>
+
 <details>
   <summary>Jan 8, 2022 -- Jan 18, 2022</summary>
   <ul>
@@ -42,6 +43,7 @@
   <li>joint zero pos and conventions !!! 摆动相和站立相永远差一个pi..... 1.18
   </ul>
 </details>
+
 <details>
   <summary>Feb 4, 2022 -- Feb 9, 2022</summary>
   <ul>
@@ -57,6 +59,7 @@
   <li>用CPP重写solver 用pybind11转译 用osqp eigen求解 平均用时1ms 但加上数据转换时间后长达30ms 2.9
   </ul>
 </details>
+
 <details>
   <summary>Feb 16, 2022 -- Feb 20, 2022</summary>
   <ul>
@@ -69,7 +72,9 @@
   <li>aliengo 似乎朝向错了
   <li>增加了a1支持, 但是 aliengo和 a1 都在往地上走, 很奇怪 2.20
   </ul>
-</details><details>
+</details>
+
+<details>
   <summary>Feb 26, 2022 -- Mar 7, 2022</summary>
   <ul>
   <li>TODO 对比两组 a1 的控制器输入输出来找bug 2.26 (已完成)
@@ -99,12 +104,15 @@
   </ul>
 </details>
 
+<details>
+  <summary>Mar 11, 2022 -- Present</summary>
+  <ul>
+  <li>
+  </ul>
+</details>
 
 
-
-
-
-### Roadmap
+### Roadmaps
 - [Quadruped](MPC_Controller/common/Quadruped.py),
 - [RobotRunner](MPC_Controller/RobotRunner.py) ->
     - [LegController](MPC_Controller/common/LegController.py),
@@ -128,11 +136,11 @@
   - [How to copy data from list or ndarray into a Python struct?](docs/2-development_log.md#how-to-copy-data-from-list-or-ndarray-into-a-python-struct)
   - [Matrix multiplication and exponential](docs/2-development_log.md#matrix-multiplication-and-exponential)
   - [Quadratic programming with CVXOPT](docs/2-development_log.md#quadratic-programming-with-cvxopt)
-- [Upgrade IsaacGym Preview 2 to Preview 3](docs/3-isaac_api_note.md)
-- [QP Solver Installation and Testing](docs/6-qp_solver.md)
+- [Setup a Simulation in Isaac Gym](docs/3-isaac_api_note.md)
+- [Upgrade Isaac Gym Preview 2 to Preview 3](docs/5-upgrade_isaac_gym.md)
+- [OSQP, qpOASES and CVXOPT Solver Installation](docs/6-qp_solver.md)
 
 ## Gallery
-    
 
 https://user-images.githubusercontent.com/44640904/157265160-ffc0c7b1-ef05-48a6-ad8e-8d93ae7ccfc3.mp4
 
