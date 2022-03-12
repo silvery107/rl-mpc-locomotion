@@ -2,9 +2,9 @@ from MPC_Controller.DesiredStateCommand import DesiredStateCommand
 from MPC_Controller.Parameters import Parameters
 from MPC_Controller.RobotRunner import RobotRunner
 from MPC_Controller.common.Quadruped import RobotType
-from RL_Simulator import gamepad_reader
+from RL_Environment import gamepad_reader
 from isaacgym import gymapi
-from RL_Simulator.sim_utils import acquire_sim, add_ground, add_terrain, add_uneven_terrains, create_envs, add_viewer, get_force_sensor
+from RL_Environment.sim_utils import acquire_sim, add_ground, add_terrain, add_uneven_terrains, create_envs, add_viewer, get_force_sensor
 
 use_gamepad = True
 robot = RobotType.A1

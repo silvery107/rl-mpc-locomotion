@@ -7,7 +7,7 @@ os.sys.path.insert(0, parentdir)
 from isaacgym import gymapi
 import numpy as np
 import math
-from RL_Simulator.sim_utils import ASSET_ROOT, ALIENGO, XIAOTIAN
+from RL_Environment.sim_utils import ASSET_ROOT, ALIENGO, XIAOTIAN
 
 gym = gymapi.acquire_gym()
 
