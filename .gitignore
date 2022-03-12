@@ -136,3 +136,4 @@ dmypy.json
 *.ini
 reference/mpc_controller
 reference/anymal.py
+third_party/

@@ -7,7 +7,7 @@ from MPC_Controller.common.Quadruped import RobotType
 sys.path.append("..")
 
 import numpy as np
-import MPC_Controller.convex_MPC.mpc_osqp as mpc
+# import MPC_Controller.convex_MPC.mpc_osqp as mpc
 from MPC_Controller.Parameters import Parameters
 from MPC_Controller.convex_MPC.Gait import OffsetDurationGait
 from MPC_Controller.DesiredStateCommand import DesiredStateCommand
@@ -15,6 +15,13 @@ from MPC_Controller.FSM_states.ControlFSMData import ControlFSMData
 from MPC_Controller.common.FootSwingTrajectory import FootSwingTrajectory
 from MPC_Controller.utils import NUM_LEGS, CoordinateAxis, DTYPE, getSideSign
 from MPC_Controller.math_utils.orientation_tools import coordinateRotation
+
+try:
+    import mpc_osqp as mpc
+except:
+    print("You need to install rl-mpc-locomotion")
+    print("Run python3 setup.py install --user in this repo")
+    sys.exit()
 
 class ConvexMPCLocomotion:
     def __init__(self, _dt:float, _iterationsBetweenMPC:int):
