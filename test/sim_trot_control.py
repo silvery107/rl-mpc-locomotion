@@ -1,6 +1,13 @@
+import os
+import inspect
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+os.sys.path.insert(0, parentdir)
+
 from isaacgym import gymapi
 import numpy as np
 import math
+from RL_Simulator.sim_utils import ASSET_ROOT, ALIENGO, XIAOTIAN
 
 gym = gymapi.acquire_gym()
 
@@ -35,11 +42,11 @@ plane_params.restitution = 0    # control the elasticity of collisions (amount o
 gym.add_ground(sim, plane_params)
 
 #* load asset
-xiaotian = "urdf/Xiaotian-ROS/urdf/xiaotian_description.urdf"
-aliengo = "urdf/aliengo_description/xacro/aliengo.urdf"
-anymal = "urdf/anymal_c/urdf/anymal.urdf"
-asset_root = "/home/silvery/isaacgym/assets"
-asset_file = aliengo
+xiaotian = XIAOTIAN
+# aliengo = "urdf/aliengo_description/xacro/aliengo.urdf"
+# anymal = "urdf/anymal_c/urdf/anymal.urdf"
+asset_root = ASSET_ROOT
+asset_file = ALIENGO
 asset_options = gymapi.AssetOptions()
 asset_options.fix_base_link = False
 asset_options.use_mesh_materials = True
@@ -64,24 +71,24 @@ foot_ids = [5, 9, 13, 17]
 # cache some common handles for later use
 envs = []
 actor_handles = []
-force_sensors = []
+# force_sensors = []
 
 # create and populate the environments
 for i in range(num_envs):
     env = gym.create_env(sim, env_lower, env_upper, envs_per_row)
     envs.append(env)
 
-    height = 0.45
+    height = 0.5
     pose = gymapi.Transform()
     pose.p = gymapi.Vec3(0.0, 0.0, height)
     # pose.r = gymapi.Quat(-0.707107, 0.0, 0.0, 0.707107) # rotate -90deg about x
     # pose.r = gymapi.Quat.from_axis_angle(gymapi.Vec3(0, 0, 1), -0.5*math.pi)
 
     actor_handle = gym.create_actor(env, asset, pose, "MyActor", group=i, filter=1)
-    for id in foot_ids:
-        foot_handle = gym.get_actor_rigid_body_handle(env, actor_handle, id)
-        sensor = gym.create_force_sensor(env, foot_handle, sensor_pose)
-        force_sensors.append(sensor)
+    # for id in foot_ids:
+    #     foot_handle = gym.get_actor_rigid_body_handle(env, actor_handle, id)
+    #     sensor = gym.create_force_sensor(env, foot_handle, sensor_pose)
+    #     force_sensors.append(sensor)
 
     actor_handles.append(actor_handle)
 
@@ -99,7 +106,7 @@ Ah = 40
 Ak = 80
 t = 0
 
-leg_const = 26
+leg_const = 0
 FL_hip_pos = 0
 FL_thigh_pos = 0+leg_const
 FL_calf_pos = 0+leg_const

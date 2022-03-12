@@ -60,16 +60,16 @@ def load_asset(gym, sim, robot, fix_base_link):
     asset_options.fix_base_link = fix_base_link
     asset_options.use_mesh_materials = True
     asset_options.flip_visual_attachments = False if asset_file==XIAOTIAN or asset_file==MINI_CHEETAH or asset_file==A1 else True
+    asset_options.angular_damping = 0.0
+    asset_options.linear_damping = 0.0
     # asset_options.density = 0.001
-    # asset_options.angular_damping = 0.0
-    # asset_options.linear_damping = 0.0
     # asset_options.thickness = 0.01
     # asset_options.disable_gravity = False
     asset_options.armature = 0.01   # added to the diagonal elements of inertia tensors
                                     # for all of the asset’s rigid bodies/links. 
                                     # Could improve simulation stability
     print("Loading asset '%s' from '%s'" % (asset_file, ASSET_ROOT))
-    asset = gym.load_asset(sim, ASSET_ROOT, asset_file, asset_options) # or load_asset_urdf
+    asset = gym.load_urdf(sim, ASSET_ROOT, asset_file, asset_options) # or load_asset_urdf
     return asset
 
 

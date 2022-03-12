@@ -15,7 +15,7 @@ from MPC_Controller.DesiredStateCommand import DesiredStateCommand
 from MPC_Controller.Parameters import Parameters
 
 from isaacgym import gymapi
-from RL_Simulator.utils import *
+from RL_Simulator.sim_utils import *
 
 robot = RobotType.MINI_CHEETAH
 dt =  1 / 60
