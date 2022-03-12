@@ -134,6 +134,6 @@ dmypy.json
 .vscode/
 .tmp.*
 *.ini
-reference/mpc_controller
-reference/anymal.py
 third_party/
+RL_Simulator/utils/
+runs/

@@ -107,7 +107,7 @@
 <details>
   <summary>Mar 11, 2022 -- Present</summary>
   <ul>
-  <li>
+  <li> 添加了isaac gym RL训练环境支持 3.12
   </ul>
 </details>
 
@@ -132,10 +132,6 @@
 - [Import URDF model in ISAAC](docs/0-model_import.md)
 - [Install MIT Cheetah Software](docs/1-MIT_cheetah_installation.md)
 - [Development Log: Cheetah Software in Python](docs/2-development_log.md)
-  - [How to imitate a C/C++ STRUCT in Python?](docs/2-development_log.md#how-to-imitate-a-cc-struct-in-python)
-  - [How to copy data from list or ndarray into a Python struct?](docs/2-development_log.md#how-to-copy-data-from-list-or-ndarray-into-a-python-struct)
-  - [Matrix multiplication and exponential](docs/2-development_log.md#matrix-multiplication-and-exponential)
-  - [Quadratic programming with CVXOPT](docs/2-development_log.md#quadratic-programming-with-cvxopt)
 - [Setup a Simulation in Isaac Gym](docs/3-isaac_api_note.md)
 - [Upgrade Isaac Gym Preview 2 to Preview 3](docs/5-upgrade_isaac_gym.md)
 - [OSQP, qpOASES and CVXOPT Solver Installation](docs/6-qp_solver.md)
