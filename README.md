@@ -116,13 +116,13 @@
 - [Quadruped](MPC_Controller/common/Quadruped.py),
 - [RobotRunner](MPC_Controller/RobotRunner.py) ->
     - [LegController](MPC_Controller/common/LegController.py),
-    - [StateEstimatorContainer](MPC_Controller/state_estimate/StateEstimatorContainer.py),
+    - [StateEstimator](MPC_Controller/state_estimate/StateEstimatorContainer.py),
     - [ControlFSM](MPC_Controller/FSM_states/ControlFSM.py) ->
-        - [FSM_State_RecoveryStand](MPC_Controller/FSM_states/FSM_State_RecoveryStand.py)
+        - [FSM_State_RecoveryStand](MPC_Controller/FSM_states/FSM_State_RecoveryStand.py),
         - [FSM_State_Locomotion](MPC_Controller/FSM_states/FSM_State_Locomotion.py) ->
             - [ConvexMPCLocomotion](MPC_Controller/convex_MPC/ConvexMPCLocomotion.py) ->
                 - [FootSwingTrajectory](MPC_Controller/common/FootSwingTrajectory.py),
-                - [Gait](MPC_Controller/convex_MPC/Gait.py)
+                - [Gait](MPC_Controller/convex_MPC/Gait.py),
                 - [SolverMPC in C](MPC_Controller/convex_MPC/mpc_osqp.cc)
 
 - [Gamepad Reader](RL_Simulator/gamepad_reader.py)
