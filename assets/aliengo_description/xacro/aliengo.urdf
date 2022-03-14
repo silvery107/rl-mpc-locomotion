@@ -84,7 +84,7 @@
     <child link="imu_link"/>
     <origin rpy="0 0 0" xyz="0 0 0"/>
   </joint>
-  <link name="imu_link">
+  <!-- <link name="imu_link">
     <inertial>
       <mass value="0.001"/>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -103,7 +103,7 @@
         <box size=".001 .001 .001"/>
       </geometry>
     </collision>
-  </link>
+  </link> -->
   <joint name="FR_hip_joint" type="revolute">
     <origin rpy="0 0 0" xyz="0.2399 -0.051 0"/>
     <parent link="trunk"/>
