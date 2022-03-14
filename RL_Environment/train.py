@@ -88,7 +88,7 @@ def launch_rlg_hydra(cfg: DictConfig):
     # register the rl-games adapter to use inside the runner
     vecenv.register('RLGPU',
                     lambda config_name, num_actors, **kwargs: RLGPUEnv(config_name, num_actors, **kwargs))
-    env_configurations.register('rlgpu', {
+    env_configurations.register('rlmpc', {
         'vecenv_type': 'RLGPU',
         'env_creator': lambda **kwargs: create_rlgpu_env(**kwargs),
     })
