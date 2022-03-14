@@ -165,7 +165,7 @@ class Anymal(VecTask):
 
     def _create_envs(self, num_envs, spacing, num_per_row):
         asset_root = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../assets')
-        asset_file = "urdf/anymal_c/urdf/anymal.urdf"
+        asset_file = "anymal_c/urdf/anymal.urdf"
         #asset_path = os.path.join(asset_root, asset_file)
         #asset_root = os.path.dirname(asset_path)
         #asset_file = os.path.basename(asset_path)

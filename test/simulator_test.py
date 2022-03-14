@@ -17,10 +17,11 @@ from MPC_Controller.Parameters import Parameters
 from isaacgym import gymapi
 from RL_Environment.sim_utils import *
 
-robot = RobotType.MINI_CHEETAH
+robot = RobotType.ALIENGO
 dt =  1 / 60
 gym = gymapi.acquire_gym()
 sim = acquire_sim(gym, dt)
+add_ground(gym, sim)
 
 # set up the env grid
 num_envs = 1
@@ -63,10 +64,10 @@ while not gym.query_viewer_has_closed(viewer):
     # 0 1  Right
     # 2 3
     # Back
-    targets = np.array([1, 0, 1,
-                        0, 0, 0,
-                        0, 0, 0,
-                        0, 0, 0],
+    targets = np.array([0, -0.8, 1.6,
+                        0, -0.8, 1.6,
+                        0, -0.8, 1.6,
+                        0, -0.8, 1.6],
                         dtype=np.float32)
     gym.set_actor_dof_position_targets(envs[0], actors[0], targets)
 

@@ -7,11 +7,12 @@ MINI_CHEETAH = "mini_cheetah/mini_cheetah.urdf"
 ALIENGO = "aliengo_description/xacro/aliengo.urdf"
 A1 = "a1_description/a1.urdf"
 XIAOTIAN = "Xiaotian-ROS/urdf/xiaotian_description.urdf"
+ANYMAL = "anymal_c/urdf/anymal.urdf"
 
 FOOT_IDX = [4, 8, 12, 16]
 
 fix_base_link = False
-init_height = 0.5
+init_height = 0.6
 
 def acquire_sim(gym, dt):
     # get default set of parameters
@@ -53,6 +54,8 @@ def load_asset(gym, sim, robot, fix_base_link):
         asset_file = XIAOTIAN
     elif robot == RobotType.A1:
         asset_file = A1
+    elif robot == RobotType.ANYMAL:
+        asset_file = ANYMAL
     else:
         raise Exception("Invalid RobotType")
     
