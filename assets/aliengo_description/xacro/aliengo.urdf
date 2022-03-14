@@ -79,12 +79,12 @@
       <inertia ixx="0.033260231" ixy="-0.000451628" ixz="0.000487603" iyy="0.16117211" iyz="4.8356e-05" izz="0.17460442"/>
     </inertial>
   </link>
-  <joint name="imu_joint" type="fixed">
+  <!-- <joint name="imu_joint" type="fixed">
     <parent link="trunk"/>
     <child link="imu_link"/>
     <origin rpy="0 0 0" xyz="0 0 0"/>
   </joint>
-  <!-- <link name="imu_link">
+  <link name="imu_link">
     <inertial>
       <mass value="0.001"/>
       <origin rpy="0 0 0" xyz="0 0 0"/>
