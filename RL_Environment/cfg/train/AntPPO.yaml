@@ -37,7 +37,7 @@ params:
   config:
     name: ${resolve_default:Ant,${....experiment}}
     full_experiment_name: ${.name}
-    env_name: rlgpu
+    env_name: rlmpc
     multi_gpu: False
     ppo: True
     mixed_precision: True
@@ -63,7 +63,7 @@ params:
     truncate_grads: False
     e_clip: 0.2
     horizon_length: 16
-    minibatch_size: 2048 # batch_size = horizon_length*num_envs
+    minibatch_size: 16384 # batch_size = horizon_length*num_envs
     mini_epochs: 4
     critic_coef: 2
     clip_value: True

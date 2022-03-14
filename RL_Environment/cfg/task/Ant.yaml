@@ -6,7 +6,7 @@ physics_engine: ${..physics_engine}
 # if given, will override the device setting in gym.
 env: 
 #  numEnvs: ${...num_envs}
-  numEnvs: ${resolve_default:128,${...num_envs}}
+  numEnvs: ${resolve_default:1024,${...num_envs}}
   envSpacing: 5
   episodeLength: 1000
   enableDebugVis: False

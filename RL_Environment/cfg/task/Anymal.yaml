@@ -4,7 +4,7 @@ name: Anymal
 physics_engine: ${..physics_engine}
 
 env:
-  numEnvs: ${resolve_default:16,${...num_envs}}
+  numEnvs: ${resolve_default:512,${...num_envs}}
   envSpacing: 4.  # [m]
 
   clipObservations: 5.0
