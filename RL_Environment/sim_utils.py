@@ -23,7 +23,6 @@ def acquire_sim(gym, dt):
     sim_params.substeps = 2 # physics simulation timestep
     sim_params.up_axis = gymapi.UP_AXIS_Z
     sim_params.gravity = gymapi.Vec3(0.0, 0.0, -9.81)
-    # sim_params.use_gpu_pipeline = True
 
     # set PhysX-specific parameters
     sim_params.physx.use_gpu = True
@@ -41,7 +40,6 @@ def acquire_sim(gym, dt):
 
     # create sim with these parameters
     sim = gym.create_sim(compute_device=0, graphics_device=0, type=gymapi.SIM_PHYSX, params=sim_params)
-    # gym.prepare_sim(sim)
     
     return sim
 

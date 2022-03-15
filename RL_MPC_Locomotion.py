@@ -17,7 +17,7 @@ add_ground(gym, sim)
 # add_uneven_terrains(gym, sim)
 
 # set up the env grid
-num_envs = 1
+num_envs = 4
 envs_per_row = 2
 env_spacing = 0.5
 # one actor per env 
@@ -70,7 +70,11 @@ while not gym.query_viewer_has_closed(viewer):
 
     # run controller
     for i in range(num_envs):
-        controllers[i].run(gym, envs[i], actors[i])
+        dof_states = gym.get_actor_dof_states(envs[i], actors[i], gymapi.STATE_ALL)
+        body_idx = gym.find_actor_rigid_body_index(envs[i], actors[i], controllers[i]._quadruped._bodyName, gymapi.DOMAIN_ACTOR)
+        body_states = gym.get_actor_rigid_body_states(envs[i], actors[i], gymapi.STATE_ALL)[body_idx]
+        legTorques = controllers[i].run(dof_states, body_states) # gym, envs[i], actors[i])
+        gym.apply_actor_dof_efforts(envs[i], actors[i], legTorques / (Parameters.controller_dt*100))
 
     if Parameters.locomotionUnsafe:
         gamepad.fake_event(ev_type='Key',code='BTN_TR',value=0)
