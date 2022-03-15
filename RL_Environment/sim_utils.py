@@ -12,7 +12,7 @@ ANYMAL = "anymal_c/urdf/anymal.urdf"
 FOOT_IDX = [4, 8, 12, 16]
 
 fix_base_link = False
-init_height = 0.6
+init_height = 0.5
 
 def acquire_sim(gym, dt):
     # get default set of parameters
