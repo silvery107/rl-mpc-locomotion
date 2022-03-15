@@ -24,6 +24,7 @@ params:
 
     mlp:
       units: [256, 128, 64]
+      # units: [512, 256, 128]
       activation: elu
       d2rl: False
 
@@ -43,15 +44,16 @@ params:
     mixed_precision: True
     normalize_input: True
     normalize_value: True
+    normalize_advantage: True
     value_bootstrap: True
+    clip_actions: False
     num_actors: ${....task.env.numEnvs}
     reward_shaper:
       scale_value: 1.0
-    normalize_advantage: True
     gamma: 0.99
     tau: 0.95
     e_clip: 0.2
-    entropy_coef: 0.0
+    entropy_coef: 0.001
     learning_rate: 3.e-4 # overwritten by adaptive lr_schedule
     lr_schedule: adaptive
     kl_threshold: 0.008 # target kl for adaptive lr
@@ -63,10 +65,10 @@ params:
     critic_coef: 2
     clip_value: True
     seq_len: 4 # only for rnn
-    bounds_loss_coef: 0.001
+    bounds_loss_coef: 0.
 
     max_epochs: ${resolve_default:5000,${....max_iterations}}
     save_best_after: 200
     score_to_win: 20000
     save_frequency: 50
-    print_stats: True
+    print_stats: False

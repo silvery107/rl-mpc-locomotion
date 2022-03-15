@@ -5,7 +5,7 @@ physics_engine: ${..physics_engine}
 
 env:
   numEnvs: ${resolve_default:512,${...num_envs}}
-  envSpacing: 1.  # [m]
+  envSpacing: 2.  # [m]
 
   clipObservations: 5.0
   clipActions: 1.0
@@ -23,15 +23,14 @@ env:
 
   randomCommandVelocityRanges:
     linear_x: [-2., 2.] # min max [m/s]
-    linear_y: [-1., 1.]   # min max [m/s]
-    yaw: [-1., 1.]          # min max [rad/s]
+    linear_y: [-1.5, 1.5]   # min max [m/s]
+    yaw: [-2., 2.]          # min max [rad/s]
 
   control:
     # PD Drive parameters:
     stiffness: 85.0  # [N*m/rad]
     damping: 2.0     # [N*m*s/rad]
     actionScale: 0.5
-    controlFrequencyInv: 1 # 60 Hz
 
   defaultJointAngles:  # = target angles when action = 0.0
   # FL RL FR RR
@@ -58,9 +57,16 @@ env:
 
   learn:
     # rewards
+    # velocity tracking reward
     linearVelocityXYRewardScale: 1.0
     angularVelocityZRewardScale: 0.5
+    # torque penalties
     torqueRewardScale: -0.000025 
+    # base velocity penalties
+    linearVelocityZRewardScale: -4.0
+    angularVelocityXYRewardScale: -0.05
+    # collision penalties
+    kneeCollisionRewardScale: -0.25
 
     # normalization
     linearVelocityScale: 2.0
@@ -81,7 +87,7 @@ env:
   enableCameraSensors: False
 
 sim:
-  dt: 0.02
+  dt: 0.01
   substeps: 2
   up_axis: "z"
   use_gpu_pipeline: ${eq:${...pipeline},"gpu"}
@@ -103,70 +109,3 @@ sim:
 
 task:
   randomize: False
-  randomization_params:
-    frequency: 600   # Define how many environment steps between generating new randomizations
-    observations:
-      range: [0, .002] # range for the white noise
-      operation: "additive"
-      distribution: "gaussian"
-    actions:
-      range: [0., .02]
-      operation: "additive"
-      distribution: "gaussian"
-    sim_params: 
-      gravity:
-        range: [0, 0.4]
-        operation: "additive"
-        distribution: "gaussian"
-        schedule: "linear"  # "linear" will linearly interpolate between no rand and max rand
-        schedule_steps: 3000
-    actor_params:
-      aliengo:
-        color: True
-        rigid_body_properties:
-          mass: 
-            range: [0.5, 1.5]
-            operation: "scaling"
-            distribution: "uniform"
-            setup_only: True # Property will only be randomized once before simulation is started. See Domain Randomization Documentation for more info.
-            schedule: "linear"  # "linear" will linearly interpolate between no rand and max rand
-            schedule_steps: 3000
-        rigid_shape_properties:
-          friction:
-            num_buckets: 500
-            range: [0.7, 1.3]
-            operation: "scaling"
-            distribution: "uniform"
-            schedule: "linear"  # "linear" will scale the current random sample by `min(current num steps, schedule_steps) / schedule_steps`
-            schedule_steps: 3000
-          restitution:
-            range: [0., 0.7]
-            operation: "scaling"
-            distribution: "uniform"
-            schedule: "linear"  # "linear" will scale the current random sample by `min(current num steps, schedule_steps) / schedule_steps`
-            schedule_steps: 3000
-        dof_properties:
-          damping: 
-            range: [0.5, 1.5]
-            operation: "scaling"
-            distribution: "uniform"
-            schedule: "linear"  # "linear" will scale the current random sample by `min(current num steps, schedule_steps) / schedule_steps`
-            schedule_steps: 3000
-          stiffness: 
-            range: [0.5, 1.5]
-            operation: "scaling"
-            distribution: "uniform"
-            schedule: "linear"  # "linear" will scale the current random sample by `min(current num steps, schedule_steps) / schedule_steps`
-            schedule_steps: 3000
-          lower:
-            range: [0, 0.01]
-            operation: "additive"
-            distribution: "gaussian"
-            schedule: "linear"  # "linear" will scale the current random sample by `min(current num steps, schedule_steps) / schedule_steps`
-            schedule_steps: 3000
-          upper:
-            range: [0, 0.01]
-            operation: "additive"
-            distribution: "gaussian"
-            schedule: "linear"  # "linear" will scale the current random sample by `min(current num steps, schedule_steps) / schedule_steps`
-            schedule_steps: 3000
