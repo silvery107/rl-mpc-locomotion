@@ -14,8 +14,15 @@ class Parameters:
     cmpc_solver_type = 2 # 0 mit py solver, 1 mit cpp solver, 2 google cpp solver
     cmpc_gait = GaitType.TROT # 1 bound, 2 pronk, 3 pace, 4 stand, else trot
 
-    control_mode = FSM_StateName.PASSIVE # 0 passive, 4 locomotion, 6 recovery stand
-    operatingMode = FSM_OperatingMode.NORMAL # 0 no transition and safe check, 1 normal
+    use_tensor_pipeline = True
+    
+    if use_tensor_pipeline:
+        control_mode = FSM_StateName.LOCOMOTION
+        operatingMode = FSM_OperatingMode.TEST
+    else:
+        control_mode = FSM_StateName.PASSIVE # 0 passive, 4 locomotion, 6 recovery stand
+        operatingMode = FSM_OperatingMode.NORMAL # 0 no transition and safe check, 1 normal
+    
     controller_dt = 0.01 # in sec
 
     locomotionUnsafe = False # global indicator for switching contorl mode

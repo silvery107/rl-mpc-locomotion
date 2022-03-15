@@ -1,6 +1,7 @@
 import math
 import numpy as np
 from math import sin, cos
+from MPC_Controller.Parameters import Parameters
 from MPC_Controller.common.Quadruped import Quadruped
 from MPC_Controller.utils import DTYPE, getSideSign
 
@@ -95,17 +96,13 @@ class LegController:
         """
         # ! update q, qd, J, p and v here
         for leg in range(4):
-            # q
-            self.datas[leg].q[0] = dof_states["pos"][leg * 3 + 0]
-            self.datas[leg].q[1] = dof_states["pos"][leg * 3 + 1]
-            self.datas[leg].q[2] = dof_states["pos"][leg * 3 + 2]
-            # self.datas[leg].q[:, 0] = dof_states["pos"][3*leg:3*leg+3]
-
-            # qd
-            self.datas[leg].qd[0] = dof_states["vel"][leg * 3 + 0]
-            self.datas[leg].qd[1] = dof_states["vel"][leg * 3 + 1]
-            self.datas[leg].qd[2] = dof_states["vel"][leg * 3 + 2]
-            # self.datas[leg].qd[:, 0] = dof_states["vel"][3*leg:3*leg+3]
+            # q and qd
+            if Parameters.use_tensor_pipeline:
+                self.datas[leg].q[:, 0] = dof_states[3*leg:3*(leg+1), 0]
+                self.datas[leg].qd[:, 0] = dof_states[3*leg:3*(leg+1), 1]
+            else:
+                self.datas[leg].q[:, 0] = dof_states["pos"][3*leg:3*(leg+1)]
+                self.datas[leg].qd[:, 0] = dof_states["vel"][3*leg:3*(leg+1)]
             
             # J and p
             self.computeLegJacobianAndPosition(leg)

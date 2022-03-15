@@ -61,5 +61,5 @@ class RobotRunner:
 
         # self._iterations += 1
 
-        return legTorques
+        return legTorques # numpy (12,) float32
 

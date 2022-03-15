@@ -62,7 +62,15 @@ class ControlFSM:
 
     def initialize(self):
         # Initialize a new FSM State with the control data
-        self.currentState = self.statesList.passive
+        if Parameters.control_mode == FSM_StateName.LOCOMOTION:
+            self.currentState = self.statesList.locomotion
+        elif Parameters.control_mode == FSM_StateName.PASSIVE:
+            self.currentState = self.statesList.passive
+        elif Parameters.control_mode == FSM_StateName.RECOVERY_STAND:
+            self.currentState = self.statesList.recoveryStand
+        else:
+            raise Exception("Invalid Initial FSM State!")
+            
         # Enter the new current state cleanly
         self.currentState.onEnter()
         # Initialize to not be in transition

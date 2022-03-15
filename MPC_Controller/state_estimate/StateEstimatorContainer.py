@@ -1,4 +1,5 @@
 import numpy as np
+from MPC_Controller.Parameters import Parameters
 from MPC_Controller.common.Quadruped import Quadruped
 from MPC_Controller.math_utils.moving_window_filter import MovingWindowFilter
 from MPC_Controller.utils import Quaternion, DTYPE
@@ -41,15 +42,28 @@ class StateEstimatorContainer:
         return self.result
 
     def update(self, body_states):
-        for idx in range(3):
-            # self.result.position[idx] = body_states["pose"]["p"][idx] # positions (Vec3: x, y, z)
-            self.result.vWorld[idx] = body_states["vel"]["linear"][idx] # linear velocities (Vec3: x, y, z)
-            self.result.omegaWorld[idx] = body_states["vel"]["angular"][idx] # angular velocities (Vec3: x, y, z)
+        if Parameters.use_tensor_pipeline:
+            # self.result.position ~~ body_states[0:3]
+            self.result.orientation.x = body_states[3]
+            self.result.orientation.y = body_states[4]
+            self.result.orientation.z = body_states[5]
+            self.result.orientation.w = body_states[6]
+            self.result.vWorld[0] = body_states[7]
+            self.result.vWorld[1] = body_states[8]
+            self.result.vWorld[2] = body_states[9]
+            self.result.omegaWorld[0] = body_states[10]
+            self.result.omegaWorld[1] = body_states[11]
+            self.result.omegaWorld[2] = body_states[12]
+        else:
+            for idx in range(3):
+                # self.result.position[idx] = body_states["pose"]["p"][idx] # positions (Vec3: x, y, z)
+                self.result.vWorld[idx] = body_states["vel"]["linear"][idx] # linear velocities (Vec3: x, y, z)
+                self.result.omegaWorld[idx] = body_states["vel"]["angular"][idx] # angular velocities (Vec3: x, y, z)
 
-        self.result.orientation.w = body_states["pose"]["r"]["w"] # orientations (Quat: x, y, z, w)
-        self.result.orientation.x = body_states["pose"]["r"]["x"]
-        self.result.orientation.y = body_states["pose"]["r"]["y"]
-        self.result.orientation.z = body_states["pose"]["r"]["z"]
+            self.result.orientation.x = body_states["pose"]["r"][0] # orientations (Quat: x, y, z, w)
+            self.result.orientation.y = body_states["pose"]["r"][1]
+            self.result.orientation.z = body_states["pose"]["r"][2]
+            self.result.orientation.w = body_states["pose"]["r"][3]
 
         # all good here
         self.result.rBody = quat_to_rot(self.result.orientation) # world_R_body_frame
