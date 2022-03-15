@@ -2,13 +2,15 @@ from MPC_Controller.FSM_states.ControlFSM import ControlFSM
 from MPC_Controller.common.Quadruped import Quadruped, RobotType
 from MPC_Controller.common.LegController import LegController
 from MPC_Controller.state_estimate.StateEstimatorContainer import StateEstimatorContainer
-from MPC_Controller.DesiredStateCommand import DesiredStateCommand
+
+# from isaacgym import gymapi
 import numpy as np
 
 
 class RobotRunner:
     def __init__(self):
-        self._iterations = 0
+        pass
+        # self._iterations = 0
 
 
     def init(self, robotType:RobotType):
@@ -23,7 +25,6 @@ class RobotRunner:
         # init quadruped
         if self.robotType in RobotType:
             self._quadruped = Quadruped(self.robotType)
-
         else:
             raise "Invalid RobotType"
 
@@ -43,24 +44,31 @@ class RobotRunner:
                                     #   self._desiredStateCommand)
 
 
-    def run(self, gym, env, actor):
+    def run(self, dof_states, body_states): # gym, env, actor):
         """
         Runs the overall robot control system by calling each of the major components
         to run each of their respective steps.
         """
         # Update the joint states
-        self._legController.updateData(gym, env, actor)
+        # dof_states = gym.get_actor_dof_states(env, actor, gymapi.STATE_ALL)
+        self._legController.updateData(dof_states) # gym, env, actor)
         self._legController.zeroCommand()
         self._legController.setEnable(True)
         # self._legController.setMaxTorque(100)
 
         # update robot states
-        self._stateEstimator.update(gym, env, actor, self._quadruped._bodyName)
+        # body_idx = gym.find_actor_rigid_body_index(env, actor, self._quadruped._bodyName, gymapi.DOMAIN_ACTOR)
+        # body_states = gym.get_actor_rigid_body_states(env, actor, gymapi.STATE_ALL)[body_idx]
+        self._stateEstimator.update(body_states) # gym, env, actor, self._quadruped._bodyName)
         
         # Run the Control FSM code
         self._controlFSM.runFSM()
 
         # Sets the leg controller commands for the robot
-        self._legController.updateCommand(gym, env, actor)
-        self._iterations += 1
+        legTorques = self._legController.updateCommand() # gym, env, actor)
+        # gym.apply_actor_dof_efforts(env, actor, legTorques / (Parameters.controller_dt*100))
+
+        # self._iterations += 1
+
+        return legTorques
 

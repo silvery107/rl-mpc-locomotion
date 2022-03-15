@@ -4,7 +4,7 @@ from math import sin, cos
 from MPC_Controller.Parameters import Parameters
 from MPC_Controller.common.Quadruped import Quadruped
 from MPC_Controller.utils import DTYPE, getSideSign
-from isaacgym import gymapi
+# from isaacgym import gymapi
 
 class LegControllerCommand:
     def __init__(self):
@@ -91,12 +91,12 @@ class LegController:
     def setMaxTorque(self, tau:float):
         self._maxTorque = tau     
 
-    def updateData(self, gym, env, actor):
+    def updateData(self, dof_states): # gym, env, actor):
         """
         update leg data from simulator
         """
         # ! update q, qd, J, p and v here
-        dof_states = gym.get_actor_dof_states(env, actor, gymapi.STATE_ALL)
+        # dof_states = gym.get_actor_dof_states(env, actor, gymapi.STATE_ALL)
         for leg in range(4):
             # q
             self.datas[leg].q[0] = dof_states["pos"][leg * 3 + 0]
@@ -115,7 +115,7 @@ class LegController:
             # v
             self.datas[leg].v = self.datas[leg].J @ self.datas[leg].qd
 
-    def updateCommand(self, gym, env, actor):
+    def updateCommand(self): # , gym, env, actor):
         """
         update leg commands for simulator
         """
@@ -140,7 +140,8 @@ class LegController:
                 legTorques[leg*3:(leg+1)*3] = legTorque.flatten()
         
         # print("leg 0 effort %.3f %.3f %.3f"%(legTorques[0], legTorques[1], legTorques[2]))
-        gym.apply_actor_dof_efforts(env, actor, legTorques / (Parameters.controller_dt*100))       
+        return legTorques
+        # gym.apply_actor_dof_efforts(env, actor, legTorques / (Parameters.controller_dt*100))       
 
 
     def computeLegJacobianAndPosition(self, leg:int):
