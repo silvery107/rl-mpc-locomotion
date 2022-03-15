@@ -108,6 +108,13 @@
   <summary>Mar 11, 2022 -- Present</summary>
   <ul>
   <li> 添加了isaac gym RL训练环境支持 3.12
+  <li> 添加了 Aliengo end to end RL 训练环境 3.14
+  <li> 注意 RL 输出的 action 是每个纬度 -1 到 1 的值
+  <li> 调整 Aliengo RL 到 60 reward, 并行环境数在512时GPU低于90度, 同时batch size 满载, 比 1024 收敛快 3.14
+  <li> TODO 录一下 RL 效果
+  <li> 调整到力控, 增加速度和碰撞 penalties, MLP [256, 128, 64] 3.15
+  <li> 完全解耦 控制器 和 gymapi, 把和gym交互的逻辑暴露在控制器之外, 交互内容只有 input: dof and rigid body states, output: legtorques 3.15
+  <li> MPC 控制器和 RL env 数据初步对接完成, 还差 cmd 和 MPC param 交互 3.15
   </ul>
 </details>
 
