@@ -1,5 +1,4 @@
 import numpy as np
-# from isaacgym import gymapi
 from MPC_Controller.common.Quadruped import Quadruped
 from MPC_Controller.math_utils.moving_window_filter import MovingWindowFilter
 from MPC_Controller.utils import Quaternion, DTYPE
@@ -41,10 +40,7 @@ class StateEstimatorContainer:
     def getResult(self):
         return self.result
 
-    def update(self, body_states): # gym, env, actor, body_name):
-        # body_idx = gym.find_actor_rigid_body_index(env, actor, body_name, gymapi.DOMAIN_ACTOR)
-        # body_states = gym.get_actor_rigid_body_states(env, actor, gymapi.STATE_ALL)[body_idx]
-
+    def update(self, body_states):
         for idx in range(3):
             # self.result.position[idx] = body_states["pose"]["p"][idx] # positions (Vec3: x, y, z)
             self.result.vWorld[idx] = body_states["vel"]["linear"][idx] # linear velocities (Vec3: x, y, z)

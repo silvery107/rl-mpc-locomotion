@@ -3,10 +3,6 @@ from MPC_Controller.common.Quadruped import Quadruped, RobotType
 from MPC_Controller.common.LegController import LegController
 from MPC_Controller.state_estimate.StateEstimatorContainer import StateEstimatorContainer
 
-# from isaacgym import gymapi
-import numpy as np
-
-
 class RobotRunner:
     def __init__(self):
         pass
@@ -44,29 +40,24 @@ class RobotRunner:
                                     #   self._desiredStateCommand)
 
 
-    def run(self, dof_states, body_states): # gym, env, actor):
+    def run(self, dof_states, body_states):
         """
         Runs the overall robot control system by calling each of the major components
         to run each of their respective steps.
         """
         # Update the joint states
-        # dof_states = gym.get_actor_dof_states(env, actor, gymapi.STATE_ALL)
-        self._legController.updateData(dof_states) # gym, env, actor)
+        self._legController.updateData(dof_states)
         self._legController.zeroCommand()
         self._legController.setEnable(True)
-        # self._legController.setMaxTorque(100)
 
         # update robot states
-        # body_idx = gym.find_actor_rigid_body_index(env, actor, self._quadruped._bodyName, gymapi.DOMAIN_ACTOR)
-        # body_states = gym.get_actor_rigid_body_states(env, actor, gymapi.STATE_ALL)[body_idx]
-        self._stateEstimator.update(body_states) # gym, env, actor, self._quadruped._bodyName)
+        self._stateEstimator.update(body_states)
         
         # Run the Control FSM code
         self._controlFSM.runFSM()
 
         # Sets the leg controller commands for the robot
-        legTorques = self._legController.updateCommand() # gym, env, actor)
-        # gym.apply_actor_dof_efforts(env, actor, legTorques / (Parameters.controller_dt*100))
+        legTorques = self._legController.updateCommand()
 
         # self._iterations += 1
 
