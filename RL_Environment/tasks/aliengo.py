@@ -31,10 +31,13 @@ class Aliengo(VecTask):
         self.rew_scales["lin_vel_xy"] = self.cfg["env"]["learn"]["linearVelocityXYRewardScale"]
         self.rew_scales["ang_vel_z"] = self.cfg["env"]["learn"]["angularVelocityZRewardScale"]
         self.rew_scales["torque"] = self.cfg["env"]["learn"]["torqueRewardScale"]
+        self.rew_scales["lin_vel_z"] = self.cfg["env"]["learn"]["linearVelocityZRewardScale"] 
+        self.rew_scales["ang_vel_xy"] = self.cfg["env"]["learn"]["angularVelocityXYRewardScale"] 
+        self.rew_scales["collision"] = self.cfg["env"]["learn"]["kneeCollisionRewardScale"]
 
         # randomization
-        self.randomization_params = self.cfg["task"]["randomization_params"]
-        self.randomize = self.cfg["task"]["randomize"]
+        # self.randomization_params = self.cfg["task"]["randomization_params"]
+        # self.randomize = self.cfg["task"]["randomize"]
 
         # command ranges
         self.command_x_range = self.cfg["env"]["randomCommandVelocityRanges"]["linear_x"]
@@ -126,8 +129,8 @@ class Aliengo(VecTask):
         self._create_envs(self.num_envs, self.cfg["env"]['envSpacing'], int(np.sqrt(self.num_envs)))
 
         # If randomizing, apply once immediately on startup before the fist sim step
-        if self.randomize:
-            self.apply_randomizations(self.randomization_params)
+        # if self.randomize:
+        #     self.apply_randomizations(self.randomization_params)
 
 
     def _create_ground_plane(self):
@@ -178,9 +181,14 @@ class Aliengo(VecTask):
 
         dof_props = self.gym.get_asset_dof_properties(robot_asset)
         for i in range(self.num_dof):
-            dof_props['driveMode'][i] = gymapi.DOF_MODE_POS
-            dof_props['stiffness'][i] = self.cfg["env"]["control"]["stiffness"] #self.Kp
-            dof_props['damping'][i] = self.cfg["env"]["control"]["damping"] #self.Kd
+            # *force control
+            dof_props['driveMode'][i] = gymapi.DOF_MODE_EFFORT
+            dof_props['stiffness'][i] = 0.0
+            dof_props['damping'][i] = 0.0
+            # *position control
+            # dof_props['driveMode'][i] = gymapi.DOF_MODE_POS
+            # dof_props['stiffness'][i] = self.cfg["env"]["control"]["stiffness"] #self.Kp
+            # dof_props['damping'][i] = self.cfg["env"]["control"]["damping"] #self.Kd
 
         env_lower = gymapi.Vec3(-spacing, -spacing, 0.0)
         env_upper = gymapi.Vec3(spacing, spacing, spacing)
@@ -207,8 +215,13 @@ class Aliengo(VecTask):
 
     def pre_physics_step(self, actions):
         self.actions = actions.clone().to(self.device)
-        targets = self.action_scale * self.actions + self.default_dof_pos
-        self.gym.set_dof_position_target_tensor(self.sim, gymtorch.unwrap_tensor(targets))
+        # *force control
+        torques = torch.clip(self.Kp*(self.action_scale*self.actions + self.default_dof_pos - self.dof_pos) - self.Kd*self.dof_vel,
+                        -50., 50.)
+        self.gym.set_dof_actuation_force_tensor(self.sim, gymtorch.unwrap_tensor(torques))
+        # *position control
+        # targets = self.action_scale * self.actions + self.default_dof_pos
+        # self.gym.set_dof_position_target_tensor(self.sim, gymtorch.unwrap_tensor(targets))
 
     def post_physics_step(self):
         self.progress_buf += 1
@@ -260,8 +273,8 @@ class Aliengo(VecTask):
 
     def reset_idx(self, env_ids):
         # Randomization can happen only at reset time, since it can reset actor positions on GPU
-        if self.randomize:
-            self.apply_randomizations(self.randomization_params)
+        # if self.randomize:
+        #     self.apply_randomizations(self.randomization_params)
 
         positions_offset = torch_rand_float(0.5, 1.5, (len(env_ids), self.num_dof), device=self.device)
         velocities = torch_rand_float(-0.1, 0.1, (len(env_ids), self.num_dof), device=self.device)
@@ -321,14 +334,22 @@ def compute_robot_reward(
     rew_lin_vel_xy = torch.exp(-lin_vel_error/0.25) * rew_scales["lin_vel_xy"]
     rew_ang_vel_z = torch.exp(-ang_vel_error/0.25) * rew_scales["ang_vel_z"]
 
+    # other base velocity penalties
+    rew_lin_vel_z = torch.square(base_lin_vel[:, 2]) * rew_scales["lin_vel_z"]
+    rew_ang_vel_xy = torch.sum(torch.square(base_ang_vel[:, :2]), dim=1) * rew_scales["ang_vel_xy"]
+
+    # collision penalty
+    knee_contact = torch.norm(contact_forces[:, knee_indices, :], dim=2) > 1.
+    rew_collision = torch.sum(knee_contact, dim=1) * rew_scales["collision"]
+
     # torque penalty
     rew_torque = torch.sum(torch.square(torques), dim=1) * rew_scales["torque"]
 
-    total_reward = rew_lin_vel_xy + rew_ang_vel_z + rew_torque
+    total_reward = rew_lin_vel_xy + rew_ang_vel_z + rew_torque + rew_lin_vel_z + rew_ang_vel_xy + rew_collision
     total_reward = torch.clip(total_reward, 0., None)
     # reset agents
     reset = torch.norm(contact_forces[:, base_index, :], dim=1) > 1.
-    reset = reset | torch.any(torch.norm(contact_forces[:, knee_indices, :], dim=2) > 1., dim=1)
+    reset = reset | torch.any(knee_contact, dim=1)
     reset = reset | torch.any(torch.norm(contact_forces[:, hip_indices, :], dim=2) > 1., dim=1)
     time_out = episode_lengths > max_episode_length  # no terminal reward for time-outs
     reset = reset | time_out
@@ -349,7 +370,7 @@ def compute_robot_observations(root_states,
                                 dof_pos_scale,
                                 dof_vel_scale
                                 ):
-
+    # 
     # type: (Tensor, Tensor, Tensor, Tensor, Tensor, Tensor, Tensor, float, float, float, float) -> Tensor
     base_quat = root_states[:, 3:7]
     base_lin_vel = quat_rotate_inverse(base_quat, root_states[:, 7:10]) * lin_vel_scale
