@@ -30,7 +30,7 @@
 from tasks.ant import Ant
 from tasks.anymal import Anymal
 from tasks.aliengo import Aliengo
-# from tasks.anymal_terrain import AnymalTerrain
+from tasks.anymal_terrain import AnymalTerrain
 # from tasks.ball_balance import BallBalance
 # from tasks.cartpole import Cartpole 
 # from tasks.humanoid import Humanoid
@@ -40,7 +40,7 @@ isaacgym_task_map = {
     "Ant": Ant,
     "Anymal": Anymal,
     "Aliengo":Aliengo,
-    # "AnymalTerrain": AnymalTerrain,
+    "AnymalTerrain": AnymalTerrain,
     # "BallBalance": BallBalance,
     # "Cartpole": Cartpole,
     # "Humanoid": Humanoid,
