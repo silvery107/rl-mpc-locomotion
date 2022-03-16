@@ -18,7 +18,7 @@ if Parameters.cmpc_solver_type == 1:
 elif Parameters.cmpc_solver_type == 0:
     import MPC_Controller.convex_MPC.convexMPC_interface as mpc
 elif Parameters.cmpc_solver_type == 2:
-    import MPC_Controller.convex_MPC.mpc_osqp as mpc
+    import mpc_osqp as mpc
 
 
 num_legs = 4
