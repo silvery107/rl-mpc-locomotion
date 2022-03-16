@@ -21,7 +21,7 @@ class StateEstimate:
         self.vBody = np.zeros((3,1), dtype=DTYPE)
         self.omegaBody = np.zeros((3,1), dtype=DTYPE)
 
-class StateEstimatorContainer:
+class StateEstimator:
 
     def __init__(self, quadruped:Quadruped):
         self.result = StateEstimate()

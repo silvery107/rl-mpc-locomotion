@@ -12,7 +12,7 @@ sys.path.append("..")
 
 from MPC_Controller.FSM_states.FSM_State import FSM_State, FSM_StateName
 from MPC_Controller.common.Quadruped import Quadruped
-from MPC_Controller.state_estimate.StateEstimatorContainer import StateEstimatorContainer
+from MPC_Controller.StateEstimator import StateEstimator
 from MPC_Controller.common.LegController import LegController
 from MPC_Controller.Parameters import Parameters
 from MPC_Controller.FSM_states.ControlFSMData import ControlFSMData
@@ -30,7 +30,7 @@ class FSM_StatesList:
 class ControlFSM:
     def __init__(self,
                  _quadruped:Quadruped,
-                 _stateEstimator:StateEstimatorContainer,
+                 _stateEstimator:StateEstimator,
                  _legController:LegController,
                  _desiredStateCommand:DesiredStateCommand):
         self.data = ControlFSMData()

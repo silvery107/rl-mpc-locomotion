@@ -2,7 +2,7 @@ from MPC_Controller.common.Quadruped import Quadruped
 from MPC_Controller.common.LegController import LegController
 from MPC_Controller.FSM_states.ControlFSM import ControlFSM
 # from MPC_Controller.Parameters import Parameters
-from MPC_Controller.state_estimate.StateEstimatorContainer import StateEstimatorContainer
+from MPC_Controller.StateEstimator import StateEstimator
 from MPC_Controller.DesiredStateCommand import DesiredStateCommand
 
 class RobotController:
@@ -11,7 +11,7 @@ class RobotController:
 
     def initializeController(self,
                              _quadruped:Quadruped,
-                             _stateEstimator:StateEstimatorContainer,
+                             _stateEstimator:StateEstimator,
                              _legController:LegController,
                              _desiredStateCommand:DesiredStateCommand):
         """Initializes the Control FSM"""

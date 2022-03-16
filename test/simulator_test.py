@@ -10,7 +10,7 @@ from MPC_Controller.RobotRunner import RobotRunner
 from MPC_Controller.deprecated.RobotController import RobotController
 from MPC_Controller.common.Quadruped import Quadruped, RobotType
 from MPC_Controller.common.LegController import LegController
-from MPC_Controller.state_estimate.StateEstimatorContainer import StateEstimatorContainer
+from MPC_Controller.StateEstimator import StateEstimator
 from MPC_Controller.DesiredStateCommand import DesiredStateCommand
 from MPC_Controller.Parameters import Parameters
 
