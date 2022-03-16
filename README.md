@@ -115,6 +115,10 @@
   <li> 调整到力控, 增加速度和碰撞 penalties, MLP [256, 128, 64] 3.15
   <li> 完全解耦 控制器 和 gymapi, 把和gym交互的逻辑暴露在控制器之外, 交互内容只有 input: dof and rigid body states, output: legtorques 3.15
   <li> MPC 控制器和 RL env 数据初步对接完成, 还差 cmd 和 MPC param 交互 3.15
+  <li> 成功剥离网络, 目前可以脱离 RL 环境单独运行 policy 3.16
+  <li> 成功对接 MPC cmd, weight交互需要重新设计 3.16
+  <li> TODO 修改 MPC weight 更新, 暴露到 conputeContactForce 的位置 (已完成)
+  <li> TODO 如何保证 weight 大等于零? 如何缩放 [-1,1] 的 action 到对应 scale？
   </ul>
 </details>
 
