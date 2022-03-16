@@ -11,7 +11,7 @@ class ControlFSMData:
         self._quadruped:Quadruped = None
         self._stateEstimator:StateEstimatorContainer = None
         self._legController:LegController = None
+        self._desiredStateCommand:DesiredStateCommand = None
         # self._gaitScheduler:GaitScheduler = None
-        # self._desiredStateCommand:DesiredStateCommand = None
         # self.userParameters:Parameters = None
 

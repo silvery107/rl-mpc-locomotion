@@ -121,12 +121,15 @@ class ConvexMPCLocomotion:
         # self._x_vel_des = self._x_vel_des*(1-filter) + x_vel_cmd*filter
         # self._y_vel_des = self._y_vel_des*(1-filter) + y_vel_cmd*filter
         
-        self._x_vel_des = DesiredStateCommand.x_vel_cmd
-        self._y_vel_des = DesiredStateCommand.y_vel_cmd
+        # self._x_vel_des = DesiredStateCommand.x_vel_cmd
+        # self._y_vel_des = DesiredStateCommand.y_vel_cmd
+        self._x_vel_des = data._desiredStateCommand.x_vel_cmd
+        self._y_vel_des = data._desiredStateCommand.y_vel_cmd
         # if data._quadruped._robotType == RobotType.MINI_CHEETAH:
         #     self._y_vel_des -= 0.125
 
-        self._yaw_turn_rate = DesiredStateCommand.yaw_turn_rate
+        # self._yaw_turn_rate = DesiredStateCommand.yaw_turn_rate
+        self._yaw_turn_rate = data._desiredStateCommand.yaw_turn_rate
 
     def solveDenseMPC(self, mpcTable:list, data:ControlFSMData):
         seResult = data._stateEstimator.getResult()

@@ -1,3 +1,4 @@
+from MPC_Controller.DesiredStateCommand import DesiredStateCommand
 from MPC_Controller.FSM_states.ControlFSM import ControlFSM
 from MPC_Controller.common.Quadruped import Quadruped, RobotType
 from MPC_Controller.common.LegController import LegController
@@ -31,26 +32,29 @@ class RobotRunner:
         self._stateEstimator = StateEstimatorContainer(self._quadruped)
 
         # init desired state command
-        # self._desiredStateCommand = DesiredStateCommand()
+        self._desiredStateCommand = DesiredStateCommand()
         
         # Controller initializations
         self._controlFSM = ControlFSM(self._quadruped, 
                                       self._stateEstimator, 
-                                      self._legController)#,
-                                    #   self._desiredStateCommand)
+                                      self._legController,
+                                      self._desiredStateCommand)
 
 
-    def run(self, dof_states, body_states):
+    def run(self, dof_states, body_states, commands):
         """
         Runs the overall robot control system by calling each of the major components
         to run each of their respective steps.
         """
+        # Update desired commands
+        self._desiredStateCommand.updateCommand(commands)
+
         # Update the joint states
         self._legController.updateData(dof_states)
         self._legController.zeroCommand()
         self._legController.setEnable(True)
 
-        # update robot states
+        # Update robot states
         self._stateEstimator.update(body_states)
         
         # Run the Control FSM code
