@@ -14,9 +14,9 @@ class Parameters:
     cmpc_solver_type = 2 # 0 mit py solver, 1 mit cpp solver, 2 google cpp solver
     cmpc_gait = GaitType.TROT # 1 bound, 2 pronk, 3 pace, 4 stand, else trot
 
-    use_tensor_pipeline = True
+    bridge_MPC_to_RL = False
     
-    if use_tensor_pipeline:
+    if bridge_MPC_to_RL:
         control_mode = FSM_StateName.LOCOMOTION
         operatingMode = FSM_OperatingMode.TEST
     else:

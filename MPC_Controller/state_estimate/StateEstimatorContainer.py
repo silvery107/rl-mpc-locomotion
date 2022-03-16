@@ -42,7 +42,7 @@ class StateEstimatorContainer:
         return self.result
 
     def update(self, body_states):
-        if Parameters.use_tensor_pipeline:
+        if Parameters.bridge_MPC_to_RL:
             # self.result.position ~~ body_states[0:3]
             self.result.orientation.x = body_states[3]
             self.result.orientation.y = body_states[4]

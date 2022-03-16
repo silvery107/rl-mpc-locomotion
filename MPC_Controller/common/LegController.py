@@ -97,7 +97,7 @@ class LegController:
         # ! update q, qd, J, p and v here
         for leg in range(4):
             # q and qd
-            if Parameters.use_tensor_pipeline:
+            if Parameters.bridge_MPC_to_RL:
                 self.datas[leg].q[:, 0] = dof_states[3*leg:3*(leg+1), 0]
                 self.datas[leg].qd[:, 0] = dof_states[3*leg:3*(leg+1), 1]
             else:
