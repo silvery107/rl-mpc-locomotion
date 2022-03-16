@@ -3,12 +3,9 @@
 * calls to the FSM State functions and manages transitions between all
 * of the states.
 """
-import sys
 
 from MPC_Controller.FSM_states.FSM_State_Passive import FSM_State_Passive
 from MPC_Controller.FSM_states.FSM_State_RecoveryStand import FSM_State_RecoveyrStand
-# from MPC_Controller.FSM_states.TransitionData import TransitionData
-sys.path.append("..")
 
 from MPC_Controller.FSM_states.FSM_State import FSM_State, FSM_StateName
 from MPC_Controller.common.Quadruped import Quadruped
@@ -104,7 +101,6 @@ class ControlFSM:
 
         # Run the transition code while transition is occuring
         elif self.operatingMode == FSM_OperatingMode.TRANSITIONING:
-            # self.transitionData = self.currentState.transition()
             self.transitionDone = self.currentState.transition()
 
             # TODO Check the robot state for safe operation

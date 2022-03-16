@@ -1,5 +1,3 @@
-import sys
-sys.path.append("..")
 from MPC_Controller.common.Quadruped import Quadruped
 from MPC_Controller.common.LegController import LegController
 # from MPC_Controller.Parameters import Parameters

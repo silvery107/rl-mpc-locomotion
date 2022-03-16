@@ -1,8 +1,5 @@
-import sys
-
-from MPC_Controller.utils import DTYPE, CASTING
-sys.path.append("..")
 import numpy as np
+from MPC_Controller.utils import DTYPE, CASTING
 from MPC_Controller.FSM_states.ControlFSMData import ControlFSMData
 from MPC_Controller.utils import FSM_StateName
 

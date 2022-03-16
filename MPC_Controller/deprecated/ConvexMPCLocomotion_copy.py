@@ -1,11 +1,9 @@
 """
 This is a copy for compatibility of MIT‘s solver in cpp and python and also the MIT's way of "states in world frame"
 """
-import math
-import sys
-import time
 
-sys.path.append("..")
+import math
+import time
 
 from MPC_Controller.DesiredStateCommand import DesiredStateCommand
 import numpy as np

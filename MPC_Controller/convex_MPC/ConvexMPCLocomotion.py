@@ -1,13 +1,9 @@
 import math
-import sys
 import time
-
-from MPC_Controller.common.Quadruped import RobotType
-
-sys.path.append("..")
 
 import numpy as np
 # import MPC_Controller.convex_MPC.mpc_osqp as mpc
+from MPC_Controller.common.Quadruped import RobotType
 from MPC_Controller.Parameters import Parameters
 from MPC_Controller.convex_MPC.Gait import OffsetDurationGait
 from MPC_Controller.DesiredStateCommand import DesiredStateCommand

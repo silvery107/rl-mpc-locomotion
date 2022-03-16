@@ -27,7 +27,6 @@ class FSM_State_Passive(FSM_State):
         self.nextStateName = self.stateName
 
         # Reset the transition data
-        # self.transitionData.zero()
         self.transitionDone = False
 
     def run(self):
@@ -82,7 +81,6 @@ class FSM_State_Passive(FSM_State):
         * @return true if transition is complete
         """
         # Finish Transition
-        # self.transitionData.done = True
         self.transitionDone = True
         # Return the transition data to the FSM
         return self.transitionDone

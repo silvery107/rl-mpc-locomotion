@@ -67,7 +67,6 @@ class FSM_State_RecoveyrStand(FSM_State):
         self.nextStateName = self.stateName
 
         # Reset the transition data
-        # self.transitionData.zero()
         self.transitionDone = False
 
         # Reset iteration counter
@@ -149,11 +148,9 @@ class FSM_State_RecoveyrStand(FSM_State):
         # Finish Transition
 
         if self.nextStateName==FSM_StateName.PASSIVE:
-            # self.transitionData.done = True
             self.transitionDone = True
 
         elif self.nextStateName==FSM_StateName.LOCOMOTION:
-            # self.transitionData.done = True
             self.transitionDone = True
 
         else:

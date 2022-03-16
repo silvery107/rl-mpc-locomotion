@@ -1,6 +1,3 @@
-import sys
-sys.path.append("..")
-
 from math import fabs
 from numpy.linalg import norm
 # from MPC_Controller.deprecated.ConvexMPCLocomotion_copy import ConvexMPCLocomotion
