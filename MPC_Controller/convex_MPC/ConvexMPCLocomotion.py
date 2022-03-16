@@ -1,5 +1,6 @@
 import math
 import time
+import sys
 
 import numpy as np
 # import MPC_Controller.convex_MPC.mpc_osqp as mpc
@@ -16,7 +17,7 @@ try:
     import mpc_osqp as mpc
 except:
     print("You need to install rl-mpc-locomotion")
-    print("Run python3 setup.py install --user in this repo")
+    print("Run 'pip install .' in this repo")
     sys.exit()
 
 class ConvexMPCLocomotion:
@@ -87,17 +88,17 @@ class ConvexMPCLocomotion:
         if Parameters.cmpc_alpha > 1e-4:
             print("Alpha was set too high (" + str(Parameters.cmpc_alpha) + ") adjust to 1e-5\n")
             Parameters.cmpc_alpha = 1e-5
-        if data._desiredStateCommand.mpc_weights is None:
-            mpc_weight = data._quadruped._mpc_weights
-        else:
-            mpc_weight = data._desiredStateCommand.mpc_weights
+        # if data._desiredStateCommand.mpc_weights is None:
+        #     mpc_weight = data._quadruped._mpc_weights
+        # else:
+        #     mpc_weight = data._desiredStateCommand.mpc_weights
 
         self._cpp_mpc = mpc.ConvexMpc(data._quadruped._bodyMass, 
                             list(data._quadruped._bodyInertia),
                             NUM_LEGS,
                             self.horizonLength,
                             self.dtMPC, 
-                            mpc_weight,
+                            # mpc_weight,
                             Parameters.cmpc_alpha,
                             mpc.QPOASES)
 
@@ -134,6 +135,11 @@ class ConvexMPCLocomotion:
     def solveDenseMPC(self, mpcTable:list, data:ControlFSMData):
         seResult = data._stateEstimator.getResult()
         # self.dtMPC = self.dt*self.iterationsBetweenMPC
+        # *MPC Weights
+        if data._desiredStateCommand.mpc_weights is None:
+            mpc_weight = data._quadruped._mpc_weights
+        else:
+            mpc_weight = data._desiredStateCommand.mpc_weights
 
         timer = time.time()
 
@@ -167,6 +173,7 @@ class ConvexMPCLocomotion:
             print("GND Vec: {: .4f}, {: .4f}, {: .4f}".format(*gravity_projection_vec))
 
         predicted_contact_forces = self._cpp_mpc.compute_contact_forces(
+            mpc_weight, # mpc weights list(12,)
             com_position, # com_position (set x y to 0.0)
             com_velocity, # com_velocity
             com_roll_pitch_yaw, # com_roll_pitch_yaw (set yaw to 0.0)

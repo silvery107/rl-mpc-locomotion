@@ -185,7 +185,8 @@ class ConvexMpc {
 
   ConvexMpc(double mass, const std::vector<double>& inertia, int num_legs,
             int planning_horizon, double timestep,
-            const std::vector<double>& qp_weights, double alpha = 1e-5,
+            // const std::vector<double>& qp_weights, 
+            double alpha = 1e-5,
             QPSolverName qp_solver_name = QPOASES);
 
   virtual ~ConvexMpc() { osqp_cleanup(workspace_); }
@@ -199,6 +200,7 @@ class ConvexMpc {
   // frame. In the intrinsic (body-attached) frame the rotation order is Z -> Y'
   // -> X".
   std::vector<double> ComputeContactForces(
+      const std::vector<double>& qp_weights,
       std::vector<double> com_position,
       std::vector<double> com_velocity,
       std::vector<double> com_roll_pitch_yaw,
@@ -227,10 +229,10 @@ class ConvexMpc {
   QPSolverName qp_solver_name_;
 
   // 13 * horizon diagonal matrix.
-  const Eigen::MatrixXd qp_weights_;
+  Eigen::MatrixXd qp_weights_;
 
   // 13 x 13 diagonal matrix.
-  const Eigen::MatrixXd qp_weights_single_;
+  Eigen::MatrixXd qp_weights_single_;
 
   // num_legs * 3 * horizon diagonal matrix.
   const Eigen::MatrixXd alpha_;
@@ -505,7 +507,8 @@ MatrixXd AsBlockDiagonalMat(const std::vector<double>& qp_weights,
 
 ConvexMpc::ConvexMpc(double mass, const std::vector<double>& inertia,
                      int num_legs, int planning_horizon, double timestep,
-                     const std::vector<double>& qp_weights, double alpha,
+                    //  const std::vector<double>& qp_weights, 
+                     double alpha,
                      QPSolverName qp_solver_name)
     : mass_(mass),
       inv_mass_(1 / mass),
@@ -515,8 +518,8 @@ ConvexMpc::ConvexMpc(double mass, const std::vector<double>& inertia,
       planning_horizon_(planning_horizon),
       timestep_(timestep),
       qp_solver_name_(qp_solver_name),
-      qp_weights_(AsBlockDiagonalMat(qp_weights, planning_horizon)),
-      qp_weights_single_(AsBlockDiagonalMat(qp_weights, 1)),
+      // qp_weights_(AsBlockDiagonalMat(qp_weights, planning_horizon)),
+      // qp_weights_single_(AsBlockDiagonalMat(qp_weights, 1)),
       alpha_(alpha * MatrixXd::Identity(num_legs * planning_horizon * k3Dim,
                                         num_legs * planning_horizon * k3Dim)),
       alpha_single_(alpha *
@@ -548,7 +551,7 @@ ConvexMpc::ConvexMpc(double mass, const std::vector<double>& inertia,
       initial_run_(true)
 
 {
-  assert(qp_weights.size() == kStateDim);
+  // assert(qp_weights.size() == kStateDim);
   // We assume the input inertia is a 3x3 matrix.
   assert(inertia.size() == k3Dim * k3Dim);
   state_.setZero();
@@ -573,6 +576,7 @@ ConvexMpc::ConvexMpc(double mass, const std::vector<double>& inertia,
 void ConvexMpc::ResetSolver() { initial_run_ = true; }
 
 std::vector<double> ConvexMpc::ComputeContactForces(
+    const std::vector<double>& qp_weights,
     std::vector<double> com_position,
     std::vector<double> com_velocity,
     std::vector<double> com_roll_pitch_yaw,
@@ -584,7 +588,12 @@ std::vector<double> ConvexMpc::ComputeContactForces(
     std::vector<double> desired_com_position,
     std::vector<double> desired_com_velocity,
     std::vector<double> desired_com_roll_pitch_yaw,
-    std::vector<double> desired_com_angular_velocity) {
+    std::vector<double> desired_com_angular_velocity){
+
+  assert(qp_weights.size() == kStateDim);
+  qp_weights_ = AsBlockDiagonalMat(qp_weights, planning_horizon_);
+  qp_weights_single_ = AsBlockDiagonalMat(qp_weights, 1);
+
   std::vector<double> error_result;
   Eigen::MatrixXd foot_contact_states =
       Eigen::Map<const Eigen::MatrixXd>(foot_contact_states_flattened.data(),
@@ -959,7 +968,8 @@ PYBIND11_MODULE(mpc_osqp, m) {
 
   py::class_<ConvexMpc>(m, "ConvexMpc")
       .def(py::init<double, const std::vector<double>&, int, int, double,
-                    const std::vector<double>&, double, QPSolverName>())
+                    // const std::vector<double>&, 
+                    double, QPSolverName>())
       .def("compute_contact_forces", &ConvexMpc::ComputeContactForces)
       .def("reset_solver", &ConvexMpc::ResetSolver);
 
