@@ -192,6 +192,28 @@ def add_terrain(gym, sim, name="slope", x_offset=2., invert=False):
 
     gym.add_triangle_mesh(sim, vertices.flatten(), triangles.flatten(), tm_params)
 
+def add_random_uniform_terrain(gym, sim):
+    num_terrains = 1
+    terrain_width = 50.
+    terrain_length = 50.
+    horizontal_scale = 0.25  # [m] resolution in x
+    vertical_scale = 0.005  # [m] resolution in z
+    num_rows = int(terrain_width/horizontal_scale)
+    num_cols = int(terrain_length/horizontal_scale)
+    heightfield = np.zeros((num_terrains*num_rows, num_cols), dtype=np.int16)
+    
+    def new_sub_terrain(): return SubTerrain(width=num_rows, length=num_cols, vertical_scale=vertical_scale, horizontal_scale=horizontal_scale)
+
+    heightfield[0:1*num_rows, :] = random_uniform_terrain(new_sub_terrain(), min_height=-0.2, max_height=0.0, step=0.2, downsampled_scale=0.5).height_field_raw
+
+    vertices, triangles = convert_heightfield_to_trimesh(heightfield, horizontal_scale=horizontal_scale, vertical_scale=vertical_scale, slope_threshold=1.5)
+    tm_params = gymapi.TriangleMeshParams()
+    tm_params.nb_vertices = vertices.shape[0]
+    tm_params.nb_triangles = triangles.shape[0]
+    tm_params.transform.p.x = -terrain_width/2
+    tm_params.transform.p.y = -terrain_length/2
+    gym.add_triangle_mesh(sim, vertices.flatten(), triangles.flatten(), tm_params)
+
 def add_uneven_terrains(gym, sim):
     # terrains
     num_terrains = 4
