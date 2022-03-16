@@ -91,13 +91,17 @@ class ConvexMPCLocomotion:
         if Parameters.cmpc_alpha > 1e-4:
             print("Alpha was set too high (" + str(Parameters.cmpc_alpha) + ") adjust to 1e-5\n")
             Parameters.cmpc_alpha = 1e-5
+        if data._desiredStateCommand.mpc_weights is None:
+            mpc_weight = data._quadruped._mpc_weights
+        else:
+            mpc_weight = data._desiredStateCommand.mpc_weights
 
         self._cpp_mpc = mpc.ConvexMpc(data._quadruped._bodyMass, 
                             list(data._quadruped._bodyInertia),
                             NUM_LEGS,
                             self.horizonLength,
                             self.dtMPC, 
-                            data._quadruped._mpc_weights, 
+                            mpc_weight,
                             Parameters.cmpc_alpha,
                             mpc.QPOASES)
 

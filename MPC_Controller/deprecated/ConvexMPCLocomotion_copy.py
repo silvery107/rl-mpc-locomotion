@@ -16,7 +16,7 @@ from MPC_Controller.utils import K_MAX_GAIT_SEGMENTS, coordinateRotation, Coordi
 
 from MPC_Controller.Parameters import Parameters
 if Parameters.cmpc_solver_type == 1:
-    import MPC_Controller.convex_MPC.C_SolverMPC as mpc
+    import MPC_Controller.deprecated.C_SolverMPC as mpc
 elif Parameters.cmpc_solver_type == 0:
     import MPC_Controller.convex_MPC.convexMPC_interface as mpc
 elif Parameters.cmpc_solver_type == 2:

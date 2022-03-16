@@ -1,23 +1,23 @@
-from MPC_Controller.DesiredStateCommand import DesiredStateCommand
 from MPC_Controller.Parameters import Parameters
 from MPC_Controller.RobotRunner import RobotRunner
 from MPC_Controller.common.Quadruped import RobotType
 from RL_Environment import gamepad_reader
 from isaacgym import gymapi
-from RL_Environment.sim_utils import acquire_sim, add_ground, add_terrain, add_uneven_terrains, create_envs, add_viewer, get_force_sensor
+from RL_Environment.sim_utils import *
 
 use_gamepad = True
-robot = RobotType.A1
+robot = RobotType.ALIENGO
 dt =  Parameters.controller_dt
 gym = gymapi.acquire_gym()
 sim = acquire_sim(gym, dt)
-add_ground(gym, sim)
+# add_ground(gym, sim)
+add_random_uniform_terrain(gym, sim)
 # add_terrain(gym, sim, "slope")
 # add_terrain(gym, sim, "stair", 3.95, True)
 # add_uneven_terrains(gym, sim)
 
 # set up the env grid
-num_envs = 4
+num_envs = 1
 envs_per_row = 2
 env_spacing = 0.5
 # one actor per env 
