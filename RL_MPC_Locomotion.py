@@ -57,24 +57,21 @@ while not gym.query_viewer_has_closed(viewer):
     gym.fetch_results(sim, True)
 
     # current_time = gym.get_sim_time(sim)
-
+    commands = [0.0, 0.0, 0.0]
     if use_gamepad:
         lin_speed, ang_speed, e_stop = gamepad.get_command()
         Parameters.cmpc_gait = gamepad.get_gait()
         Parameters.control_mode = gamepad.get_mode()
-
         if not e_stop:
-            DesiredStateCommand.x_vel_cmd = lin_speed[0]
-            DesiredStateCommand.y_vel_cmd = lin_speed[1]
-            DesiredStateCommand.yaw_turn_rate = ang_speed
+            commands = [lin_speed[0], lin_speed[1], ang_speed]
 
-    # run controller
-    for i in range(num_envs):
-        dof_states = gym.get_actor_dof_states(envs[i], actors[i], gymapi.STATE_ALL)
-        body_idx = gym.find_actor_rigid_body_index(envs[i], actors[i], controllers[i]._quadruped._bodyName, gymapi.DOMAIN_ACTOR)
-        body_states = gym.get_actor_rigid_body_states(envs[i], actors[i], gymapi.STATE_ALL)[body_idx]
-        legTorques = controllers[i].run(dof_states, body_states) # gym, envs[i], actors[i])
-        gym.apply_actor_dof_efforts(envs[i], actors[i], legTorques / (Parameters.controller_dt*100))
+    # run controllers
+    for idx, (env, actor, controller) in enumerate(zip(envs, actors, controllers)):
+        dof_states = gym.get_actor_dof_states(env, actor, gymapi.STATE_ALL)
+        body_idx = gym.find_actor_rigid_body_index(env, actor, controller._quadruped._bodyName, gymapi.DOMAIN_ACTOR)
+        body_states = gym.get_actor_rigid_body_states(env, actor, gymapi.STATE_ALL)[body_idx]
+        legTorques = controller.run(dof_states, body_states, commands)
+        gym.apply_actor_dof_efforts(env, actor, legTorques / (Parameters.controller_dt*100))
 
     if Parameters.locomotionUnsafe:
         gamepad.fake_event(ev_type='Key',code='BTN_TR',value=0)
