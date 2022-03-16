@@ -2,6 +2,7 @@ import numpy as np
 import os
 import torch
 import sys
+
 sys.path.append("..")
 
 from isaacgym import gymtorch
@@ -9,6 +10,10 @@ from isaacgym import gymapi
 from isaacgym.torch_utils import *
 
 from sim_utils import ALIENGO
+from MPC_Controller.common.Quadruped import RobotType
+from MPC_Controller.RobotRunner import RobotRunner
+from MPC_Controller.Parameters import Parameters
+from MPC_Controller.utils import DTYPE
 
 from .base.vec_task import VecTask
 
@@ -34,10 +39,6 @@ class Aliengo(VecTask):
         self.rew_scales["lin_vel_z"] = self.cfg["env"]["learn"]["linearVelocityZRewardScale"] 
         self.rew_scales["ang_vel_xy"] = self.cfg["env"]["learn"]["angularVelocityXYRewardScale"] 
         self.rew_scales["collision"] = self.cfg["env"]["learn"]["kneeCollisionRewardScale"]
-
-        # randomization
-        # self.randomization_params = self.cfg["task"]["randomization_params"]
-        # self.randomize = self.cfg["task"]["randomize"]
 
         # command ranges
         self.command_x_range = self.cfg["env"]["randomCommandVelocityRanges"]["linear_x"]
@@ -87,12 +88,13 @@ class Aliengo(VecTask):
         actor_root_state = self.gym.acquire_actor_root_state_tensor(self.sim)
         dof_state_tensor = self.gym.acquire_dof_state_tensor(self.sim)
         net_contact_forces = self.gym.acquire_net_contact_force_tensor(self.sim)
-        torques = self.gym.acquire_dof_force_tensor(self.sim)
+        torques = torch.zeros(self.num_envs, self.num_dof, dtype=torch.float, device=self.device, requires_grad=False)
+        # torques = self.gym.acquire_dof_force_tensor(self.sim)
 
         self.gym.refresh_dof_state_tensor(self.sim)
         self.gym.refresh_actor_root_state_tensor(self.sim)
         self.gym.refresh_net_contact_force_tensor(self.sim)
-        self.gym.refresh_dof_force_tensor(self.sim)
+        # self.gym.refresh_dof_force_tensor(self.sim)
 
         # create some wrapper tensors for different slices
         self.root_states = gymtorch.wrap_tensor(actor_root_state)
@@ -100,7 +102,8 @@ class Aliengo(VecTask):
         self.dof_pos = self.dof_state.view(self.num_envs, self.num_dof, 2)[..., 0]
         self.dof_vel = self.dof_state.view(self.num_envs, self.num_dof, 2)[..., 1]
         self.contact_forces = gymtorch.wrap_tensor(net_contact_forces).view(self.num_envs, -1, 3)  # shape: num_envs, num_bodies, xyz axis
-        self.torques = gymtorch.wrap_tensor(torques).view(self.num_envs, self.num_dof)
+        self.torques = torques
+        # self.torques = gymtorch.wrap_tensor(torques).view(self.num_envs, self.num_dof)
 
         self.commands = torch.zeros(self.num_envs, 3, dtype=torch.float, device=self.device, requires_grad=False)
         self.commands_y = self.commands.view(self.num_envs, 3)[..., 1]
@@ -127,11 +130,6 @@ class Aliengo(VecTask):
         self.sim = super().create_sim(self.device_id, self.graphics_device_id, self.physics_engine, self.sim_params)
         self._create_ground_plane()
         self._create_envs(self.num_envs, self.cfg["env"]['envSpacing'], int(np.sqrt(self.num_envs)))
-
-        # If randomizing, apply once immediately on startup before the fist sim step
-        # if self.randomize:
-        #     self.apply_randomizations(self.randomization_params)
-
 
     def _create_ground_plane(self):
         plane_params = gymapi.PlaneParams()
@@ -192,36 +190,67 @@ class Aliengo(VecTask):
 
         env_lower = gymapi.Vec3(-spacing, -spacing, 0.0)
         env_upper = gymapi.Vec3(spacing, spacing, spacing)
-        self.robot_handles = []
+        self.actor_handles = []
         self.envs = []
+        # *MPC controller handles
+        self.controllers = []
+        self.robotType = RobotType.ALIENGO
 
         for i in range(self.num_envs):
             # create env instance
             env_ptr = self.gym.create_env(self.sim, env_lower, env_upper, num_per_row)
             robot_handle = self.gym.create_actor(env_ptr, robot_asset, start_pose, "robot", i, 1, 0)
             self.gym.set_actor_dof_properties(env_ptr, robot_handle, dof_props)
-            self.gym.enable_actor_dof_force_sensors(env_ptr, robot_handle)
+            # self.gym.enable_actor_dof_force_sensors(env_ptr, robot_handle)
             self.envs.append(env_ptr)
-            self.robot_handles.append(robot_handle)
+            self.actor_handles.append(robot_handle)
+
+            if Parameters.bridge_MPC_to_RL:
+                # *MPC create controllers
+                robotRunner = RobotRunner()
+                robotRunner.init(self.robotType)
+                self.controllers.append(robotRunner)
 
         for i in range(len(feet_names)):
-            self.feet_indices[i] = self.gym.find_actor_rigid_body_handle(self.envs[0], self.robot_handles[0], feet_names[i])
+            self.feet_indices[i] = self.gym.find_actor_rigid_body_handle(self.envs[0], self.actor_handles[0], feet_names[i])
         for i in range(len(knee_names)):
-            self.knee_indices[i] = self.gym.find_actor_rigid_body_handle(self.envs[0], self.robot_handles[0], knee_names[i])
+            self.knee_indices[i] = self.gym.find_actor_rigid_body_handle(self.envs[0], self.actor_handles[0], knee_names[i])
         for i in range(len(hip_names)):
-            self.hip_indices[i] = self.gym.find_actor_rigid_body_handle(self.envs[0], self.robot_handles[0], hip_names[i])
+            self.hip_indices[i] = self.gym.find_actor_rigid_body_handle(self.envs[0], self.actor_handles[0], hip_names[i])
 
-        self.base_index = self.gym.find_actor_rigid_body_handle(self.envs[0], self.robot_handles[0], "trunk")
+        self.base_index = self.gym.find_actor_rigid_body_handle(self.envs[0], self.actor_handles[0], "trunk")
 
     def pre_physics_step(self, actions):
         self.actions = actions.clone().to(self.device)
-        # *force control
-        torques = torch.clip(self.Kp*(self.action_scale*self.actions + self.default_dof_pos - self.dof_pos) - self.Kd*self.dof_vel,
-                        -50., 50.)
-        self.gym.set_dof_actuation_force_tensor(self.sim, gymtorch.unwrap_tensor(torques))
-        # *position control
-        # targets = self.action_scale * self.actions + self.default_dof_pos
-        # self.gym.set_dof_position_target_tensor(self.sim, gymtorch.unwrap_tensor(targets))
+        if Parameters.bridge_MPC_to_RL:
+            # *MPC control
+            # actions: (num_envs, 12) [-1, 1]
+            # torques: (num_envs, num_dofs)
+            # dof_state: (num_envs*num_dofs, 2)
+            # root_states: (num_envs, pos[3]+quat[4]+lin_vel[3]+ang_vel[3])
+            # commands: (num_envs, 3)
+            actions_cpu = self.actions.cpu().numpy().astype(DTYPE)
+            torques_cpu = np.zeros((self.num_envs, self.num_dof), dtype=DTYPE)
+            dof_state_cpu = self.dof_state.cpu().numpy().astype(DTYPE)
+            root_states_cpu = self.root_states.cpu().numpy().astype(DTYPE)
+            commands_cpu = self.commands.cpu().numpy().astype(DTYPE)
+            for idx, controller in enumerate(self.controllers):
+                commands = np.concatenate((commands_cpu[idx], actions_cpu[idx], [0.0]), axis=0, dtype=DTYPE)
+                torques_cpu[idx] = controller.run(dof_state_cpu[idx*self.num_dof:(idx+1)*self.num_dof],
+                                                  root_states_cpu[idx],
+                                                  commands)
+
+            torques_gpu = torch.from_numpy(torques_cpu).to(self.device)
+            torques = torch.clip(torques_gpu, -55., 55.)
+            self.gym.set_dof_actuation_force_tensor(self.sim, gymtorch.unwrap_tensor(torques))
+        else:
+            # *force control
+            torques = torch.clip(self.Kp*(self.action_scale*self.actions + self.default_dof_pos - self.dof_pos) - self.Kd*self.dof_vel,
+                            -55., 55.)
+            self.gym.set_dof_actuation_force_tensor(self.sim, gymtorch.unwrap_tensor(torques))
+            # *position control
+            # targets = self.action_scale * self.actions + self.default_dof_pos
+            # self.gym.set_dof_position_target_tensor(self.sim, gymtorch.unwrap_tensor(targets))
 
     def post_physics_step(self):
         self.progress_buf += 1
@@ -254,7 +283,7 @@ class Aliengo(VecTask):
         self.gym.refresh_dof_state_tensor(self.sim)  # done in step
         self.gym.refresh_actor_root_state_tensor(self.sim)
         self.gym.refresh_net_contact_force_tensor(self.sim)
-        self.gym.refresh_dof_force_tensor(self.sim)
+        # self.gym.refresh_dof_force_tensor(self.sim)
 
         self.obs_buf[:] = compute_robot_observations(  # tensors
                                                         self.root_states,
@@ -272,10 +301,6 @@ class Aliengo(VecTask):
         )
 
     def reset_idx(self, env_ids):
-        # Randomization can happen only at reset time, since it can reset actor positions on GPU
-        # if self.randomize:
-        #     self.apply_randomizations(self.randomization_params)
-
         positions_offset = torch_rand_float(0.5, 1.5, (len(env_ids), self.num_dof), device=self.device)
         velocities = torch_rand_float(-0.1, 0.1, (len(env_ids), self.num_dof), device=self.device)
 
@@ -298,6 +323,11 @@ class Aliengo(VecTask):
 
         self.progress_buf[env_ids] = 0
         self.reset_buf[env_ids] = 1
+        if Parameters.bridge_MPC_to_RL:
+            # *MPC reset
+            # print(env_ids_int32.cpu().numpy())
+            for idx in env_ids_int32.cpu().numpy():
+                self.controllers[idx]._controlFSM.initialize()
 
 #####################################################################
 ###=========================jit functions=========================###
