@@ -124,19 +124,24 @@
 
 
 ### Roadmaps
-- [Quadruped](MPC_Controller/common/Quadruped.py),
-- [RobotRunner](MPC_Controller/RobotRunner.py) ->
-    - [LegController](MPC_Controller/common/LegController.py),
-    - [StateEstimator](MPC_Controller/state_estimate/StateEstimatorContainer.py),
-    - [ControlFSM](MPC_Controller/FSM_states/ControlFSM.py) ->
-        - [FSM_State_RecoveryStand](MPC_Controller/FSM_states/FSM_State_RecoveryStand.py),
-        - [FSM_State_Locomotion](MPC_Controller/FSM_states/FSM_State_Locomotion.py) ->
-            - [ConvexMPCLocomotion](MPC_Controller/convex_MPC/ConvexMPCLocomotion.py) ->
-                - [FootSwingTrajectory](MPC_Controller/common/FootSwingTrajectory.py),
-                - [Gait](MPC_Controller/convex_MPC/Gait.py),
-                - [SolverMPC in C](MPC_Controller/convex_MPC/mpc_osqp.cc)
+- MPC_Controller
+  - [Quadruped](MPC_Controller/common/Quadruped.py),
+  - [RobotRunner](MPC_Controller/RobotRunner.py) ->
+      - [LegController](MPC_Controller/common/LegController.py),
+      - [StateEstimator](MPC_Controller/state_estimate/StateEstimatorContainer.py),
+      - [ControlFSM](MPC_Controller/FSM_states/ControlFSM.py) ->
+          - [FSM_State_RecoveryStand](MPC_Controller/FSM_states/FSM_State_RecoveryStand.py),
+          - [FSM_State_Locomotion](MPC_Controller/FSM_states/FSM_State_Locomotion.py) ->
+              - [ConvexMPCLocomotion](MPC_Controller/convex_MPC/ConvexMPCLocomotion.py) ->
+                  - [FootSwingTrajectory](MPC_Controller/common/FootSwingTrajectory.py),
+                  - [Gait](MPC_Controller/convex_MPC/Gait.py),
+                  - [MPC Solver in C](MPC_Controller/convex_MPC/mpc_osqp.cc)
 
-- [Gamepad Reader](RL_Simulator/gamepad_reader.py)
+- RL_Environment
+  - [Gamepad Reader](RL_Simulator/gamepad_reader.py),
+  - [Simulation Utils](RL_Environment/sim_utils.py),
+  - [Train](RL_Environment/train.py) ->
+    - [Aliengo Env](RL_Environment/tasks/aliengo.py)
 
 ## User Notes
 
