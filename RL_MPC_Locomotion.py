@@ -6,14 +6,16 @@ from isaacgym import gymapi
 from RL_Environment.sim_utils import *
 
 use_gamepad = True
+debug_vis = False # draw ground normal vector
+
 robot = RobotType.ALIENGO
 dt =  Parameters.controller_dt
 gym = gymapi.acquire_gym()
 sim = acquire_sim(gym, dt)
-# add_ground(gym, sim)
-add_random_uniform_terrain(gym, sim)
-# add_terrain(gym, sim, "slope")
-# add_terrain(gym, sim, "stair", 3.95, True)
+add_ground(gym, sim)
+# add_random_uniform_terrain(gym, sim)
+add_terrain(gym, sim, "slope")
+add_terrain(gym, sim, "stair", 3.95, True)
 # add_uneven_terrains(gym, sim)
 
 # set up the env grid
@@ -77,11 +79,17 @@ while not gym.query_viewer_has_closed(viewer):
         gamepad.fake_event(ev_type='Key',code='BTN_TR',value=0)
         Parameters.locomotionUnsafe = False
 
+    if debug_vis:
+        pos_np = np.asarray([p for p in body_states["pose"]["p"]], dtype=np.float32)
+        gym.add_lines(viewer, envs[0], 1, 
+            [pos_np, pos_np + controllers[0]._stateEstimator.result.ground_normal_world], 
+            [[255,0,0]])
+
     if count % render_count == 0:
         # update the viewer
         gym.step_graphics(sim)
         gym.draw_viewer(viewer, sim, True)
-        
+        gym.clear_lines(viewer)
         # Wait for dt to elapse in real time.
         gym.sync_frame_time(sim)
         count = 0
@@ -90,5 +98,8 @@ while not gym.query_viewer_has_closed(viewer):
 
 if use_gamepad:
     gamepad.stop()
+    # gamepad.read_thread.join()
+    # print("Gamepad read thread killed!") # too slow
+
 gym.destroy_viewer(viewer)
 gym.destroy_sim(sim)
