@@ -16,7 +16,7 @@ from MPC_Controller.math_utils.orientation_tools import coordinateRotation
 try:
     import mpc_osqp as mpc
 except:
-    print("You need to install rl-mpc-locomotion")
+    print("You need to install 'rl-mpc-locomotion'")
     print("Run 'pip install .' in this repo")
     sys.exit()
 
@@ -65,7 +65,7 @@ class ConvexMPCLocomotion:
         self.f_ff = np.zeros((4,3,1), dtype=DTYPE)
         # self.f_ff = [np.zeros((3,1), dtype=DTYPE) for _ in range(4)]
 
-        self.foot_positions:np.ndarray = None
+        self.foot_positions = np.zeros((4,3,1), dtype=DTYPE)
 
         self.current_gait = 0
         self._x_vel_des = 0.0
@@ -145,11 +145,12 @@ class ConvexMPCLocomotion:
 
         # *Normal Vector of ground
         # gravity_projection_vec = np.array([0, 0, 1],dtype=DTYPE)
-        gravity_projection_vec = seResult.ground_normal
+        gravity_projection_vec = seResult.ground_normal_yaw
         
         # *Google's way of states
-        com_roll_pitch_yaw = np.array([seResult.rpyBody[0], seResult.rpyBody[1], 0], dtype=DTYPE)
-        com_position = np.array([0, 0, seResult.position[2]], dtype=DTYPE)
+        com_roll_pitch_yaw = seResult.rpyBody.flatten()
+        # com_roll_pitch_yaw = np.array([seResult.rpyBody[0], seResult.rpyBody[1], 0], dtype=DTYPE)
+        com_position = seResult.position.flatten()
         com_angular_velocity = seResult.omegaBody.flatten()
         com_velocity = seResult.vBody.flatten()
 
@@ -225,13 +226,12 @@ class ConvexMPCLocomotion:
         self.recomputerTiming(self.default_iterations_between_mpc)
 
         for i in range(4):
-            self.pFoot[i] = seResult.position + \
-                            (data._quadruped.getHipLocation(i)+
-                            data._legController.datas[i].p)
+            self.foot_positions[i] = data._quadruped.getHipLocation(i) + data._legController.datas[i].p
+            self.pFoot[i] = self.foot_positions[i] + seResult.position
             # np.copyto(self.pFoot[i], seResult.position + \
                                         # (data._quadruped.getHipLocation(i)+
                                         # data._legController.datas[i].p))
-        self.foot_positions = np.array([self.pFoot[i] - seResult.position for i in range(4)], dtype=DTYPE).reshape((4,3,1))
+        # self.foot_positions = np.array([self.pFoot[i] - seResult.position for i in range(4)], dtype=DTYPE).reshape((4,3,1))
 
         # * first time initialization
         if self.firstRun:
