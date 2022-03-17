@@ -1,11 +1,10 @@
 from MPC_Controller.utils import GaitType, FSM_OperatingMode, FSM_StateName
 
-
 class Parameters:
     cmpc_x_drag = 3.0
     cmpc_bonus_swing = 0.0
     cmpc_alpha = 1e-5
-    
+
     cmpc_print_solver_time = False
     cmpc_print_update_time = False
     cmpc_print_states = False
@@ -15,7 +14,7 @@ class Parameters:
     cmpc_gait = GaitType.TROT # 1 bound, 2 pronk, 3 pace, 4 stand, else trot
 
     bridge_MPC_to_RL = False
-    
+
     if bridge_MPC_to_RL:
         control_mode = FSM_StateName.LOCOMOTION
         operatingMode = FSM_OperatingMode.TEST

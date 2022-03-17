@@ -1,7 +1,5 @@
-import math
 import numpy as np
 from enum import Enum, auto
-from math import sin, cos
 
 # Constants
 DTYPE = np.float32
@@ -38,14 +36,14 @@ class FSM_OperatingMode(Enum):
     TRANSITIONING = auto()
     # ESTOP = auto()
     # EDAMP = auto()
-    
+
 class Quaternion:
     def __init__(self, w:float=1, x:float=0, y:float=0, z:float=0):
         self.w = float(w)
         self.x = float(x)
         self.y = float(y)
         self.z = float(z)
-        
+
     def toNumpy(self):
         return np.array([self.w,self.x,self.y,self.z], dtype=DTYPE).reshape((4,1))
 
