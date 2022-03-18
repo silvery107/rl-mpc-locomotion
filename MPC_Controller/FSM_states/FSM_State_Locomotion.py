@@ -112,6 +112,9 @@ class FSM_State_Locomotion(FSM_State):
         return self.transitionDone
 
     def locomotionSafe(self):
+        if not Parameters.FSM_check_safety:
+            return True
+        
         seResult = self._data._stateEstimator.getResult()
 
         max_roll = 40

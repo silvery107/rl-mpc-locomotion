@@ -25,5 +25,5 @@ class Parameters:
     controller_dt = 0.01 # in sec
 
     locomotionUnsafe = False # global indicator for switching contorl mode
-
+    FSM_check_safety = False
     FSM_print_info = False
