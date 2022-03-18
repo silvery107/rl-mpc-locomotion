@@ -25,11 +25,12 @@
     ```
 
 ## Quick Start
-1. Play the MPC controller with Aliengo:
+1. Play the MPC controller on Aliengo:
     ```bash
     python RL_MPC_Locomotion --robot=Aliengo
     ```
     Note that by default you need to plug in your xbox-like gamepad to control it.
+    All supported robot types are `Aliengo`, `A1` and `Mini_Cheetah`.
 
 2. Train a new policy:
     ```bash
@@ -43,6 +44,12 @@
     python train.py task=Aliengo checkpoint=runs/Aliengo/nn/Aliengo.pth test=True num_envs=4
     ```
     Set `test=False` to continue training.
+
+4. Run the trained weight-policy for MPC controller on Aliengo:
+    ```bash
+    python RL_MPC_Locomotion --robot=Aliengo --mode=Policy
+    ```
+    By default the controller mode is `Fsm`, and you can also try `Min` for the minimum MPC controller (without FSM).
 
 ## Development Logs
 <details>
@@ -159,6 +166,8 @@
   <li> TODO 如何保证 weight 大等于零? 如何缩放 [-1,1] 的 action 到对应 scale？(已完成)
   <li> 修正了地面法向量坐标系至 yaw 对齐, rpy 完全正常, 无需置 yaw 为零 3.17
   <li> 实现 MPC 参数学习 3.18
+  <li> 实现 Policy 结合 MPC 运行, 推理速度可以 100 Hz 实时运行 3.18
+  <li> TODO 如何权衡 30Hz 的 MPC 和实时的网络更新?
   </ul>
 </details>
 
@@ -166,7 +175,7 @@
 ### Roadmaps
 - [x] **MPC_Controller**
 - [Quadruped](MPC_Controller/common/Quadruped.py),
-- [RobotRunner](MPC_Controller/RobotRunner.py) ->
+- [RobotRunner](MPC_Controller/RobotRunnerFSM.py) ->
     - [LegController](MPC_Controller/common/LegController.py),
     - [StateEstimator](MPC_Controller/state_estimate/StateEstimatorContainer.py),
     - [ControlFSM](MPC_Controller/FSM_states/ControlFSM.py) ->
@@ -180,7 +189,7 @@
 - [x] **RL_Environment**
 - [Gamepad Reader](RL_Simulator/gamepad_reader.py),
 - [Simulation Utils](RL_Environment/sim_utils.py),
-- [Policy Transfer](RL_Environment/model_test.py),
+- [Weight Policy](RL_Environment/WeightPolicy.py),
 - [Train](RL_Environment/train.py) ->
     - [Vectorized Env](RL_Environment/tasks/base/vec_task.py),
     - [Aliengo Env](RL_Environment/tasks/aliengo.py)
