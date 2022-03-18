@@ -6,6 +6,43 @@
 
 <img src="images/controller_blocks.png" width=700>
 
+## Dependencies
+- PyTorch 1.8.1
+- Isaac Gym Preview 3
+- RL Games 1.1.3
+- OSQP
+
+## Installation
+
+1. Create the conda environment:
+    ```bash
+    conda env create -f environment.yml
+    ```
+
+2. Install the python binding of the MPC solver:
+    ```bash
+    pip install -e .
+    ```
+
+## Quick Start
+1. Play the MPC controller with Aliengo
+    ```bash
+    python RL_MPC_Locomotion --robot=Aliengo
+    ```
+    Note that by default you need to plug in your xbox-like gamepad to control it.
+
+2. Train a new policy
+    ```bash
+    python train.py task=Aliengo headless=False
+    ```
+    Press the `v` key to disable viewer updates, and press again to resume. Set `headless=True` to train without rendering
+
+3. Load a trained checkpoint
+    ```bash
+    python train.py task=Aliengo checkpoint=runs/Aliengo/nn/Aliengo.pth test=True num_envs=4
+    ```
+    Set `test=False` to continue training.
+
 ## Development Logs
 <details>
   <summary>Dec 3, 2019 -- Jan 7, 2022</summary>
@@ -118,14 +155,15 @@
   <li> 成功剥离网络, 目前可以脱离 RL 环境单独运行 policy 3.16
   <li> 成功对接 MPC cmd, weight交互需要重新设计 3.16
   <li> TODO 修改 MPC weight 更新, 暴露到 conputeContactForce 的位置 (已完成)
-  <li> TODO 如何保证 weight 大等于零? 如何缩放 [-1,1] 的 action 到对应 scale？
+  <li> TODO 如何保证 weight 大等于零? 如何缩放 [-1,1] 的 action 到对应 scale？(已完成)
   <li> 修正了地面法向量坐标系至 yaw 对齐, rpy 完全正常, 无需置 yaw 为零 3.17
+  <li> 实现 MPC 参数学习 3.18
   </ul>
 </details>
 
 
 ### Roadmaps
-- MPC_Controller
+- [x] **MPC_Controller**
   - [Quadruped](MPC_Controller/common/Quadruped.py),
   - [RobotRunner](MPC_Controller/RobotRunner.py) ->
       - [LegController](MPC_Controller/common/LegController.py),
@@ -138,10 +176,12 @@
                   - [Gait](MPC_Controller/convex_MPC/Gait.py),
                   - [MPC Solver in C](MPC_Controller/convex_MPC/mpc_osqp.cc)
 
-- RL_Environment
+- [x] **RL_Environment**
   - [Gamepad Reader](RL_Simulator/gamepad_reader.py),
   - [Simulation Utils](RL_Environment/sim_utils.py),
+  - [Policy Transfer](RL_Environment/model_test.py),
   - [Train](RL_Environment/train.py) ->
+    - [Vectorized Env](RL_Environment/tasks/base/vec_task.py),
     - [Aliengo Env](RL_Environment/tasks/aliengo.py)
 
 ## User Notes
@@ -152,6 +192,7 @@
 - [Setup a Simulation in Isaac Gym](docs/3-isaac_api_note.md)
 - [Upgrade Isaac Gym Preview 2 to Preview 3](docs/5-upgrade_isaac_gym.md)
 - [OSQP, qpOASES and CVXOPT Solver Installation](docs/6-qp_solver.md)
+- [Train PPO Model Using RL Games](docs/8-rl_games_api_note.md)
 
 ## Gallery
 
