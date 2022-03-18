@@ -4,7 +4,7 @@ from MPC_Controller.common.Quadruped import Quadruped, RobotType
 from MPC_Controller.common.LegController import LegController
 from MPC_Controller.StateEstimator import StateEstimator
 
-class RobotRunner:
+class RobotRunnerFSM:
     def __init__(self):
         pass
         # self._iterations = 0

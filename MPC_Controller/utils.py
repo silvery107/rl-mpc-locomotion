@@ -2,13 +2,18 @@ import numpy as np
 from enum import Enum, auto
 
 # Constants
-DTYPE = np.float32
+DTYPE = np.float16
 CASTING = "same_kind"
 SIDE_SIGN = [1, -1, 1, -1]
 K_MAX_GAIT_SEGMENTS = 40
 NUM_LEGS = 4
 
 # Enumerate classes
+class ControllerType(Enum):
+    FSM = auto()
+    MIN = auto()
+    POLICY = auto()
+
 class CoordinateAxis(Enum):
     X = auto()
     Y = auto()
