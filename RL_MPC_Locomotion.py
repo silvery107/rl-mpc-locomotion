@@ -1,5 +1,6 @@
 from MPC_Controller.Parameters import Parameters
 from MPC_Controller.RobotRunner import RobotRunner
+from MPC_Controller.RobotRunnerMin import RobotRunnerMin
 from MPC_Controller.common.Quadruped import RobotType
 from RL_Environment import gamepad_reader
 from isaacgym import gymapi
@@ -39,14 +40,13 @@ for idx in range(num_envs):
 
     # Setup MPC Controller
     robotRunner = RobotRunner()
+    # robotRunner = RobotRunnerMin()
     robotRunner.init(robot)
     controllers.append(robotRunner)
 
 # Setup MPC Controller
 if use_gamepad:
     gamepad = gamepad_reader.Gamepad(vel_scale_x=2, vel_scale_y=1.5, vel_scale_rot=2)
-
-print("[Simulator Driver] First run of robot controller...")
 
 count = 0
 render_fps = 30

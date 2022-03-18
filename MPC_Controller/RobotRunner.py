@@ -23,7 +23,7 @@ class RobotRunner:
         if self.robotType in RobotType:
             self._quadruped = Quadruped(self.robotType)
         else:
-            raise "Invalid RobotType"
+            raise Exception("Invalid RobotType")
 
         # init leg controller
         self._legController = LegController(self._quadruped)
@@ -40,6 +40,8 @@ class RobotRunner:
                                       self._legController,
                                       self._desiredStateCommand)
 
+    def reset(self):
+        self._controlFSM.initialize()
 
     def run(self, dof_states, body_states, commands):
         """

@@ -1,5 +1,4 @@
 from MPC_Controller.DesiredStateCommand import DesiredStateCommand
-from MPC_Controller.FSM_states.ControlFSM import ControlFSM
 from MPC_Controller.FSM_states.ControlFSMData import ControlFSMData
 from MPC_Controller.Parameters import Parameters
 from MPC_Controller.common.Quadruped import Quadruped, RobotType
@@ -35,7 +34,7 @@ class RobotRunnerMin:
         if self.robotType in RobotType:
             self._quadruped = Quadruped(self.robotType)
         else:
-            raise "Invalid RobotType"
+            raise Exception("Invalid RobotType")
 
         # init leg controller
         self._legController = LegController(self._quadruped)
