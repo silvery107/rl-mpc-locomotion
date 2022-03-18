@@ -14,7 +14,7 @@ class Quadruped:
 
     def __init__(self, robotype:RobotType):
 
-        if robotype == RobotType.ALIENGO:
+        if robotype is RobotType.ALIENGO:
             self._abadLinkLength = 0.0418
             self._hipLinkLength = 0.25
             self._kneeLinkLength = 0.25
@@ -35,7 +35,7 @@ class Quadruped:
                                  0.0]
             # self._mpc_weights = [0.25, 0.25, 10, 2, 2, 50, 0, 0, 0.3, 0.2, 0.2, 0.1, 0]
 
-        elif robotype == RobotType.A1:
+        elif robotype is RobotType.A1:
             self._abadLinkLength = 0.04
             self._hipLinkLength = 0.2
             self._kneeLinkLength = 0.2
@@ -52,7 +52,7 @@ class Quadruped:
             # self._mpc_weights = [1., 1., 0, 0, 0, 20, 0., 0., .1, .1, .1, .0, 0]
             self._mpc_weights = [0.25, 0.25, 10, 2, 2, 50, 0, 0, 0.3, 0.5, 0.5, 0.1, 0]
 
-        elif robotype == RobotType.MINI_CHEETAH:
+        elif robotype is RobotType.MINI_CHEETAH:
             self._abadLinkLength = 0.062
             self._hipLinkLength = 0.209
             self._kneeLinkLength = 0.195

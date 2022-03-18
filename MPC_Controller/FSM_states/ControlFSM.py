@@ -59,11 +59,11 @@ class ControlFSM:
 
     def initialize(self):
         # Initialize a new FSM State with the control data
-        if Parameters.control_mode == FSM_StateName.LOCOMOTION:
+        if Parameters.control_mode is FSM_StateName.LOCOMOTION:
             self.currentState = self.statesList.locomotion
-        elif Parameters.control_mode == FSM_StateName.PASSIVE:
+        elif Parameters.control_mode is FSM_StateName.PASSIVE:
             self.currentState = self.statesList.passive
-        elif Parameters.control_mode == FSM_StateName.RECOVERY_STAND:
+        elif Parameters.control_mode is FSM_StateName.RECOVERY_STAND:
             self.currentState = self.statesList.recoveryStand
         else:
             raise Exception("Invalid Initial FSM State!")
@@ -79,11 +79,11 @@ class ControlFSM:
         # Check the robot state for safe operation
         # operatingMode = safetyPreCheck();
 
-        if self.operatingMode == FSM_OperatingMode.TEST:
+        if self.operatingMode is FSM_OperatingMode.TEST:
             self.currentState.run()
 
         # Run normal controls if no transition is detected
-        elif self.operatingMode == FSM_OperatingMode.NORMAL:
+        elif self.operatingMode is FSM_OperatingMode.NORMAL:
             # Check the current state for any transition
             nextStateName = self.currentState.checkTransition()
 
@@ -100,7 +100,7 @@ class ControlFSM:
                 self.currentState.run()
 
         # Run the transition code while transition is occuring
-        elif self.operatingMode == FSM_OperatingMode.TRANSITIONING:
+        elif self.operatingMode is FSM_OperatingMode.TRANSITIONING:
             self.transitionDone = self.currentState.transition()
 
             # TODO Check the robot state for safe operation
@@ -145,13 +145,13 @@ class ControlFSM:
         * @param  next commanded enumerated state name
         * @return next FSM state
         """
-        if stateName == FSM_StateName.INVALID:
+        if stateName is FSM_StateName.INVALID:
             return self.statesList.invalid
-        elif stateName == FSM_StateName.PASSIVE:
+        elif stateName is FSM_StateName.PASSIVE:
             return self.statesList.passive
-        elif stateName == FSM_StateName.LOCOMOTION:
+        elif stateName is FSM_StateName.LOCOMOTION:
             return self.statesList.locomotion
-        elif stateName == FSM_StateName.RECOVERY_STAND:
+        elif stateName is FSM_StateName.RECOVERY_STAND:
             return self.statesList.recoveryStand
         else:
             return self.statesList.invalid
@@ -174,9 +174,9 @@ class ControlFSM:
                 print("---------------------------------------------------------")
                 print("[CONTROL FSM] Printing FSM Info...")
                 print("Iteration: " + str(self.iter))
-                if self.operatingMode == FSM_OperatingMode.NORMAL:
+                if self.operatingMode is FSM_OperatingMode.NORMAL:
                     print("Operating Mode:: NORMAL in "+self.currentState.stateString)
-                elif self.operatingMode == FSM_OperatingMode.TRANSITIONING:
+                elif self.operatingMode is FSM_OperatingMode.TRANSITIONING:
                     print("Operating Mode: TRANSITIONING from "+self.currentState.stateString+" to "+self.nextState.stateString)
 
                 self.printIter = 0

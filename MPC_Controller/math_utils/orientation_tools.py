@@ -30,11 +30,11 @@ def coordinateRotation(axis:CoordinateAxis, theta:float) -> np.ndarray:
     s = sin(float(theta))
     c = cos(float(theta))
     R:np.ndarray = None
-    if axis == CoordinateAxis.X:
+    if axis is CoordinateAxis.X:
         R = np.array([1, 0, 0, 0, c, s, 0, -s, c], dtype=DTYPE).reshape((3,3))
-    elif axis == CoordinateAxis.Y:
+    elif axis is CoordinateAxis.Y:
         R = np.array([c, 0, -s, 0, 1, 0, s, 0, c], dtype=DTYPE).reshape((3,3))
-    elif axis == CoordinateAxis.Z:
+    elif axis is CoordinateAxis.Z:
         R = np.array([c, s, 0, -s, c, 0, 0, 0, 1], dtype=DTYPE).reshape((3,3))
 
     return R

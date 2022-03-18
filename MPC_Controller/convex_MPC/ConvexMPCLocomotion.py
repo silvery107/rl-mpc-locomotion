@@ -126,7 +126,7 @@ class ConvexMPCLocomotion:
         # self._y_vel_des = DesiredStateCommand.y_vel_cmd
         self._x_vel_des = data._desiredStateCommand.x_vel_cmd
         self._y_vel_des = data._desiredStateCommand.y_vel_cmd
-        # if data._quadruped._robotType == RobotType.MINI_CHEETAH:
+        # if data._quadruped._robotType is RobotType.MINI_CHEETAH:
         #     self._y_vel_des -= 0.125
 
         # self._yaw_turn_rate = DesiredStateCommand.yaw_turn_rate

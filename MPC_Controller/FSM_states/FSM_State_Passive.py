@@ -60,10 +60,10 @@ class FSM_State_Passive(FSM_State):
         self.iter += 1
 
         # Switch FSM control mode
-        if Parameters.control_mode == FSM_StateName.PASSIVE:
+        if Parameters.control_mode is FSM_StateName.PASSIVE:
             pass
 
-        elif Parameters.control_mode == FSM_StateName.RECOVERY_STAND:
+        elif Parameters.control_mode is FSM_StateName.RECOVERY_STAND:
             self.nextStateName = FSM_StateName.RECOVERY_STAND
             
         else:

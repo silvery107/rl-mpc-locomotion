@@ -17,13 +17,13 @@ class FSM_State_Locomotion(FSM_State):
     def __init__(self, _controlFSMData:ControlFSMData):
         super().__init__(_controlFSMData, FSM_StateName.LOCOMOTION, "LOCOMOTION")
 
-        if _controlFSMData._quadruped._robotType == RobotType.MINI_CHEETAH:
+        if _controlFSMData._quadruped._robotType is RobotType.MINI_CHEETAH:
             self.cMPC = ConvexMPCLocomotion(Parameters.controller_dt,
                 27/(1000.0*Parameters.controller_dt))
-        elif _controlFSMData._quadruped._robotType == RobotType.ALIENGO:
+        elif _controlFSMData._quadruped._robotType is RobotType.ALIENGO:
             self.cMPC = ConvexMPCLocomotion(Parameters.controller_dt,
                 27/(1000.0*Parameters.controller_dt))
-        elif _controlFSMData._quadruped._robotType == RobotType.A1:
+        elif _controlFSMData._quadruped._robotType is RobotType.A1:
             self.cMPC = ConvexMPCLocomotion(Parameters.controller_dt,
                 29/(1000.0*Parameters.controller_dt))
         else:
@@ -70,14 +70,14 @@ class FSM_State_Locomotion(FSM_State):
         """
         self.iter += 1
         if self.locomotionSafe():
-            if Parameters.control_mode == FSM_StateName.LOCOMOTION:
+            if Parameters.control_mode is FSM_StateName.LOCOMOTION:
                 pass
 
-            elif Parameters.control_mode == FSM_StateName.PASSIVE:
+            elif Parameters.control_mode is FSM_StateName.PASSIVE:
                 # Requested change to PASSIVE
                 self.nextStateName = FSM_StateName.PASSIVE
 
-            elif Parameters.control_mode == FSM_StateName.RECOVERY_STAND:
+            elif Parameters.control_mode is FSM_StateName.RECOVERY_STAND:
                 self.nextStateName = FSM_StateName.RECOVERY_STAND
             
             else:
@@ -99,11 +99,11 @@ class FSM_State_Locomotion(FSM_State):
         *
         * @return true if transition is complete
         """
-        if self.nextStateName == FSM_StateName.PASSIVE:
+        if self.nextStateName is FSM_StateName.PASSIVE:
             self.turnOffAllSafetyChecks()
             self.transitionDone = True
 
-        elif self.nextStateName == FSM_StateName.RECOVERY_STAND:
+        elif self.nextStateName is FSM_StateName.RECOVERY_STAND:
             self.transitionDone = True
         
         else:
