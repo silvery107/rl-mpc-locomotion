@@ -1,3 +1,8 @@
+import os
+import inspect
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+os.sys.path.insert(0, parentdir)
 import isaacgym
 
 import hydra
@@ -7,8 +12,8 @@ from hydra.utils import to_absolute_path
 
 import torch
 
-from utils.reformat import omegaconf_to_dict
-from utils.utils import set_np_formatting
+from RL_Environment.utils.reformat import omegaconf_to_dict, print_dict
+from RL_Environment.utils.utils import set_np_formatting
 
 from rl_games.algos_torch.model_builder import ModelBuilder
 from rl_games.algos_torch.running_mean_std import RunningMeanStd
@@ -23,7 +28,7 @@ OmegaConf.register_new_resolver('if', lambda pred, a, b: a if pred else b)
 # num_ensv
 OmegaConf.register_new_resolver('resolve_default', lambda default, arg: default if arg=='' else arg)
 
-@hydra.main(config_name="config", config_path="./cfg")
+@hydra.main(config_name="config", config_path="../RL_Environment/cfg")
 def launch_rlg_hydra(cfg: DictConfig):
 
     def rescale_actions(low, high, action):
@@ -47,10 +52,14 @@ def launch_rlg_hydra(cfg: DictConfig):
     # ensure checkpoints can be specified as relative paths
     # if cfg.checkpoint:
     #     cfg.checkpoint = to_absolute_path(cfg.checkpoint)
-
+    cfg.num_envs = 4
+    cfg.checkpoint = "RL_Environment/runs/Aliengo/nn/Aliengo.pth"
     # set numpy formatting for printing only
     set_np_formatting()
-
+    
+    cfg_dict = omegaconf_to_dict(cfg)
+    print_dict(cfg_dict)
+    
     rlg_config_dict = omegaconf_to_dict(cfg.train)
 
     # prepare config and params dict

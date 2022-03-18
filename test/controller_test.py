@@ -4,7 +4,7 @@ sys.path.append("..")
 import numpy as np
 from enum import Enum, auto
 from time import sleep
-from MPC_Controller.RobotRunner import RobotRunner
+from MPC_Controller.RobotRunnerFSM import RobotRunnerFSM
 from MPC_Controller.common.Quadruped import RobotType
 from MPC_Controller.deprecated.RobotController import RobotController
 
@@ -17,7 +17,7 @@ class SimulatorMode(Enum):
 # Setup MPC Controller
 robotType = RobotType.ALIENGO
 robotController = RobotController()
-robotRunner = RobotRunner(robotController)
+robotRunner = RobotRunnerFSM(robotController)
 
 iterations = 0
 firstControllerRun = True

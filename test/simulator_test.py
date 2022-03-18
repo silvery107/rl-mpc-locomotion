@@ -6,7 +6,7 @@ currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentfram
 parentdir = os.path.dirname(currentdir)
 os.sys.path.insert(0, parentdir)
 
-from MPC_Controller.RobotRunner import RobotRunner
+from MPC_Controller.RobotRunnerFSM import RobotRunnerFSM
 from MPC_Controller.deprecated.RobotController import RobotController
 from MPC_Controller.common.Quadruped import Quadruped, RobotType
 from MPC_Controller.common.LegController import LegController
