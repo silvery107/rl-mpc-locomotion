@@ -44,15 +44,15 @@ def acquire_sim(gym, dt):
     return sim
 
 def load_asset(gym, sim, robot, fix_base_link):
-    if robot == RobotType.ALIENGO:
+    if robot is RobotType.ALIENGO:
         asset_file = ALIENGO
-    elif robot == RobotType.MINI_CHEETAH:
+    elif robot is RobotType.MINI_CHEETAH:
         asset_file = MINI_CHEETAH
-    elif robot == RobotType.XIAOTIAN:
+    elif robot is RobotType.XIAOTIAN:
         asset_file = XIAOTIAN
-    elif robot == RobotType.A1:
+    elif robot is RobotType.A1:
         asset_file = A1
-    elif robot == RobotType.ANYMAL:
+    elif robot is RobotType.ANYMAL:
         asset_file = ANYMAL
     else:
         raise Exception("Invalid RobotType")
