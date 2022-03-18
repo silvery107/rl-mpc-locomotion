@@ -7,10 +7,10 @@
 <img src="images/controller_blocks.png" width=700>
 
 ## Dependencies
-- PyTorch 1.8.1
-- Isaac Gym Preview 3
-- RL Games 1.1.3
-- OSQP
+- *PyTorch* - 1.8.1
+- *Isaac Gym* - Preview 3
+- *RL Games* - 1.1.3
+- *OSQP* - 0.6.2
 
 ## Installation
 
@@ -25,19 +25,20 @@
     ```
 
 ## Quick Start
-1. Play the MPC controller with Aliengo
+1. Play the MPC controller with Aliengo:
     ```bash
     python RL_MPC_Locomotion --robot=Aliengo
     ```
     Note that by default you need to plug in your xbox-like gamepad to control it.
 
-2. Train a new policy
+2. Train a new policy:
     ```bash
     python train.py task=Aliengo headless=False
     ```
-    Press the `v` key to disable viewer updates, and press again to resume. Set `headless=True` to train without rendering
+    Press the `v` key to disable viewer updates, and press again to resume. 
+    Set `headless=True` to train without rendering.
 
-3. Load a trained checkpoint
+3. Load a trained checkpoint:
     ```bash
     python train.py task=Aliengo checkpoint=runs/Aliengo/nn/Aliengo.pth test=True num_envs=4
     ```
@@ -164,23 +165,23 @@
 
 ### Roadmaps
 - [x] **MPC_Controller**
-  - [Quadruped](MPC_Controller/common/Quadruped.py),
-  - [RobotRunner](MPC_Controller/RobotRunner.py) ->
-      - [LegController](MPC_Controller/common/LegController.py),
-      - [StateEstimator](MPC_Controller/state_estimate/StateEstimatorContainer.py),
-      - [ControlFSM](MPC_Controller/FSM_states/ControlFSM.py) ->
-          - [FSM_State_RecoveryStand](MPC_Controller/FSM_states/FSM_State_RecoveryStand.py),
-          - [FSM_State_Locomotion](MPC_Controller/FSM_states/FSM_State_Locomotion.py) ->
-              - [ConvexMPCLocomotion](MPC_Controller/convex_MPC/ConvexMPCLocomotion.py) ->
-                  - [FootSwingTrajectory](MPC_Controller/common/FootSwingTrajectory.py),
-                  - [Gait](MPC_Controller/convex_MPC/Gait.py),
-                  - [MPC Solver in C](MPC_Controller/convex_MPC/mpc_osqp.cc)
+- [Quadruped](MPC_Controller/common/Quadruped.py),
+- [RobotRunner](MPC_Controller/RobotRunner.py) ->
+    - [LegController](MPC_Controller/common/LegController.py),
+    - [StateEstimator](MPC_Controller/state_estimate/StateEstimatorContainer.py),
+    - [ControlFSM](MPC_Controller/FSM_states/ControlFSM.py) ->
+        - [FSM_State_RecoveryStand](MPC_Controller/FSM_states/FSM_State_RecoveryStand.py),
+        - [FSM_State_Locomotion](MPC_Controller/FSM_states/FSM_State_Locomotion.py) ->
+            - [ConvexMPCLocomotion](MPC_Controller/convex_MPC/ConvexMPCLocomotion.py) ->
+                - [FootSwingTrajectory](MPC_Controller/common/FootSwingTrajectory.py),
+                - [Gait](MPC_Controller/convex_MPC/Gait.py),
+                - [MPC Solver in C](MPC_Controller/convex_MPC/mpc_osqp.cc)
 
 - [x] **RL_Environment**
-  - [Gamepad Reader](RL_Simulator/gamepad_reader.py),
-  - [Simulation Utils](RL_Environment/sim_utils.py),
-  - [Policy Transfer](RL_Environment/model_test.py),
-  - [Train](RL_Environment/train.py) ->
+- [Gamepad Reader](RL_Simulator/gamepad_reader.py),
+- [Simulation Utils](RL_Environment/sim_utils.py),
+- [Policy Transfer](RL_Environment/model_test.py),
+- [Train](RL_Environment/train.py) ->
     - [Vectorized Env](RL_Environment/tasks/base/vec_task.py),
     - [Aliengo Env](RL_Environment/tasks/aliengo.py)
 
