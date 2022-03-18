@@ -249,9 +249,9 @@ class ConvexMPCLocomotion:
             self.swingTimes[l] = gait.getCurrentSwingTime(self.dtMPC, l)
 
         v_des_robot = np.array([self._x_vel_des, self._y_vel_des, 0], dtype=DTYPE).reshape((3,1))
-        interleave_y = [0.08, -0.08, -0.02, 0.02]
-        interleave_gain = -0.2
-        v_abs = math.fabs(v_des_robot[0])
+        # interleave_y = [0.08, -0.08, -0.02, 0.02]
+        # interleave_gain = -0.2
+        # v_abs = math.fabs(v_des_robot[0])
 
         for i in range(4):
             if self.firstSwing[i]:
@@ -264,7 +264,7 @@ class ConvexMPCLocomotion:
             
             offset = np.array([0, getSideSign(i)*0.065, 0], dtype=DTYPE).reshape((3,1))
             pRobotFrame = data._quadruped.getHipLocation(i) + offset
-            pRobotFrame[1] += interleave_y[i] * v_abs * interleave_gain
+            # pRobotFrame[1] += interleave_y[i] * v_abs * interleave_gain
             stance_time = gait.getCurrentStanceTime(self.dtMPC, i)
             pYawCorrected = coordinateRotation(CoordinateAxis.Z, -self._yaw_turn_rate*stance_time/2) @ pRobotFrame
 
