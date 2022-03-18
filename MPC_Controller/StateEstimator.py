@@ -41,10 +41,10 @@ class StateEstimator:
     def reset(self):
         self.result = StateEstimate()
         self._phase = np.zeros((4,1), dtype=DTYPE)
-        self._phase = np.zeros((4,1), dtype=DTYPE)
         self._contactPhase = self._phase
         self._foot_contact_history:np.ndarray = None
         self.ground_R_body_frame:np.ndarray = None
+        self.body_height = self._quadruped._bodyHeight
         self.result.position[2] = self.body_height
 
     def setContactPhase(self, phase:np.ndarray):
