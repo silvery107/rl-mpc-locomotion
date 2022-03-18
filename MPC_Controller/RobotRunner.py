@@ -17,7 +17,7 @@ class RobotRunner:
         """
         self.robotType = robotType
 
-        print("[RobotRunner] initialize")
+        # print("[RobotRunner] initialize")
 
         # init quadruped
         if self.robotType in RobotType:

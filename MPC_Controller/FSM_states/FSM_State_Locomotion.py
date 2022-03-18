@@ -48,7 +48,8 @@ class FSM_State_Locomotion(FSM_State):
         self.cMPC.initialize(self._data)
         self._data._desiredStateCommand.reset()
         self._data._stateEstimator.reset()
-        print("[FSM LOCOMOTION] On Enter")
+        if Parameters.FSM_print_info:
+            print("[FSM LOCOMOTION] On Enter")
 
     def run(self):
         """

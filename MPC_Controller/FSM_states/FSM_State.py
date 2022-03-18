@@ -1,4 +1,5 @@
 import numpy as np
+from MPC_Controller.Parameters import Parameters
 from MPC_Controller.utils import DTYPE, CASTING
 from MPC_Controller.FSM_states.ControlFSMData import ControlFSMData
 from MPC_Controller.utils import FSM_StateName
@@ -21,7 +22,8 @@ class FSM_State:
         self.nextStateName:FSM_StateName = None
         self.stateString = stateStringIn
         self.transitionDone = False
-        print("[FSM_State] Initialized FSM state:", self.stateString)
+        if Parameters.FSM_print_info:
+            print("[FSM_State] Initialized FSM state:", self.stateString)
 
     def onEnter(self):
         raise NotImplementedError
