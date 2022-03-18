@@ -1,8 +1,10 @@
 import math
 from MPC_Controller.Parameters import Parameters
-from MPC_Controller.RobotRunner import RobotRunner
+from MPC_Controller.RobotRunnerFSM import RobotRunnerFSM
 from MPC_Controller.RobotRunnerMin import RobotRunnerMin
+from MPC_Controller.RobotRunnerPolicy import RobotRunnerPolicy
 from MPC_Controller.common.Quadruped import RobotType
+from MPC_Controller.utils import DTYPE, ControllerType
 from RL_Environment import gamepad_reader
 from isaacgym import gymapi
 from RL_Environment.sim_utils import *
@@ -11,10 +13,10 @@ from argparse import ArgumentParser
 parser = ArgumentParser(prog="RL_MPC_LOCOMOTION")
 
 parser.add_argument("--robot", default="Aliengo", choices=[name.title() for name in RobotType.__members__.keys()], help="robot types")
+parser.add_argument("--mode", default="FSM", choices=[name.title() for name in ControllerType.__members__.keys()], help="controller types")
 parser.add_argument("--num_envs", default=1, type=int, help="the number of robots")
 parser.add_argument("--render_fps", type=int, default=30, help="render fps")
 parser.add_argument('--disable_gamepad', action='store_true')
-# parser.add_argument("")
 
 args = parser.parse_args()
 
@@ -53,8 +55,16 @@ def main():
         gym.set_actor_dof_properties(envs[idx], actors[idx], props)
 
         # Setup MPC Controller
-        robotRunner = RobotRunner()
-        # robotRunner = RobotRunnerMin()
+        controller_type = ControllerType[args.mode.upper()]
+        if controller_type is ControllerType.FSM:
+            robotRunner = RobotRunnerFSM()
+        elif controller_type is ControllerType.MIN:
+            robotRunner = RobotRunnerMin()
+        elif controller_type is ControllerType.POLICY:
+            robotRunner = RobotRunnerPolicy()
+        else:
+            raise Exception("Invalid ControllerType!")
+
         robotRunner.init(robot)
         controllers.append(robotRunner)
 
@@ -73,13 +83,13 @@ def main():
         gym.fetch_results(sim, True)
 
         # current_time = gym.get_sim_time(sim)
-        commands = [0.0, 0.0, 0.0]
+        commands = np.zeros(3, dtype=DTYPE)
         if use_gamepad:
             lin_speed, ang_speed, e_stop = gamepad.get_command()
             Parameters.cmpc_gait = gamepad.get_gait()
             Parameters.control_mode = gamepad.get_mode()
             if not e_stop:
-                commands = [lin_speed[0], lin_speed[1], ang_speed]
+                commands = np.array([lin_speed[0], lin_speed[1], ang_speed], dtype=DTYPE)
 
         # run controllers
         for idx, (env, actor, controller) in enumerate(zip(envs, actors, controllers)):

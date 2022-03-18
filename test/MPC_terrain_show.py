@@ -6,7 +6,7 @@ os.sys.path.insert(0, parentdir)
 
 from MPC_Controller.DesiredStateCommand import DesiredStateCommand
 from MPC_Controller.Parameters import Parameters
-from MPC_Controller.RobotRunner import RobotRunner
+from MPC_Controller.RobotRunnerFSM import RobotRunnerFSM
 from MPC_Controller.common.Quadruped import RobotType
 from RL_Environment import gamepad_reader
 from isaacgym import gymapi
@@ -75,7 +75,7 @@ for robot,idx in zip(robots,range(num_envs)):
     gym.set_actor_dof_properties(envs[idx], actors[idx], props)
 
     # Setup MPC Controller
-    robotRunner = RobotRunner()
+    robotRunner = RobotRunnerFSM()
     robotRunner.init(robot)
     controllers.append(robotRunner)
 
