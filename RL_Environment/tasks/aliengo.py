@@ -12,6 +12,7 @@ from isaacgym.torch_utils import *
 from sim_utils import ALIENGO
 from MPC_Controller.common.Quadruped import RobotType
 from MPC_Controller.RobotRunner import RobotRunner
+from MPC_Controller.RobotRunnerMin import RobotRunnerMin
 from MPC_Controller.Parameters import Parameters
 from MPC_Controller.utils import DTYPE
 
@@ -207,7 +208,7 @@ class Aliengo(VecTask):
 
             if Parameters.bridge_MPC_to_RL:
                 # *MPC create controllers
-                robotRunner = RobotRunner()
+                robotRunner = RobotRunnerMin()
                 robotRunner.init(self.robotType)
                 self.controllers.append(robotRunner)
 
@@ -229,20 +230,37 @@ class Aliengo(VecTask):
             # dof_state: (num_envs*num_dofs, 2)
             # root_states: (num_envs, pos[3]+quat[4]+lin_vel[3]+ang_vel[3])
             # commands: (num_envs, 3)
-            actions_cpu = self.actions.cpu().numpy().astype(DTYPE)
+            # * [-1, 1] -> [a, b] => [-1, 1] * (b-a)/2 + (b+a)/2
+            actions_rescale = torch.mul(self.actions, 
+                                        torch.tensor(
+                                        [10, 10, 10,   # 0-20
+                                        25, 25, 25,   # 10-60
+                                        4, 4, 4,    # 0-8
+                                        4, 4, 4],   # 0-8
+                                        dtype=torch.float,
+                                        device=self.device)).add(
+                                        torch.tensor(
+                                        [10, 10, 10,
+                                        35,35,35,
+                                        4, 4, 4,
+                                        4, 4, 4],
+                                        dtype=torch.float,
+                                        device=self.device))
+            # torch.cuda.synchronize()
+            actions_cpu = actions_rescale.detach().cpu().numpy().astype(DTYPE)
             torques_cpu = np.zeros((self.num_envs, self.num_dof), dtype=DTYPE)
-            dof_state_cpu = self.dof_state.cpu().numpy().astype(DTYPE)
-            root_states_cpu = self.root_states.cpu().numpy().astype(DTYPE)
-            commands_cpu = self.commands.cpu().numpy().astype(DTYPE)
+            dof_state_cpu = self.dof_state.detach().cpu().numpy().astype(DTYPE)
+            root_states_cpu = self.root_states.detach().cpu().numpy().astype(DTYPE)
+            commands_cpu = self.commands.detach().cpu().numpy().astype(DTYPE)
             for idx, controller in enumerate(self.controllers):
                 commands = np.concatenate((commands_cpu[idx], actions_cpu[idx], [0.0]), axis=0, dtype=DTYPE)
                 torques_cpu[idx] = controller.run(dof_state_cpu[idx*self.num_dof:(idx+1)*self.num_dof],
                                                   root_states_cpu[idx],
                                                   commands)
 
-            torques_gpu = torch.from_numpy(torques_cpu).to(self.device)
-            torques = torch.clip(torques_gpu, -55., 55.)
-            self.gym.set_dof_actuation_force_tensor(self.sim, gymtorch.unwrap_tensor(torques))
+            torques_gpu = torch.from_numpy(torques_cpu.astype(np.float32)).to(self.device)
+            self.torques = torch.clip(torques_gpu, -55., 55.)
+            self.gym.set_dof_actuation_force_tensor(self.sim, gymtorch.unwrap_tensor(self.torques))
         else:
             # *force control
             torques = torch.clip(self.Kp*(self.action_scale*self.actions + self.default_dof_pos - self.dof_pos) - self.Kd*self.dof_vel,
@@ -325,9 +343,10 @@ class Aliengo(VecTask):
         self.reset_buf[env_ids] = 1
         if Parameters.bridge_MPC_to_RL:
             # *MPC reset
-            # print(env_ids_int32.cpu().numpy())
-            for idx in env_ids_int32.cpu().numpy():
-                self.controllers[idx]._controlFSM.initialize()
+            # print(env_ids_int32.cpu())
+            # torch.cuda.synchronize()
+            for idx in env_ids_int32.detach().cpu():
+                self.controllers[idx].reset()
 
 #####################################################################
 ###=========================jit functions=========================###
