@@ -5,15 +5,14 @@ import numpy as np
 from omegaconf import DictConfig, OmegaConf
 from hydra.utils import to_absolute_path
 
-from isaacgymenvs.utils.reformat import omegaconf_to_dict, print_dict
 import torch
 
-from utils.utils import set_np_formatting, set_seed
+from utils.reformat import omegaconf_to_dict
+from utils.utils import set_np_formatting
 
 from rl_games.algos_torch.model_builder import ModelBuilder
 from rl_games.algos_torch.running_mean_std import RunningMeanStd
 from rl_games.algos_torch import torch_ext
-
 
 ## OmegaConf & Hydra Config
 # Resolvers used in hydra configs (see https://omegaconf.readthedocs.io/en/2.1_branch/usage.html#resolvers)
@@ -46,17 +45,11 @@ def launch_rlg_hydra(cfg: DictConfig):
         return obs_batch
 
     # ensure checkpoints can be specified as relative paths
-    if cfg.checkpoint:
-        cfg.checkpoint = to_absolute_path(cfg.checkpoint)
-
-    cfg_dict = omegaconf_to_dict(cfg)
-    print_dict(cfg_dict)
+    # if cfg.checkpoint:
+    #     cfg.checkpoint = to_absolute_path(cfg.checkpoint)
 
     # set numpy formatting for printing only
     set_np_formatting()
-
-    # sets seed. if seed is -1 will pick a random one
-    cfg.seed = set_seed(cfg.seed, torch_deterministic=cfg.torch_deterministic)
 
     rlg_config_dict = omegaconf_to_dict(cfg.train)
 
@@ -93,7 +86,7 @@ def launch_rlg_hydra(cfg: DictConfig):
     running_mean_std.load_state_dict(checkpoint['running_mean_std'])
 
     # TODO get observation
-    obs = torch.zeros([num_agents, num_obs], requires_grad=False, device=device)
+    obs = torch.ones([num_agents, num_obs], requires_grad=False, device=device)
     obs = _preproc_obs(obs)
 
     # get action
@@ -111,12 +104,28 @@ def launch_rlg_hydra(cfg: DictConfig):
     else:
         # non-determenistic action
         action = res_dict['actions']
+
     # clip actions to (-1, 1)
-    scaled_action = rescale_actions(-torch.ones_like(action, requires_grad=False, device=device), 
+    action_clip = rescale_actions(-torch.ones_like(action, requires_grad=False, device=device), 
                                     torch.ones_like(action, requires_grad=False, device=device), 
                                     torch.clamp(action, -1.0, 1.0))
-
-    print(scaled_action.cpu().numpy())
+    # * [-1, 1] -> [a, b] => [-1, 1] * (b-a)/2 + (b+a)/2
+    actions_rescale = torch.mul(action_clip, 
+                                torch.tensor(
+                                [5, 5, 5,   # 1-11
+                                15,15,15,   # 10-40
+                                1, 1, 1,    # 0-2
+                                1, 1, 1],   # 0-2
+                                dtype=torch.float,
+                                device=device)).add(
+                                torch.tensor(
+                                [6, 6, 6,
+                                25,25,25,
+                                1, 1, 1,
+                                1, 1, 1],
+                                dtype=torch.float,
+                                device=device))
+    print(actions_rescale.cpu().numpy())
 
 if __name__ == "__main__":
     launch_rlg_hydra()
