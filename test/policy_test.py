@@ -1,5 +1,6 @@
 import os
 import inspect
+from time import time
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parentdir = os.path.dirname(currentdir)
 os.sys.path.insert(0, parentdir)
@@ -104,6 +105,8 @@ def launch_rlg_hydra(cfg: DictConfig):
         'obs' : obs,
         'rnn_states' : None
     }
+    t_start = time()
+    torch.cuda.synchronize()
     with torch.no_grad():
         res_dict = model(input_dict)
     if is_determenistic:
@@ -112,7 +115,7 @@ def launch_rlg_hydra(cfg: DictConfig):
     else:
         # non-determenistic action
         action = res_dict['actions']
-
+    print(time()-t_start)
     # clip actions to (-1, 1)
     action_clip = rescale_actions(-torch.ones_like(action, requires_grad=False, device=device), 
                                     torch.ones_like(action, requires_grad=False, device=device), 

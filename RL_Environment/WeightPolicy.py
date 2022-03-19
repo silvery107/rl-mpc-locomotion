@@ -1,11 +1,13 @@
 import isaacgym
 import torch
+import time
 import numpy as np
 from omegaconf import OmegaConf
 from hydra import compose, initialize
 from hydra.utils import to_absolute_path
-from MPC_Controller.StateEstimator import StateEstimate
+from MPC_Controller.Parameters import Parameters
 from MPC_Controller.utils import DTYPE
+from MPC_Controller.StateEstimator import StateEstimate
 
 from RL_Environment.utils.reformat import omegaconf_to_dict, print_dict
 
@@ -91,8 +93,13 @@ class WeightPolicy:
             'obs' : obs,
             'rnn_states' : None
         }
+
+        t_start = time.time()
         with torch.no_grad():
             res_dict = self.model(input_dict)
+        if Parameters.policy_print_time:
+            print("Model Inference Time: {:.5f}".format(time.time()-t_start))
+
         if self.is_determenistic:
             # determenistic action
             action = res_dict['mus']
@@ -127,6 +134,8 @@ class WeightPolicy:
     def compute_observations(self, dof_states, se_result:StateEstimate, _commands, _actions):
         base_lin_vel = se_result.vBody.flatten() * self.lin_vel_scale
         base_ang_vel = se_result.omegaBody.flatten() * self.ang_vel_scale
+
+        # TODO check gravity direction
         projected_gravity = - se_result.ground_normal_yaw
         commands = _commands * np.array([self.lin_vel_scale, self.lin_vel_scale, self.ang_vel_scale], dtype=DTYPE)
         dof_pos = dof_states["pos"] * self.dof_pos_scale
@@ -161,7 +170,6 @@ class WeightPolicy:
 
 if __name__ == "__main__":
     policy = WeightPolicy(checkpoint="runs/Aliengo/nn/Aliengo.pth")
-    # TODO get observation
     obs = torch.ones([policy.num_agents, policy.num_obs], requires_grad=False, device=policy.device)
     weights = policy.step(obs)
     print(weights)
