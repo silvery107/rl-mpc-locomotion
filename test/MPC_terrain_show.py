@@ -1,12 +1,14 @@
 import os
 import inspect
+
+from MPC_Controller.utils import DTYPE
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parentdir = os.path.dirname(currentdir)
 os.sys.path.insert(0, parentdir)
 
 from MPC_Controller.DesiredStateCommand import DesiredStateCommand
 from MPC_Controller.Parameters import Parameters
-from MPC_Controller.RobotRunnerFSM import RobotRunnerFSM
+from MPC_Controller.robot_runner.RobotRunnerFSM import RobotRunnerFSM
 from MPC_Controller.common.Quadruped import RobotType
 from RL_Environment import gamepad_reader
 from isaacgym import gymapi
@@ -81,7 +83,7 @@ for robot,idx in zip(robots,range(num_envs)):
 
 # Setup MPC Controller
 if use_gamepad:
-    gamepad = gamepad_reader.Gamepad(vel_scale_x=2, vel_scale_y=2, vel_scale_rot=2)
+    gamepad = gamepad_reader.Gamepad(vel_scale_x=2, vel_scale_y=1.5, vel_scale_rot=3)
 
 print("[Simulator Driver] First run of robot controller...")
 
@@ -96,13 +98,13 @@ while not gym.query_viewer_has_closed(viewer):
     gym.fetch_results(sim, True)
 
     # current_time = gym.get_sim_time(sim)
-    commands = [0.0, 0.0, 0.0]
+    commands = np.zeros(3, dtype=DTYPE)
     if use_gamepad:
         lin_speed, ang_speed, e_stop = gamepad.get_command()
         Parameters.cmpc_gait = gamepad.get_gait()
         Parameters.control_mode = gamepad.get_mode()
         if not e_stop:
-            commands = [lin_speed[0], lin_speed[1], ang_speed]
+            commands = np.array([lin_speed[0], lin_speed[1], ang_speed], dtype=DTYPE)
 
     # run controllers
     for idx, (env, actor, controller) in enumerate(zip(envs, actors, controllers)):
