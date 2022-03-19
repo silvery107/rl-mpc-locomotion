@@ -94,7 +94,6 @@ def launch_rlg_hydra(cfg: DictConfig):
     running_mean_std.eval()
     running_mean_std.load_state_dict(checkpoint['running_mean_std'])
 
-    # TODO get observation
     obs = torch.ones([num_agents, num_obs], requires_grad=False, device=device)
     obs = _preproc_obs(obs)
 
