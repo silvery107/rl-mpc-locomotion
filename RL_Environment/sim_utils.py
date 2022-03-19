@@ -146,11 +146,11 @@ def add_ground(gym, sim):
     # create the ground plane
     gym.add_ground(sim, plane_params)
 
-def add_terrain(gym, sim, name="slope", x_offset=2., invert=False):
+def add_terrain(gym, sim, name="slope", x_offset=2., invert=False, width=2.8):
     # terrains
     num_terrains = 1
     terrain_width = 2.
-    terrain_length = 2.8
+    terrain_length = width
     horizontal_scale = 0.05  # [m] resolution in x
     vertical_scale = 0.005  # [m] resolution in z
     num_rows = int(terrain_width/horizontal_scale)
