@@ -1,0 +1,13 @@
+<mxfile host="65bd71144e" scale="2" border="0">
+    <diagram id="MsnkrazB3p0r8uDwOO7m" name="第 1 页">
+        <mxGraphModel dx="1426" dy="876" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="2" value="stateDiagram&#10;state FSM_State{&#10;    state if_state &lt;&lt;choice&gt;&gt;&#10;    [*] --&gt; onEnter() : curState&#10;    onEnter() --&gt; run()&#10;    cmdState --&gt; if_state : cmdState ? curState&#10;    run() --&gt; run() : Loop&#10;    if_state --&gt; run() : True&#10;    if_state --&gt; transition() : False&#10;    transition() --&gt; transition() : Loop&#10;    transition() --&gt; onExit()&#10;    }" style="shadow=0;dashed=0;align=left;strokeWidth=1;shape=mxgraph.mermaid.abstract.mermaid;labelBackgroundColor=#ffffff;noLabel=1;theme=default;" parent="1" vertex="1">
+                    <mxGeometry x="120" y="160" width="330" height="320" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

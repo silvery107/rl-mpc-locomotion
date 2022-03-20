@@ -1,0 +1,67 @@
+<mxfile host="65bd71144e" scale="2" border="0">
+    <diagram id="DGBlqrFxvaZjDMD5XtuF" name="第 1 页">
+        <mxGraphModel dx="591" dy="511" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="56" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FA191F;fontFamily=Times New Roman;fontSize=13;strokeColor=#36393d;sketch=0;fontColor=#FFFFFF;glass=0;shadow=0;" parent="1" vertex="1">
+                    <mxGeometry x="440" y="290" width="120" height="170" as="geometry"/>
+                </mxCell>
+                <mxCell id="59" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;startArrow=none;startFill=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;fontFamily=Times New Roman;fontSize=13;sketch=0;strokeWidth=3;" parent="1" source="56" target="49" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="340" y="580" as="targetPoint"/>
+                        <Array as="points">
+                            <mxPoint x="500" y="530"/>
+                            <mxPoint x="280" y="530"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="58" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;startArrow=none;startFill=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;fontFamily=Times New Roman;fontSize=13;sketch=0;strokeWidth=3;" parent="1" source="49" target="56" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="280" y="170" as="targetPoint"/>
+                        <Array as="points">
+                            <mxPoint x="280" y="230"/>
+                            <mxPoint x="500" y="230"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="49" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#78C14C;fontFamily=Times New Roman;fontSize=13;strokeColor=#36393d;sketch=0;fillStyle=auto;" parent="1" vertex="1">
+                    <mxGeometry x="180" y="260" width="200" height="240" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" value="Learning&lt;br style=&quot;font-size: 16px;&quot;&gt;Framework" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=16;fontStyle=1;fillColor=none;strokeWidth=1;dashed=1;dashPattern=1 1;sketch=0;fontColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="200" y="280" width="160" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="7" value="Environment&lt;br style=&quot;font-size: 16px;&quot;&gt;Logic" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=16;fontStyle=1;fillColor=none;strokeWidth=1;dashed=1;dashPattern=1 1;sketch=0;fontColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="200" y="330" width="160" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="8" value="PhyX Simulation" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=16;fontStyle=1;fillColor=none;strokeWidth=1;dashed=1;dashPattern=1 1;sketch=0;fontColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="200" y="420" width="160" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="14" value="MPC Controller" style="rounded=1;fontFamily=Times New Roman;fontSize=14;direction=east;horizontal=0;labelPosition=center;verticalLabelPosition=middle;align=center;verticalAlign=middle;fontStyle=1;whiteSpace=wrap;html=1;fillColor=none;dashed=1;dashPattern=1 1;sketch=0;fontColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="460" y="310" width="20" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="33" value="IsaacGym API" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=16;fontStyle=1;fillColor=none;strokeWidth=1;dashed=1;dashPattern=1 1;sketch=0;fontColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="200" y="380" width="160" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="50" value="GPU" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontFamily=Lucida Console;fontSize=16;fontStyle=3;horizontal=1;sketch=0;fontColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="255" y="470" width="50" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="55" value="..." style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontFamily=Times New Roman;fontSize=18;horizontal=0;sketch=0;fontColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="526" y="353" width="40" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="57" value="CPU" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontFamily=Lucida Console;fontSize=16;fontStyle=3;rounded=0;shadow=0;sketch=0;fontColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="480" y="430" width="40" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="68" value="MPC Controller" style="rounded=1;fontFamily=Times New Roman;fontSize=14;direction=east;horizontal=0;labelPosition=center;verticalLabelPosition=middle;align=center;verticalAlign=middle;fontStyle=1;whiteSpace=wrap;html=1;fillColor=none;dashed=1;dashPattern=1 1;sketch=0;fontColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="480" y="310" width="20" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="69" value="MPC Controller" style="rounded=1;fontFamily=Times New Roman;fontSize=14;direction=east;horizontal=0;labelPosition=center;verticalLabelPosition=middle;align=center;verticalAlign=middle;fontStyle=1;whiteSpace=wrap;html=1;fillColor=none;dashed=1;dashPattern=1 1;sketch=0;fontColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="500" y="310" width="20" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="70" value="MPC Controller" style="rounded=1;fontFamily=Times New Roman;fontSize=14;direction=east;horizontal=0;labelPosition=center;verticalLabelPosition=middle;align=center;verticalAlign=middle;fontStyle=1;whiteSpace=wrap;html=1;fillColor=none;dashed=1;dashPattern=1 1;sketch=0;fontColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="520" y="310" width="20" height="110" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>
