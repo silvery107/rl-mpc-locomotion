@@ -1,10 +1,10 @@
 <mxfile host="65bd71144e" scale="2" border="0">
     <diagram id="tUogOAnEH_v8c7l96Irl" name="第 1 页">
-        <mxGraphModel dx="998" dy="613" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+        <mxGraphModel dx="960" dy="613" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
-                <mxCell id="2" value="stateDiagram&#10;    %[*] --&gt; Passive&#10;    Passive --&gt; Locomotion&#10;    Passive --&gt; RecoveryStand&#10;    Locomotion --&gt; RecoveryStand&#10;    RecoveryStand --&gt; Locomotion&#10;&#10;    %Locomotion --&gt; [*]&#10;    %RecoveryStand --&gt; [*]&#10;    %Passive --&gt; [*]" style="shadow=0;dashed=0;align=left;strokeWidth=1;shape=mxgraph.mermaid.abstract.mermaid;labelBackgroundColor=#ffffff;noLabel=1;theme=default;fillColor=#f8cecc;strokeColor=#b85450;" parent="1" vertex="1">
+                <mxCell id="2" value="stateDiagram&#10;    %[*] --&gt; Passive&#10;    Passive --&gt; RecoveryStand&#10;    Locomotion --&gt; RecoveryStand&#10;    RecoveryStand --&gt; Locomotion&#10;&#10;&#10;    %Locomotion --&gt; [*]&#10;    %RecoveryStand --&gt; [*]&#10;    %Passive --&gt; [*]" style="shadow=0;dashed=0;align=left;strokeWidth=1;shape=mxgraph.mermaid.abstract.mermaid;labelBackgroundColor=#ffffff;noLabel=1;theme=default;fillColor=#f8cecc;strokeColor=#b85450;" parent="1" vertex="1">
                     <mxGeometry x="120" y="120" width="230" height="270" as="geometry"/>
                 </mxCell>
             </root>
