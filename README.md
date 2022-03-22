@@ -178,6 +178,7 @@
   </ul>
 </details>
 
+- TODO 训练环境中发 x vel 正向时会无法行走, 坐到地上 3.21
 
 ### Roadmaps
 - [x] **MPC_Controller**
