@@ -1,11 +1,11 @@
 import os
 import inspect
 
-from MPC_Controller.utils import DTYPE
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parentdir = os.path.dirname(currentdir)
 os.sys.path.insert(0, parentdir)
 
+from MPC_Controller.utils import DTYPE
 from MPC_Controller.DesiredStateCommand import DesiredStateCommand
 from MPC_Controller.Parameters import Parameters
 from MPC_Controller.robot_runner.RobotRunnerFSM import RobotRunnerFSM
@@ -64,8 +64,9 @@ for asset, i in zip(assets,range(num_envs)):
     actors.append(actor_handle)
 
 
-cam_pos = gymapi.Vec3(8, 2.5, 1.5) # w.r.t target env
-viewer = add_viewer(gym, sim, envs[0], cam_pos)
+cam_pos = gymapi.Vec3(7.6, 2.1, 1.6) # w.r.t target env
+cam_target = [5.4, 1.1, 0.0]
+viewer = add_viewer(gym, sim, envs[0], cam_pos, cam_target)
 
 controllers = []
 for robot,idx in zip(robots,range(num_envs)):
