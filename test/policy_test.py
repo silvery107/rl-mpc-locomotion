@@ -123,17 +123,17 @@ def launch_rlg_hydra(cfg: DictConfig):
     # * [-1, 1] -> [a, b] => [-1, 1] * (b-a)/2 + (b+a)/2
     actions_rescale = torch.mul(action_clip, 
                                 torch.tensor(
-                                [5, 5, 5,   # 1-11
-                                15,15,15,   # 10-40
-                                1, 1, 1,    # 0-2
-                                1, 1, 1],   # 0-2
+                                [10, 10, 10,   # 0-20
+                                25, 25, 25,   # 10-60
+                                4, 4, 4,    # 0-8
+                                4, 4, 4],   # 0-8
                                 dtype=torch.float,
                                 device=device)).add(
                                 torch.tensor(
-                                [6, 6, 6,
-                                25,25,25,
-                                1, 1, 1,
-                                1, 1, 1],
+                                [10, 10, 10,
+                                35,35,35,
+                                4, 4, 4,
+                                4, 4, 4],
                                 dtype=torch.float,
                                 device=device))
     print(actions_rescale.cpu().numpy())
