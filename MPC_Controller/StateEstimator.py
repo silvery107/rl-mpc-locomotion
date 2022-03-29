@@ -82,13 +82,13 @@ class StateEstimator:
         self.result.vBody = self.result.rBody @ self.result.vWorld
         self.result.omegaBody = self.result.rBody @ self.result.omegaWorld
 
-        #  RPY of body in the world frame
+        # RPY of body in the world frame
         self.result.rpy = quat_to_rpy(self.result.orientation)
 
         world_R_yaw_frame = rpy_to_rot([0,0,self.result.rpy[2]])
         yaw_R_ground_frame = get_rot_from_normals(np.array([0,0,1], dtype=DTYPE),
                                                     self.result.ground_normal_yaw)
- 
+
         # self.ground_R_body_frame = self.result.rBody @ yaw_R_ground_frame.T
         self.ground_R_body_frame = self.result.rBody @ world_R_yaw_frame.T @ yaw_R_ground_frame.T
 
