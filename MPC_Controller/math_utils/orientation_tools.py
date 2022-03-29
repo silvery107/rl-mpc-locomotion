@@ -5,13 +5,34 @@ from MPC_Controller.utils import DTYPE, CoordinateAxis, Quaternion
 
 
 # Orientation tools
+def quat_product(q:Quaternion, p:Quaternion)->Quaternion:
+    w = q.w*p.w - q.x*p.x - q.y*p.y - q.z*p.z
+    x = q.w*p.x + q.x*p.w + q.y*p.z + q.z*p.y
+    y = q.w*p.y + q.y*p.w - q.x*p.z + q.z*p.x
+    z = q.w*p.z + q.z*p.w + q.x*p.y - q.y*p.x
+    return Quaternion(w,x,y,z)
+
+def rpy_to_quat(rpy)->Quaternion:
+    cy = cos(rpy[2] * 0.5)
+    sy = sin(rpy[2] * 0.5)
+    cp = cos(rpy[1] * 0.5)
+    sp = sin(rpy[1] * 0.5)
+    cr = cos(rpy[0] * 0.5)
+    sr = sin(rpy[0] * 0.5)
+    q = Quaternion()
+    q.w = cr * cp * cy + sr * sp * sy
+    q.x = sr * cp * cy - cr * sp * sy
+    q.y = cr * sp * cy + sr * cp * sy
+    q.z = cr * cp * sy - sr * sp * cy
+    return q
+
 def get_rot_from_normals(world_normal, ground_normal):
     """
     get rotation matrix from two plane normals
     """
-    k = np.cross(world_normal, ground_normal)
+    axis = np.cross(world_normal, ground_normal)
     theta = np.arccos(world_normal.dot(ground_normal))
-    return axis_angle_to_rot(k, theta)
+    return axis_angle_to_rot(axis, theta)
 
 def axis_angle_to_rot(k, theta):
     c_t = cos(theta)
@@ -25,6 +46,16 @@ def axis_angle_to_rot(k, theta):
         ], dtype=DTYPE).reshape((3,3))
     
     return R_axis_angle.T
+
+def axis_angle_to_quat(k, theta):
+    q = Quaternion()
+    q.w = cos(theta/2)
+
+    s2 = sin(theta/2)
+    q.x = k[0] * s2
+    q.y = k[1] * s2
+    q.z = k[2] * s2
+    return q
 
 def coordinateRotation(axis:CoordinateAxis, theta:float) -> np.ndarray:
     s = sin(float(theta))
@@ -72,7 +103,7 @@ def quat_to_rot(q:Quaternion) -> np.ndarray:
                   dtype=DTYPE).reshape((3,3))
     return R.T
 
-def rpy_to_rot(rpy):
+def rpy_to_rot(rpy)->np.ndarray:
     """
     convert RPY to a rotation matrix
     """
@@ -81,7 +112,7 @@ def rpy_to_rot(rpy):
         coordinateRotation(CoordinateAxis.Z, rpy[2])
     return R
 
-def rot_to_quat(rot:np.ndarray):
+def rot_to_quat(rot:np.ndarray)->Quaternion:
     """
     * Convert a coordinate transformation matrix to an orientation quaternion.
     """
@@ -118,8 +149,8 @@ def rot_to_quat(rot:np.ndarray):
     
     return q
     
-def rot_to_rpy(rot:np.ndarray):
-    return quat_to_rpy(rot_to_quat(rot))
+def rot_to_rpy(R:np.ndarray):
+    return quat_to_rpy(rot_to_quat(R))
 
 def deg2rad(deg:float):
     return deg*math.pi/180
