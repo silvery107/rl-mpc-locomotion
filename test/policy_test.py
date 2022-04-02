@@ -1,5 +1,6 @@
 import os
 import inspect
+from time import time
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parentdir = os.path.dirname(currentdir)
 os.sys.path.insert(0, parentdir)
@@ -104,6 +105,8 @@ def launch_rlg_hydra(cfg: DictConfig):
         'obs' : obs,
         'rnn_states' : None
     }
+    t_start = time()
+    torch.cuda.synchronize()
     with torch.no_grad():
         res_dict = model(input_dict)
     if is_determenistic:
@@ -112,7 +115,7 @@ def launch_rlg_hydra(cfg: DictConfig):
     else:
         # non-determenistic action
         action = res_dict['actions']
-
+    print(time()-t_start)
     # clip actions to (-1, 1)
     action_clip = rescale_actions(-torch.ones_like(action, requires_grad=False, device=device), 
                                     torch.ones_like(action, requires_grad=False, device=device), 
@@ -120,17 +123,17 @@ def launch_rlg_hydra(cfg: DictConfig):
     # * [-1, 1] -> [a, b] => [-1, 1] * (b-a)/2 + (b+a)/2
     actions_rescale = torch.mul(action_clip, 
                                 torch.tensor(
-                                [5, 5, 5,   # 1-11
-                                15,15,15,   # 10-40
-                                1, 1, 1,    # 0-2
-                                1, 1, 1],   # 0-2
+                                [10, 10, 10,   # 0-20
+                                25, 25, 25,   # 10-60
+                                4, 4, 4,    # 0-8
+                                4, 4, 4],   # 0-8
                                 dtype=torch.float,
                                 device=device)).add(
                                 torch.tensor(
-                                [6, 6, 6,
-                                25,25,25,
-                                1, 1, 1,
-                                1, 1, 1],
+                                [10, 10, 10,
+                                35,35,35,
+                                4, 4, 4,
+                                4, 4, 4],
                                 dtype=torch.float,
                                 device=device))
     print(actions_rescale.cpu().numpy())

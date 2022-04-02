@@ -29,11 +29,18 @@
     ```bash
     python RL_MPC_Locomotion --robot=Aliengo
     ```
-    Note that by default you need to plug in your xbox-like gamepad to control it.
     All supported robot types are `Aliengo`, `A1` and `Mini_Cheetah`.
+    Note that by default you need to plug in your Xbox-like gamepad to control it.
+
+    - Gamepad keymap
+        > Press `LB` to switch gait types between `Trot`, `Fly Tort`, `Gallop`, `Pace` and `Bound`.
+
+        > Press `RB` to switch FSM states between `Locomotion` and `Recovery Stand`
+
 
 2. Train a new policy:
     ```bash
+    cd RL_Environment
     python train.py task=Aliengo headless=False
     ```
     Press the `v` key to disable viewer updates, and press again to resume. 
@@ -150,7 +157,7 @@
 </details>
 
 <details>
-  <summary>Mar 11, 2022 -- Present</summary>
+  <summary>Mar 11, 2022 -- Mar 18, 2022</summary>
   <ul>
   <li> 添加了isaac gym RL训练环境支持 3.12
   <li> 添加了 Aliengo end to end RL 训练环境 3.14
@@ -171,13 +178,14 @@
   </ul>
 </details>
 
+- TODO 训练环境中发 x vel 正向时会无法行走, 坐到地上 3.21
 
 ### Roadmaps
 - [x] **MPC_Controller**
 - [Quadruped](MPC_Controller/common/Quadruped.py),
-- [RobotRunner](MPC_Controller/RobotRunnerFSM.py) ->
+- [RobotRunner](MPC_Controller/robot_runner/RobotRunnerFSM.py) ->
     - [LegController](MPC_Controller/common/LegController.py),
-    - [StateEstimator](MPC_Controller/state_estimate/StateEstimatorContainer.py),
+    - [StateEstimator](MPC_Controller/StateEstimatorContainer.py),
     - [ControlFSM](MPC_Controller/FSM_states/ControlFSM.py) ->
         - [FSM_State_RecoveryStand](MPC_Controller/FSM_states/FSM_State_RecoveryStand.py),
         - [FSM_State_Locomotion](MPC_Controller/FSM_states/FSM_State_Locomotion.py) ->

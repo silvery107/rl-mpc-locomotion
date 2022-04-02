@@ -6,40 +6,35 @@ parentdir = os.path.dirname(currentdir)
 os.sys.path.insert(0, parentdir)
 
 from MPC_Controller.utils import DTYPE
-from MPC_Controller.DesiredStateCommand import DesiredStateCommand
 from MPC_Controller.Parameters import Parameters
 from MPC_Controller.robot_runner.RobotRunnerFSM import RobotRunnerFSM
+from MPC_Controller.robot_runner.RobotRunnerPolicy import RobotRunnerPolicy
 from MPC_Controller.common.Quadruped import RobotType
 from RL_Environment import gamepad_reader
 from isaacgym import gymapi
 from RL_Environment.sim_utils import *
 
 use_gamepad = True
-# robot = RobotType.A1
 dt =  Parameters.controller_dt
 gym = gymapi.acquire_gym()
 sim = acquire_sim(gym, dt)
 add_ground(gym, sim)
-add_terrain(gym, sim, "slope")
-add_terrain(gym, sim, "stair", 3.95, True)
+add_terrain(gym, sim, "slope", width=4)
+add_terrain(gym, sim, "stair", 3.95, True, width=4)
 
-robots = [RobotType.ALIENGO, RobotType.ALIENGO,
-          RobotType.A1, RobotType.A1,
-          RobotType.MINI_CHEETAH, RobotType.MINI_CHEETAH]
+robot = RobotType.ALIENGO
 
-mini_cheetah = load_asset(gym, sim, RobotType.MINI_CHEETAH, False)
-a1 = load_asset(gym, sim, RobotType.A1, False)
+# mini_cheetah = load_asset(gym, sim, RobotType.MINI_CHEETAH, False)
+# a1 = load_asset(gym, sim, RobotType.A1, False)
 aliengo = load_asset(gym, sim, RobotType.ALIENGO, False)
 
-assets = [aliengo, aliengo,
-          a1, a1,
-          mini_cheetah, mini_cheetah]
+asset = aliengo
 
-
+ctrls = [RobotRunnerFSM(), RobotRunnerPolicy()]
 # set up the env grid
-num_envs = 6
+num_envs = 4
 envs_per_row = 2
-env_spacing = 0.5
+env_spacing = 1
 
 env_lower = gymapi.Vec3(-env_spacing, -env_spacing, 0.0)
 env_upper = gymapi.Vec3(env_spacing*2, env_spacing, env_spacing)
@@ -50,26 +45,32 @@ actors = []
 height = 0.5
 
 # create and populate the environments
-for asset, i in zip(assets,range(num_envs)):
+for i in range(num_envs):
     env = gym.create_env(sim, env_lower, env_upper, envs_per_row)
-    envs.append(env)
+    if i%2 == 0:
+        envs.append(env)
 
     pose = gymapi.Transform()
     pose.p = gymapi.Vec3(0.0, 0.0, height)
 
     # pose.r = gymapi.Quat(-0.707107, 0.0, 0.0, 0.707107) # rotate -90deg about x
     # pose.r = gymapi.Quat.from_axis_angle(gymapi.Vec3(1, 0, 0), -0.5*math.pi)
+    if i%2 == 0:
+        actor_handle = gym.create_actor(env, asset, pose, "MyActor", group=i, filter=1)
+        actors.append(actor_handle)
 
-    actor_handle = gym.create_actor(env, asset, pose, "MyActor", group=i, filter=1)
-    actors.append(actor_handle)
 
-
-cam_pos = gymapi.Vec3(7.6, 2.1, 1.6) # w.r.t target env
-cam_target = [5.4, 1.1, 0.0]
-viewer = add_viewer(gym, sim, envs[0], cam_pos, cam_target)
+cam_pos = gymapi.Vec3(1.4, 2.8, 1.5) # w.r.t target env
+# viewer = add_viewer(gym, sim, envs[0], cam_pos)
+# add viewer
+cam_props = gymapi.CameraProperties()
+viewer = gym.create_viewer(sim, cam_props)
+# Look at the env
+cam_target = gymapi.Vec3(0.8, 0, 0.0)
+gym.viewer_camera_look_at(viewer, env, cam_pos, cam_target)
 
 controllers = []
-for robot,idx in zip(robots,range(num_envs)):
+for idx in range(int(num_envs/2)):
     # configure the joints for effort control mode (once)
     props = gym.get_actor_dof_properties(envs[idx], actors[idx])
     props["driveMode"].fill(gymapi.DOF_MODE_EFFORT)
@@ -78,15 +79,13 @@ for robot,idx in zip(robots,range(num_envs)):
     gym.set_actor_dof_properties(envs[idx], actors[idx], props)
 
     # Setup MPC Controller
-    robotRunner = RobotRunnerFSM()
+    robotRunner = ctrls[idx]
     robotRunner.init(robot)
     controllers.append(robotRunner)
 
 # Setup MPC Controller
 if use_gamepad:
     gamepad = gamepad_reader.Gamepad(vel_scale_x=2, vel_scale_y=1.5, vel_scale_rot=3)
-
-print("[Simulator Driver] First run of robot controller...")
 
 count = 0
 render_fps = 30

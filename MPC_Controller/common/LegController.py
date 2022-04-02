@@ -116,22 +116,22 @@ class LegController:
         # ! update joint PD gain, leg enable, feedforward torque and estimate torque
         legTorques = np.zeros(12, dtype=DTYPE)
 
-        if self._legsEnabled == True:
-            for leg in range(4):
-                # MPC -> f_ff -R^T-> forceFeedForward
-                # force feedforward + cartesian PD
-                footForce = self.commands[leg].forceFeedForward \
-                            + self.commands[leg].kpCartesian @ (self.commands[leg].pDes - self.datas[leg].p) \
-                            + self.commands[leg].kdCartesian @ (self.commands[leg].vDes - self.datas[leg].v)
+        # if self._legsEnabled == True:
+        for leg in range(4):
+            # MPC -> f_ff -R^T-> forceFeedForward
+            # force feedforward + cartesian PD
+            footForce = self.commands[leg].forceFeedForward \
+                        + self.commands[leg].kpCartesian @ (self.commands[leg].pDes - self.datas[leg].p) \
+                        + self.commands[leg].kdCartesian @ (self.commands[leg].vDes - self.datas[leg].v)
 
-                # tau feedforward + torque
-                legTorque = self.commands[leg].tauFeedForward + self.datas[leg].J.T @ footForce
+            # tau feedforward + torque
+            legTorque = self.commands[leg].tauFeedForward + self.datas[leg].J.T @ footForce
 
-                # joint PD control
-                legTorque += self.commands[leg].kpJoint @ (self.commands[leg].qDes - self.datas[leg].q)
-                legTorque += self.commands[leg].kdJoint @ (self.commands[leg].qdDes - self.datas[leg].qd)
+            # joint PD control
+            legTorque += self.commands[leg].kpJoint @ (self.commands[leg].qDes - self.datas[leg].q)
+            legTorque += self.commands[leg].kdJoint @ (self.commands[leg].qdDes - self.datas[leg].qd)
 
-                legTorques[leg*3:(leg+1)*3] = legTorque.flatten()
+            legTorques[leg*3:(leg+1)*3] = legTorque.flatten()
         
         # print("leg 0 effort %.3f %.3f %.3f"%(legTorques[0], legTorques[1], legTorques[2]))
         return legTorques

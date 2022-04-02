@@ -6,7 +6,7 @@ ASSET_ROOT = "assets"
 MINI_CHEETAH = "mini_cheetah/mini_cheetah.urdf"
 ALIENGO = "aliengo_description/xacro/aliengo.urdf"
 A1 = "a1_description/a1.urdf"
-XIAOTIAN = "Xiaotian-ROS/urdf/xiaotian_description.urdf"
+XIAOTIAN = "Xiaotian/urdf/xiaotian_description.urdf"
 ANYMAL = "anymal_c/urdf/anymal.urdf"
 
 FOOT_IDX = [4, 8, 12, 16]
@@ -127,12 +127,12 @@ def get_force_sensor(gym, envs, actor_handles):
 
     return sensors
 
-def add_viewer(gym, sim, env, cam_pos):
+def add_viewer(gym, sim, env, cam_pos, _cam_target=[0.0, 0.0, 0.0]):
     # add viewer
     cam_props = gymapi.CameraProperties()
     viewer = gym.create_viewer(sim, cam_props)
     # Look at the env
-    cam_target = gymapi.Vec3(0, 0, 0.0)
+    cam_target = gymapi.Vec3(*_cam_target)
     gym.viewer_camera_look_at(viewer, env, cam_pos, cam_target)
     return viewer
 
@@ -146,11 +146,11 @@ def add_ground(gym, sim):
     # create the ground plane
     gym.add_ground(sim, plane_params)
 
-def add_terrain(gym, sim, name="slope", x_offset=2., invert=False):
+def add_terrain(gym, sim, name="slope", x_offset=2., invert=False, width=2.8):
     # terrains
     num_terrains = 1
     terrain_width = 2.
-    terrain_length = 2.8
+    terrain_length = width
     horizontal_scale = 0.05  # [m] resolution in x
     vertical_scale = 0.005  # [m] resolution in z
     num_rows = int(terrain_width/horizontal_scale)
@@ -194,9 +194,9 @@ def add_terrain(gym, sim, name="slope", x_offset=2., invert=False):
 
 def add_random_uniform_terrain(gym, sim):
     num_terrains = 1
-    terrain_width = 50.
-    terrain_length = 50.
-    horizontal_scale = 0.25  # [m] resolution in x
+    terrain_width = 40.
+    terrain_length = 40.
+    horizontal_scale = 0.1  # [m] resolution in x
     vertical_scale = 0.005  # [m] resolution in z
     num_rows = int(terrain_width/horizontal_scale)
     num_cols = int(terrain_length/horizontal_scale)
@@ -204,14 +204,14 @@ def add_random_uniform_terrain(gym, sim):
     
     def new_sub_terrain(): return SubTerrain(width=num_rows, length=num_cols, vertical_scale=vertical_scale, horizontal_scale=horizontal_scale)
 
-    heightfield[0:1*num_rows, :] = random_uniform_terrain(new_sub_terrain(), min_height=-0.2, max_height=0.0, step=0.2, downsampled_scale=0.5).height_field_raw
+    heightfield[0:1*num_rows, :] = random_uniform_terrain(new_sub_terrain(), min_height=-0.2, max_height=0.0, step=0.05, downsampled_scale=0.3).height_field_raw
 
     vertices, triangles = convert_heightfield_to_trimesh(heightfield, horizontal_scale=horizontal_scale, vertical_scale=vertical_scale, slope_threshold=1.5)
     tm_params = gymapi.TriangleMeshParams()
     tm_params.nb_vertices = vertices.shape[0]
     tm_params.nb_triangles = triangles.shape[0]
-    tm_params.transform.p.x = -terrain_width/2
-    tm_params.transform.p.y = -terrain_length/2
+    tm_params.transform.p.x = -terrain_width/3
+    tm_params.transform.p.y = -terrain_length/4
     gym.add_triangle_mesh(sim, vertices.flatten(), triangles.flatten(), tm_params)
 
 def add_uneven_terrains(gym, sim):

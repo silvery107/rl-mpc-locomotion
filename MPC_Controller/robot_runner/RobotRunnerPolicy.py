@@ -1,3 +1,4 @@
+import time
 import numpy as np
 from MPC_Controller.DesiredStateCommand import DesiredStateCommand
 from MPC_Controller.FSM_states.ControlFSM import ControlFSM
@@ -68,11 +69,14 @@ class RobotRunnerPolicy:
         self._stateEstimator.update(body_states)
 
         # step weight policy
+        timer = time.time()
         self._weightPolicy.compute_observations(dof_states, 
                                                 self._stateEstimator.getResult(), 
                                                 commands, 
                                                 self.weights)
         self.weights = self._weightPolicy.step()
+        if Parameters.policy_print_time:
+            print("Policy Update Time: {:.5f}".format(time.time()-timer))
 
         # Update desired commands
         self._desiredStateCommand.updateCommand(commands, self.weights)
