@@ -27,7 +27,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-from tasks.ant import Ant
+# from tasks.ant import Ant
 from tasks.anymal import Anymal
 from tasks.aliengo import Aliengo
 from tasks.anymal_terrain import AnymalTerrain
@@ -37,7 +37,7 @@ from tasks.anymal_terrain import AnymalTerrain
 
 # Mappings from strings to environments
 isaacgym_task_map = {
-    "Ant": Ant,
+    # "Ant": Ant,
     "Anymal": Anymal,
     "Aliengo":Aliengo,
     "AnymalTerrain": AnymalTerrain,
