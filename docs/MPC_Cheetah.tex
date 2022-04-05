@@ -164,5 +164,26 @@ $$
 $$
 
 
+\section{Ground Normal Estimation}
+To enable the ability to traverse stairs and sloped terrain without vision, we use
+measurements of each footstep location $$\boldsymbol{p}_i=(p^{x}_i, p^{y}_i, p^{z}_i)$$
+to approximate the local slope of the walking surface.
+\\
+The walking surface is modeled as a plane:
+$$
+z(x, y)=a_{0}+a_{1} x+a_{2} y
+$$
+\\
+Coefficients $\boldsymbol{a}=\left(a_{0}, a_{1}, a_{2}\right)^{T}$ are obtained through the solution of the least squares problem
+$$
+\begin{aligned}
+\boldsymbol{a} &=\left(\boldsymbol{W}^{T} \boldsymbol{W}\right)^{\dagger} \boldsymbol{W}^{T} \boldsymbol{p}^{z} \\
+\boldsymbol{W} &=\left[\begin{array}{lll}
+\mathbf{1} & \boldsymbol{p}^{x} & \boldsymbol{p}^{y}
+\end{array}\right]_{4 \times 3}
+\end{aligned}
+$$
+\\
+where $\boldsymbol{p}^{x}=(p^{x}_1, p^{x}_2, p^{x}_3, p^{x}_4)$
 
 \end{document}
