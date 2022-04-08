@@ -9,13 +9,13 @@ from isaacgym import gymtorch
 from isaacgym import gymapi
 from isaacgym.torch_utils import *
 
-from sim_utils import ALIENGO
 from MPC_Controller.common.Quadruped import RobotType
-from MPC_Controller.RobotRunner import RobotRunner
-from MPC_Controller.RobotRunnerMin import RobotRunnerMin
+from MPC_Controller.robot_runner.RobotRunnerFSM import RobotRunnerFSM
+from MPC_Controller.robot_runner.RobotRunnerMin import RobotRunnerMin
 from MPC_Controller.Parameters import Parameters
 from MPC_Controller.utils import DTYPE
 
+from sim_utils import ALIENGO, add_random_uniform_terrain, add_uneven_terrains
 from .base.vec_task import VecTask
 
 
@@ -133,6 +133,7 @@ class Aliengo(VecTask):
         self._create_envs(self.num_envs, self.cfg["env"]['envSpacing'], int(np.sqrt(self.num_envs)))
 
     def _create_ground_plane(self):
+        # add_random_uniform_terrain(self.gym, self.sim)
         plane_params = gymapi.PlaneParams()
         plane_params.normal = gymapi.Vec3(0.0, 0.0, 1.0)
         plane_params.static_friction = self.plane_static_friction
@@ -233,17 +234,11 @@ class Aliengo(VecTask):
             # * [-1, 1] -> [a, b] => [-1, 1] * (b-a)/2 + (b+a)/2
             actions_rescale = torch.mul(self.actions, 
                                         torch.tensor(
-                                        [10, 10, 10,   # 0-20
-                                        25, 25, 25,   # 10-60
-                                        4, 4, 4,    # 0-8
-                                        4, 4, 4],   # 0-8
+                                        Parameters.MPC_param_scale,
                                         dtype=torch.float,
                                         device=self.device)).add(
                                         torch.tensor(
-                                        [10, 10, 10,
-                                        35,35,35,
-                                        4, 4, 4,
-                                        4, 4, 4],
+                                        Parameters.MPC_param_const,
                                         dtype=torch.float,
                                         device=self.device))
             # torch.cuda.synchronize()
@@ -326,6 +321,12 @@ class Aliengo(VecTask):
         self.dof_vel[env_ids] = velocities
 
         env_ids_int32 = env_ids.to(dtype=torch.int32)
+        if Parameters.bridge_MPC_to_RL:
+            # *MPC reset
+            # print(env_ids_int32.cpu())
+            # torch.cuda.synchronize()
+            for idx in env_ids_int32.detach().cpu():
+                self.controllers[idx].reset()
 
         self.gym.set_actor_root_state_tensor_indexed(self.sim,
                                                      gymtorch.unwrap_tensor(self.initial_root_states),
@@ -341,12 +342,7 @@ class Aliengo(VecTask):
 
         self.progress_buf[env_ids] = 0
         self.reset_buf[env_ids] = 1
-        if Parameters.bridge_MPC_to_RL:
-            # *MPC reset
-            # print(env_ids_int32.cpu())
-            # torch.cuda.synchronize()
-            for idx in env_ids_int32.detach().cpu():
-                self.controllers[idx].reset()
+
 
 #####################################################################
 ###=========================jit functions=========================###
@@ -394,7 +390,7 @@ def compute_robot_reward(
     # torque penalty
     rew_torque = torch.sum(torch.square(torques), dim=1) * rew_scales["torque"]
 
-    total_reward = rew_lin_vel_xy + rew_ang_vel_z + rew_torque + rew_lin_vel_z + rew_ang_vel_xy + rew_collision
+    total_reward = rew_lin_vel_xy + rew_lin_vel_z + rew_ang_vel_xy + rew_ang_vel_z + rew_torque + rew_collision
     total_reward = torch.clip(total_reward, 0., None)
     # reset agents
     reset = torch.norm(contact_forces[:, base_index, :], dim=1) > 1.

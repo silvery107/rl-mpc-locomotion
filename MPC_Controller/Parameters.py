@@ -13,7 +13,20 @@ class Parameters:
     cmpc_solver_type = 2 # 0 mit py solver, 1 mit cpp solver, 2 google cpp solver
     cmpc_gait = GaitType.TROT # 1 bound, 2 pronk, 3 pace, 4 stand, else trot
 
+    policy_print_time = False
+
     bridge_MPC_to_RL = False
+    
+    # * [-1, 1] -> [a, b] => [-1, 1] * (b-a)/2 + (b+a)/2
+    MPC_param_scale = [5, 5, 5,     # 1-11
+                       25, 25, 25,  # 10-60
+                       4, 4, 4,     # 0-8
+                       1, 1, 1]     # 0-2
+    
+    MPC_param_const = [6, 6, 6,
+                       35,35,35,
+                       4, 4, 4,
+                       1, 1, 1]
 
     if bridge_MPC_to_RL:
         control_mode = FSM_StateName.LOCOMOTION

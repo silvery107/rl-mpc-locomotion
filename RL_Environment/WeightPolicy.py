@@ -1,4 +1,10 @@
 import isaacgym
+import os
+import inspect
+
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+os.sys.path.insert(0, parentdir)
 import torch
 import time
 import numpy as np
@@ -114,17 +120,11 @@ class WeightPolicy:
         # * [-1, 1] -> [a, b] => [-1, 1] * (b-a)/2 + (b+a)/2
         actions_rescale = torch.mul(action_clip, 
                                     torch.tensor(
-                                    [5, 5, 5,   # 1-11
-                                    15,15,15,   # 10-40
-                                    1, 1, 1,    # 0-2
-                                    1, 1, 1],   # 0-2
+                                    Parameters.MPC_param_scale,
                                     dtype=torch.float,
                                     device=self.device)).add(
                                     torch.tensor(
-                                    [6, 6, 6,
-                                    25,25,25,
-                                    1, 1, 1,
-                                    1, 1, 1],
+                                    Parameters.MPC_param_const,
                                     dtype=torch.float,
                                     device=self.device))
 
@@ -167,9 +167,3 @@ class WeightPolicy:
         m = (high + low) / 2.0
         scaled_action =  action * d + m
         return scaled_action
-
-if __name__ == "__main__":
-    policy = WeightPolicy(checkpoint="runs/Aliengo/nn/Aliengo.pth")
-    obs = torch.ones([policy.num_agents, policy.num_obs], requires_grad=False, device=policy.device)
-    weights = policy.step(obs)
-    print(weights)
