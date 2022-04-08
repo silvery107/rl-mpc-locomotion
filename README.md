@@ -2,7 +2,7 @@
 
 <img src="images/Isaac.png" width=150>
 
-## Control Blocks
+## Frameworks
 
 <img src="images/controller_blocks.png" width=700>
 
@@ -33,7 +33,7 @@
     Note that by default you need to plug in your Xbox-like gamepad to control it.
 
     - Gamepad keymap
-        > Press `LB` to switch gait types between `Trot`, `Fly Tort`, `Gallop`, `Pace` and `Bound`.
+        > Press `LB` to switch gait types between `Trot`, `Fly Tort`, `Gallop`, `Walk` and `Pace`.
 
         > Press `RB` to switch FSM states between `Locomotion` and `Recovery Stand`
 
@@ -45,6 +45,8 @@
     ```
     Press the `v` key to disable viewer updates, and press again to resume. 
     Set `headless=True` to train without rendering.
+
+    Tensorboard support is avaliable, run `tensorboard --logdir runs`.
 
 3. Load a trained checkpoint:
     ```bash
@@ -157,7 +159,7 @@
 </details>
 
 <details>
-  <summary>Mar 11, 2022 -- Mar 18, 2022</summary>
+  <summary>Mar 11, 2022 -- Mar 21, 2022</summary>
   <ul>
   <li> 添加了isaac gym RL训练环境支持 3.12
   <li> 添加了 Aliengo end to end RL 训练环境 3.14
@@ -174,11 +176,17 @@
   <li> 修正了地面法向量坐标系至 yaw 对齐, rpy 完全正常, 无需置 yaw 为零 3.17
   <li> 实现 MPC 参数学习 3.18
   <li> 实现 Policy 结合 MPC 运行, 推理速度可以 100 Hz 实时运行 3.18
-  <li> TODO 如何权衡 30Hz 的 MPC 和实时的网络更新?
+  <li> TODO 如何权衡 50Hz 的 MPC 和实时的网络更新?
+  <li> TODO 训练环境中发 x vel 正向时会无法行走, 坐到地上 3.21 (已完成)
   </ul>
 </details>
 
-- TODO 训练环境中发 x vel 正向时会无法行走, 坐到地上 3.21
+<details>
+  <summary>Apr 8, 2022 -- Present</summary>
+  <ul>
+  <li> 并不是 x vel 正向无法行走, 是因为裁减了输出力矩 4.8
+  </ul>
+</details>
 
 ### Roadmaps
 - [x] **MPC_Controller**
@@ -216,6 +224,8 @@
 
 https://user-images.githubusercontent.com/44640904/157265160-ffc0c7b1-ef05-48a6-ad8e-8d93ae7ccfc3.mp4
 
+
+<img src="images/trot_demo.gif" width=500>
 <img src="images/4_cheetah_trot.gif" width=500>
 <img src="images/aliengo_trot.gif" width=500>
 <img src="images/aliengo_train.png" width=500>
