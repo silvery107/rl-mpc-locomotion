@@ -1,11 +1,12 @@
 import os
 import inspect
-from time import time
+
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parentdir = os.path.dirname(currentdir)
 os.sys.path.insert(0, parentdir)
 import isaacgym
 
+from time import time
 import hydra
 import numpy as np
 from omegaconf import DictConfig, OmegaConf
@@ -13,6 +14,7 @@ from hydra.utils import to_absolute_path
 
 import torch
 
+from MPC_Controller.Parameters import Parameters
 from RL_Environment.utils.reformat import omegaconf_to_dict, print_dict
 from RL_Environment.utils.utils import set_np_formatting
 
@@ -123,17 +125,11 @@ def launch_rlg_hydra(cfg: DictConfig):
     # * [-1, 1] -> [a, b] => [-1, 1] * (b-a)/2 + (b+a)/2
     actions_rescale = torch.mul(action_clip, 
                                 torch.tensor(
-                                [10, 10, 10,   # 0-20
-                                25, 25, 25,   # 10-60
-                                4, 4, 4,    # 0-8
-                                4, 4, 4],   # 0-8
+                                Parameters.MPC_param_scale,
                                 dtype=torch.float,
                                 device=device)).add(
                                 torch.tensor(
-                                [10, 10, 10,
-                                35,35,35,
-                                4, 4, 4,
-                                4, 4, 4],
+                                Parameters.MPC_param_const,
                                 dtype=torch.float,
                                 device=device))
     print(actions_rescale.cpu().numpy())
