@@ -10,6 +10,7 @@ from MPC_Controller.StateEstimator import StateEstimator
 from MPC_Controller.convex_MPC.ConvexMPCLocomotion import ConvexMPCLocomotion
 from MPC_Controller.utils import DTYPE
 from RL_Environment.WeightPolicy import WeightPolicy
+from RL_Environment.utils.utils import set_np_formatting
 
 class RobotRunnerPolicy:
     def __init__(self):
@@ -50,6 +51,7 @@ class RobotRunnerPolicy:
                                       self._stateEstimator, 
                                       self._legController,
                                       self._desiredStateCommand)
+        # set_np_formatting()
 
     def reset(self):
         self._controlFSM.initialize()
@@ -74,9 +76,11 @@ class RobotRunnerPolicy:
                                                 self._stateEstimator.getResult(), 
                                                 commands, 
                                                 self.weights)
-        self.weights = self._weightPolicy.step()
+        self.weights = self._weightPolicy.step() # shape (12,)
         if Parameters.policy_print_time:
             print("Policy Update Time: {:.5f}".format(time.time()-timer))
+        # print("MPC Weights:")
+        # print(self.weights)
 
         # Update desired commands
         self._desiredStateCommand.updateCommand(commands, self.weights)
@@ -88,4 +92,3 @@ class RobotRunnerPolicy:
         legTorques = self._legController.updateCommand()
 
         return legTorques # numpy (12,) float32
-
