@@ -1,8 +1,8 @@
 import math
 from MPC_Controller.Parameters import Parameters
-from MPC_Controller.RobotRunnerFSM import RobotRunnerFSM
-from MPC_Controller.RobotRunnerMin import RobotRunnerMin
-from MPC_Controller.RobotRunnerPolicy import RobotRunnerPolicy
+from MPC_Controller.robot_runner.RobotRunnerFSM import RobotRunnerFSM
+from MPC_Controller.robot_runner.RobotRunnerMin import RobotRunnerMin
+from MPC_Controller.robot_runner.RobotRunnerPolicy import RobotRunnerPolicy
 from MPC_Controller.common.Quadruped import RobotType
 from MPC_Controller.utils import DTYPE, ControllerType
 from RL_Environment import gamepad_reader
@@ -13,7 +13,7 @@ from argparse import ArgumentParser
 parser = ArgumentParser(prog="RL_MPC_LOCOMOTION")
 
 parser.add_argument("--robot", default="Aliengo", choices=[name.title() for name in RobotType.__members__.keys()], help="robot types")
-parser.add_argument("--mode", default="FSM", choices=[name.title() for name in ControllerType.__members__.keys()], help="controller types")
+parser.add_argument("--mode", default="Fsm", choices=[name.title() for name in ControllerType.__members__.keys()], help="controller types")
 parser.add_argument("--num_envs", default=1, type=int, help="the number of robots")
 parser.add_argument("--render_fps", type=int, default=30, help="render fps")
 parser.add_argument('--disable_gamepad', action='store_true')
@@ -70,7 +70,7 @@ def main():
 
     # Setup MPC Controller
     if use_gamepad:
-        gamepad = gamepad_reader.Gamepad(vel_scale_x=3, vel_scale_y=1.5, vel_scale_rot=5)
+        gamepad = gamepad_reader.Gamepad(vel_scale_x=2.5, vel_scale_y=1.5, vel_scale_rot=2.0)
 
     count = 0
     render_fps = args.render_fps
