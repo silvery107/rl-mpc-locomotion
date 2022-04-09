@@ -1,6 +1,7 @@
 import math
 import time
 import sys
+import csv
 
 import numpy as np
 # import MPC_Controller.convex_MPC.mpc_osqp as mpc
@@ -83,6 +84,10 @@ class ConvexMPCLocomotion:
         self.Kp_stance:np.ndarray = None
         self.Kd:np.ndarray = None
         self.Kd_stance:np.ndarray = None
+        
+        if Parameters.cmpc_log_loss:
+            self.logger = open("record.csv", "w", newline='')
+            self.log_writter = csv.writer(self.logger)
 
     def initialize(self, data:ControlFSMData):
         if Parameters.cmpc_alpha > 1e-4:
@@ -188,6 +193,18 @@ class ConvexMPCLocomotion:
             desired_com_roll_pitch_yaw,  # desired_com_roll_pitch_yaw
             desired_com_angular_velocity  # desired_com_angular_velocity
             )
+        
+        mpc_state_loss = (com_roll_pitch_yaw - desired_com_roll_pitch_yaw).dot(mpc_weight[0:3]) + \
+                        (com_position - desired_com_position).dot(mpc_weight[3:6]) + \
+                        (com_angular_velocity - desired_com_velocity).dot(mpc_weight[6:9]) + \
+                        (com_velocity - desired_com_velocity).dot(mpc_weight[9:12])
+                    
+        mpc_torque_loss = np.sum(predicted_contact_forces[:12])
+
+        # print("MPC Loss: %.3f" % mpc_torque_loss)
+        if Parameters.cmpc_log_loss:
+            self.log_writter.writerow([mpc_state_loss, mpc_torque_loss])
+
 
         for leg in range(4):
             self.f_ff[leg] = np.array(predicted_contact_forces[leg*3: (leg+1)*3],dtype=DTYPE).reshape((3,1))
