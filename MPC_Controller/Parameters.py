@@ -8,6 +8,7 @@ class Parameters:
     cmpc_print_solver_time = False
     cmpc_print_update_time = False
     cmpc_print_states = False
+    cmpc_log_loss = False
 
     cmpc_py_solver = 1 # 0 cvxopt, 1 osqp
     cmpc_solver_type = 2 # 0 mit py solver, 1 mit cpp solver, 2 google cpp solver
@@ -16,16 +17,16 @@ class Parameters:
     policy_print_time = False
 
     bridge_MPC_to_RL = False
-    
+
     # * [-1, 1] -> [a, b] => [-1, 1] * (b-a)/2 + (b+a)/2
-    MPC_param_scale = [5, 5, 5,     # 1-11
-                       25, 25, 25,  # 10-60
-                       4, 4, 4,     # 0-8
+    MPC_param_scale = [4, 4, 4,     # 1-9
+                       10, 10, 10,  # 30-50
+                       1, 1, 1,     # 0-2
                        1, 1, 1]     # 0-2
     
-    MPC_param_const = [6, 6, 6,
-                       35,35,35,
-                       4, 4, 4,
+    MPC_param_const = [5, 5, 5,
+                       40,40,40,
+                       1, 1, 1,
                        1, 1, 1]
 
     if bridge_MPC_to_RL:
