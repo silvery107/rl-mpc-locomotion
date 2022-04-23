@@ -193,6 +193,8 @@
   </ul>
 </details>
 
+注意 Aliengo PD 参数为 (30, 1)
+
 ### Roadmaps
 - [x] **MPC_Controller**
 - [Quadruped](MPC_Controller/common/Quadruped.py),
@@ -200,8 +202,8 @@
     - [LegController](MPC_Controller/common/LegController.py),
     - [StateEstimator](MPC_Controller/StateEstimatorContainer.py),
     - [ControlFSM](MPC_Controller/FSM_states/ControlFSM.py) ->
-        - [FSM_State_RecoveryStand](MPC_Controller/FSM_states/FSM_State_RecoveryStand.py),
-        - [FSM_State_Locomotion](MPC_Controller/FSM_states/FSM_State_Locomotion.py) ->
+        - [FSM State RecoveryStand](MPC_Controller/FSM_states/FSM_State_RecoveryStand.py),
+        - [FSM State Locomotion](MPC_Controller/FSM_states/FSM_State_Locomotion.py) ->
             - [ConvexMPCLocomotion](MPC_Controller/convex_MPC/ConvexMPCLocomotion.py) ->
                 - [FootSwingTrajectory](MPC_Controller/common/FootSwingTrajectory.py),
                 - [Gait](MPC_Controller/convex_MPC/Gait.py),
