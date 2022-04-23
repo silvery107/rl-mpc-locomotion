@@ -194,8 +194,8 @@ def add_terrain(gym, sim, name="slope", x_offset=2., invert=False, width=2.8):
 
 def add_random_uniform_terrain(gym, sim):
     num_terrains = 1
-    terrain_width = 40.
-    terrain_length = 40.
+    terrain_width = 50.
+    terrain_length = 50.
     horizontal_scale = 0.1  # [m] resolution in x
     vertical_scale = 0.005  # [m] resolution in z
     num_rows = int(terrain_width/horizontal_scale)
@@ -211,7 +211,7 @@ def add_random_uniform_terrain(gym, sim):
     tm_params.nb_vertices = vertices.shape[0]
     tm_params.nb_triangles = triangles.shape[0]
     tm_params.transform.p.x = -terrain_width/3
-    tm_params.transform.p.y = -terrain_length/4
+    tm_params.transform.p.y = -terrain_length/3
     gym.add_triangle_mesh(sim, vertices.flatten(), triangles.flatten(), tm_params)
 
 def add_uneven_terrains(gym, sim):
