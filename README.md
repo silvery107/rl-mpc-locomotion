@@ -185,6 +185,11 @@
   <summary>Apr 8, 2022 -- Present</summary>
   <ul>
   <li> 并不是 x vel 正向无法行走, 是因为裁减了输出力矩 4.8
+  <li> 实现 random uniform terrain MPC 训练 4.8
+  <li> 如何权衡RL reward 和 MPC loss 不一致? RL reward 包括线速度和角速度6维和输出力惩罚, 因为不方便计算,仅不包括位置和角度, 可能是合理的
+  <li> 如何权衡 50Hz 的 MPC 和实时的网络更新? 暂时只差两倍, 或许可以接受 4.9
+  <li> 实现 MPC Loss 计算 4.9
+  <li> TODO 绘制 state 和 torque loss 曲线 (已完成) 4.9
   </ul>
 </details>
 
