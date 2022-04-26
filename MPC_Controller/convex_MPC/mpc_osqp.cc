@@ -57,8 +57,8 @@ constexpr double kMinScale = 0.1;
 
 #include "Eigen/Core"
 #include "Eigen/SparseCore"
-#include "osqp/ctrlc.h"
-#include "osqp/osqp.h"
+#include "osqp/include/ctrlc.h"
+#include "osqp/include/osqp.h"
 
 enum QPSolverName { OSQP, QPOASES };
 
