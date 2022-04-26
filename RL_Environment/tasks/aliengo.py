@@ -133,12 +133,12 @@ class Aliengo(VecTask):
         self._create_envs(self.num_envs, self.cfg["env"]['envSpacing'], int(np.sqrt(self.num_envs)))
 
     def _create_ground_plane(self):
-        # add_random_uniform_terrain(self.gym, self.sim)
-        plane_params = gymapi.PlaneParams()
-        plane_params.normal = gymapi.Vec3(0.0, 0.0, 1.0)
-        plane_params.static_friction = self.plane_static_friction
-        plane_params.dynamic_friction = self.plane_dynamic_friction
-        self.gym.add_ground(self.sim, plane_params)
+        add_random_uniform_terrain(self.gym, self.sim)
+        # plane_params = gymapi.PlaneParams()
+        # plane_params.normal = gymapi.Vec3(0.0, 0.0, 1.0)
+        # plane_params.static_friction = self.plane_static_friction
+        # plane_params.dynamic_friction = self.plane_dynamic_friction
+        # self.gym.add_ground(self.sim, plane_params)
 
     def _create_envs(self, num_envs, spacing, num_per_row):
         asset_root = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../assets')
@@ -254,7 +254,10 @@ class Aliengo(VecTask):
                                                   commands)
 
             torques_gpu = torch.from_numpy(torques_cpu.astype(np.float32)).to(self.device)
-            self.torques = torch.clip(torques_gpu, -55., 55.)
+            # *maybe clip output torques is not a good idea in training
+            # *causing weird forward motion 
+            # self.torques = torch.clip(torques_gpu, -55., 55.) 
+            self.torques = torques_gpu
             self.gym.set_dof_actuation_force_tensor(self.sim, gymtorch.unwrap_tensor(self.torques))
         else:
             # *force control
