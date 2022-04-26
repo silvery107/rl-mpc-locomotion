@@ -194,6 +194,7 @@
 </details>
 
 注意 Aliengo PD 参数为 (30, 1)
+将pybind11、qpoases、eigen3设置成submodule，并通过编译
 
 ### Roadmaps
 - [x] **MPC_Controller**
