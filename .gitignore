@@ -134,5 +134,9 @@ dmypy.json
 .vscode/
 .tmp.*
 *.ini
-third_party/
 runs/
+*.ipynb
+record*.csv
+
+
+third_party/
