@@ -90,14 +90,14 @@ CXX_FLAGS = '-D__SUPPRESSANYOUTPUT__'
 libraries = []
 include_dirs = [
     '.',
-    'third_party',
-    'third_party/eigen3/include',
-    'third_party/osqp/include',
-    'third_party/osqp/lin_sys/direct/qdldl',
-    'third_party/osqp/lin_sys/direct/qdldl/qdldl_sources/include',
-    'third_party/osqp/lin_sys/direct/qdldl/amd/include',
-    'third_party/qpoases/include',
-    'third_party/pybind11/include',
+    'extern',
+    'extern/eigen3',
+    'extern/osqp/include',
+    'extern/osqp/lin_sys/direct/qdldl',
+    'extern/osqp/lin_sys/direct/qdldl/qdldl_sources/include',
+    'extern/osqp/lin_sys/direct/qdldl/amd/include',
+    'extern/qpoases/include',
+    'extern/pybind11/include',
 ]
 
 try:
@@ -115,55 +115,55 @@ else:
 
 sources = [
     "MPC_Controller/convex_MPC/mpc_osqp.cc",
-    "third_party/osqp/src/auxil.c",
-    "third_party/osqp/src/cs.c",
-    "third_party/osqp/src/ctrlc.c",
-    "third_party/osqp/src/error.c",
-    "third_party/osqp/src/kkt.c",
-    "third_party/osqp/src/lin_alg.c",
-    "third_party/osqp/src/lin_sys.c",
-    "third_party/osqp/src/osqp.c",
-    "third_party/osqp/src/polish.c",
-    "third_party/osqp/src/proj.c",
-    "third_party/osqp/src/scaling.c",
-    "third_party/osqp/src/util.c",
-    "third_party/osqp/lin_sys/direct/qdldl/qdldl_interface.c",
-    "third_party/osqp/lin_sys/direct/qdldl/qdldl_sources/src/qdldl.c",
-    "third_party/osqp/lin_sys/direct/qdldl/amd/src/amd_1.c",
-    "third_party/osqp/lin_sys/direct/qdldl/amd/src/amd_2.c",
-    "third_party/osqp/lin_sys/direct/qdldl/amd/src/amd_aat.c",
-    "third_party/osqp/lin_sys/direct/qdldl/amd/src/amd_control.c",
-    "third_party/osqp/lin_sys/direct/qdldl/amd/src/amd_defaults.c",
-    "third_party/osqp/lin_sys/direct/qdldl/amd/src/amd_info.c",
-    "third_party/osqp/lin_sys/direct/qdldl/amd/src/amd_order.c",
-    "third_party/osqp/lin_sys/direct/qdldl/amd/src/amd_post_tree.c",
-    "third_party/osqp/lin_sys/direct/qdldl/amd/src/amd_postorder.c",
-    "third_party/osqp/lin_sys/direct/qdldl/amd/src/amd_preprocess.c",
-    "third_party/osqp/lin_sys/direct/qdldl/amd/src/amd_valid.c",
-    "third_party/osqp/lin_sys/direct/qdldl/amd/src/SuiteSparse_config.c",
-    "third_party/qpoases/src/BLASReplacement.cpp",
-    "third_party/qpoases/src/Bounds.cpp",
-    "third_party/qpoases/src/Constraints.cpp",
-    "third_party/qpoases/src/Flipper.cpp",
-    "third_party/qpoases/src/Indexlist.cpp",
-    "third_party/qpoases/src/LAPACKReplacement.cpp",
-    "third_party/qpoases/src/Matrices.cpp",
-    "third_party/qpoases/src/MessageHandling.cpp",
-    "third_party/qpoases/src/Options.cpp",
-    "third_party/qpoases/src/OQPinterface.cpp",
-    "third_party/qpoases/src/QProblem.cpp",
-    "third_party/qpoases/src/QProblemB.cpp",
-    "third_party/qpoases/src/SolutionAnalysis.cpp",
-    "third_party/qpoases/src/SparseSolver.cpp",
-    "third_party/qpoases/src/SQProblem.cpp",
-    "third_party/qpoases/src/SQProblemSchur.cpp",
-    "third_party/qpoases/src/SubjectTo.cpp",
-    "third_party/qpoases/src/Utils.cpp",
+    "extern/osqp/src/auxil.c",
+    "extern/osqp/src/cs.c",
+    "extern/osqp/src/ctrlc.c",
+    "extern/osqp/src/error.c",
+    "extern/osqp/src/kkt.c",
+    "extern/osqp/src/lin_alg.c",
+    "extern/osqp/src/lin_sys.c",
+    "extern/osqp/src/osqp.c",
+    "extern/osqp/src/polish.c",
+    "extern/osqp/src/proj.c",
+    "extern/osqp/src/scaling.c",
+    "extern/osqp/src/util.c",
+    "extern/osqp/lin_sys/direct/qdldl/qdldl_interface.c",
+    "extern/osqp/lin_sys/direct/qdldl/qdldl_sources/src/qdldl.c",
+    "extern/osqp/lin_sys/direct/qdldl/amd/src/amd_1.c",
+    "extern/osqp/lin_sys/direct/qdldl/amd/src/amd_2.c",
+    "extern/osqp/lin_sys/direct/qdldl/amd/src/amd_aat.c",
+    "extern/osqp/lin_sys/direct/qdldl/amd/src/amd_control.c",
+    "extern/osqp/lin_sys/direct/qdldl/amd/src/amd_defaults.c",
+    "extern/osqp/lin_sys/direct/qdldl/amd/src/amd_info.c",
+    "extern/osqp/lin_sys/direct/qdldl/amd/src/amd_order.c",
+    "extern/osqp/lin_sys/direct/qdldl/amd/src/amd_post_tree.c",
+    "extern/osqp/lin_sys/direct/qdldl/amd/src/amd_postorder.c",
+    "extern/osqp/lin_sys/direct/qdldl/amd/src/amd_preprocess.c",
+    "extern/osqp/lin_sys/direct/qdldl/amd/src/amd_valid.c",
+    "extern/osqp/lin_sys/direct/qdldl/amd/src/SuiteSparse_config.c",
+    "extern/qpoases/src/BLASReplacement.cpp",
+    "extern/qpoases/src/Bounds.cpp",
+    "extern/qpoases/src/Constraints.cpp",
+    "extern/qpoases/src/Flipper.cpp",
+    "extern/qpoases/src/Indexlist.cpp",
+    "extern/qpoases/src/LAPACKReplacement.cpp",
+    "extern/qpoases/src/Matrices.cpp",
+    "extern/qpoases/src/MessageHandling.cpp",
+    "extern/qpoases/src/Options.cpp",
+    "extern/qpoases/src/OQPinterface.cpp",
+    "extern/qpoases/src/QProblem.cpp",
+    "extern/qpoases/src/QProblemB.cpp",
+    "extern/qpoases/src/SolutionAnalysis.cpp",
+    "extern/qpoases/src/SparseSolver.cpp",
+    "extern/qpoases/src/SQProblem.cpp",
+    "extern/qpoases/src/SQProblemSchur.cpp",
+    "extern/qpoases/src/SubjectTo.cpp",
+    "extern/qpoases/src/Utils.cpp",
 ]
 
 if _platform == "linux" or _platform == "linux2":
   print("linux")
-  include_dirs += ['third_party/osqp/include/linux']
+  include_dirs += ['extern/osqp/include/linux']
   CXX_FLAGS += '-fpermissive '
   libraries = ['dl', 'pthread']
   CXX_FLAGS += '-D_LINUX '
@@ -184,7 +184,7 @@ if _platform == "linux" or _platform == "linux2":
 
 elif _platform == "win32":
   print("win32!")
-  include_dirs += ['third_party/osqp/include/windows']
+  include_dirs += ['extern/osqp/include/windows']
   print(include_dirs)
   libraries = ['User32', 'kernel32']
   #CXX_FLAGS += '-DIS_WINDOWS '
@@ -194,7 +194,7 @@ elif _platform == "win32":
 elif _platform == "darwin":
   print("darwin!")
   CXX_FLAGS += '-fpermissive '
-  include_dirs += ['third_party/osqp/include/macosx']
+  include_dirs += ['extern/osqp/include/macosx']
   os.environ[
       'LDFLAGS'] = '-framework Cocoa -mmacosx-version-min=10.7 -stdlib=libc++ -framework OpenGL'
   CXX_FLAGS += '-DB3_NO_PYTHON_FRAMEWORK '
@@ -205,7 +205,7 @@ elif _platform == "darwin":
   #    CXX_FLAGS += '-framework Cocoa '
 else:
   print("bsd!")
-  include_dirs += ['third_party/osqp/include/linux']
+  include_dirs += ['extern/osqp/include/linux']
   libraries = ['GL', 'GLEW', 'pthread']
   os.environ['LDFLAGS'] = '-L/usr/X11R6/lib'
   CXX_FLAGS += '-D_BSD '
