@@ -4,7 +4,7 @@ name: Aliengo
 physics_engine: ${..physics_engine}
 
 env:
-  numEnvs: ${resolve_default:512,${...num_envs}}
+  numEnvs: ${resolve_default:16,${...num_envs}}
   envSpacing: 2.  # [m]
 
   clipObservations: 5.0
@@ -22,14 +22,14 @@ env:
     vAngular: [0.0, 0.0, 0.0]  # x,y,z [rad/s]
 
   randomCommandVelocityRanges:
-    linear_x: [-2., 2.] # min max [m/s]
-    linear_y: [-1.5, 1.5]   # min max [m/s]
-    yaw: [-2., 2.]          # min max [rad/s]
+    linear_x: [-2.0, 2.0] # min max [m/s]
+    linear_y: [-1.0, 1.0]   # min max [m/s]
+    yaw: [-2.5, 2.5]          # min max [rad/s]
 
   control:
     # PD Drive parameters:
-    stiffness: 85.0  # [N*m/rad]
-    damping: 2.0     # [N*m*s/rad]
+    stiffness: 0.0  # [N*m/rad]
+    damping: 0.0     # [N*m*s/rad]
     actionScale: 0.5
 
   defaultJointAngles:  # = target angles when action = 0.0
@@ -66,16 +66,16 @@ env:
     linearVelocityZRewardScale: -4.0
     angularVelocityXYRewardScale: -0.05
     # collision penalties
-    kneeCollisionRewardScale: -0.25
+    kneeCollisionRewardScale: 0 #-0.25
 
     # normalization
-    linearVelocityScale: 2.0
-    angularVelocityScale: 0.25
-    dofPositionScale: 1.0
-    dofVelocityScale: 0.05
+    linearVelocityScale: 1 #2.0
+    angularVelocityScale: 1 #0.25
+    dofPositionScale: 1 #1.0
+    dofVelocityScale: 1 #0.05
 
     # episode length in seconds
-    episodeLength_s: 50
+    episodeLength_s: 20
 
   # viewer cam:
   viewer:
