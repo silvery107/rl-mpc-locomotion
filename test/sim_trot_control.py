@@ -7,7 +7,7 @@ os.sys.path.insert(0, parentdir)
 from isaacgym import gymapi
 import numpy as np
 import math
-from RL_Environment.sim_utils import ASSET_ROOT, ALIENGO, XIAOTIAN
+from RL_Environment.sim_utils import ASSET_ROOT, ALIENGO
 
 gym = gymapi.acquire_gym()
 
@@ -42,7 +42,7 @@ plane_params.restitution = 0    # control the elasticity of collisions (amount o
 gym.add_ground(sim, plane_params)
 
 #* load asset
-xiaotian = XIAOTIAN
+# xiaotian = XIAOTIAN
 # aliengo = "urdf/aliengo_description/xacro/aliengo.urdf"
 # anymal = "urdf/anymal_c/urdf/anymal.urdf"
 asset_root = ASSET_ROOT
@@ -50,7 +50,7 @@ asset_file = ALIENGO
 asset_options = gymapi.AssetOptions()
 asset_options.fix_base_link = False
 asset_options.use_mesh_materials = True
-asset_options.flip_visual_attachments = False if asset_file==xiaotian else True
+asset_options.flip_visual_attachments = True
 asset_options.armature = 0.01   # added to the diagonal elements of inertia tensors
                                 # for all of the asset’s rigid bodies/links. 
                                 # Could improve simulation stability

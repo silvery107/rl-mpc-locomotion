@@ -6,7 +6,6 @@ ASSET_ROOT = "assets"
 MINI_CHEETAH = "mini_cheetah/mini_cheetah.urdf"
 ALIENGO = "aliengo_description/xacro/aliengo.urdf"
 A1 = "a1_description/a1.urdf"
-XIAOTIAN = "Xiaotian/urdf/xiaotian_description.urdf"
 ANYMAL = "anymal_c/urdf/anymal.urdf"
 
 FOOT_IDX = [4, 8, 12, 16]
@@ -48,8 +47,6 @@ def load_asset(gym, sim, robot, fix_base_link):
         asset_file = ALIENGO
     elif robot is RobotType.MINI_CHEETAH:
         asset_file = MINI_CHEETAH
-    elif robot is RobotType.XIAOTIAN:
-        asset_file = XIAOTIAN
     elif robot is RobotType.A1:
         asset_file = A1
     elif robot is RobotType.ANYMAL:
@@ -60,7 +57,7 @@ def load_asset(gym, sim, robot, fix_base_link):
     asset_options = gymapi.AssetOptions()
     asset_options.fix_base_link = fix_base_link
     asset_options.use_mesh_materials = True
-    asset_options.flip_visual_attachments = False if asset_file==XIAOTIAN or asset_file==MINI_CHEETAH or asset_file==A1 else True
+    asset_options.flip_visual_attachments = False if asset_file==MINI_CHEETAH or asset_file==A1 else True
     asset_options.angular_damping = 0.0
     asset_options.linear_damping = 0.0
     # asset_options.density = 0.001

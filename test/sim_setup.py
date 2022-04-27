@@ -35,7 +35,7 @@ plane_params.restitution = 0    # control the elasticity of collisions (amount o
 gym.add_ground(sim, plane_params)
 
 #* load asset
-xiaotian = "urdf/Xiaotian-ROS/urdf/xiaotian_description.urdf"
+# xiaotian = "urdf/Xiaotian-ROS/urdf/xiaotian_description.urdf"
 aliengo = "urdf/aliengo_description/xacro/aliengo.urdf"
 anymal = "urdf/anymal_c/urdf/anymal.urdf"
 asset_root = "/home/silvery/isaacgym/assets"
@@ -43,7 +43,7 @@ asset_file = aliengo
 asset_options = gymapi.AssetOptions()
 asset_options.fix_base_link = True
 asset_options.use_mesh_materials = True
-asset_options.flip_visual_attachments = False if asset_file==xiaotian else True
+asset_options.flip_visual_attachments = True
 asset_options.armature = 0.01   # added to the diagonal elements of inertia tensors
                                 # for all of the asset’s rigid bodies/links. 
                                 # Could improve simulation stability
