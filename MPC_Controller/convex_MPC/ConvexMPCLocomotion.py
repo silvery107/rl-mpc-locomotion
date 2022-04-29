@@ -199,10 +199,11 @@ class ConvexMPCLocomotion:
                         (com_angular_velocity - desired_com_velocity).dot(mpc_weight[6:9]) + \
                         (com_velocity - desired_com_velocity).dot(mpc_weight[9:12])
                     
-        mpc_torque_loss = np.sum(predicted_contact_forces[:12])
+        mpc_torque_loss = Parameters.cmpc_alpha * np.sum(predicted_contact_forces[:12])
 
         # print("MPC Loss: %.3f" % mpc_torque_loss)
         if Parameters.cmpc_log_loss:
+            print("MPC Loss: %.3f" % (mpc_state_loss + mpc_torque_loss))
             self.log_writter.writerow([mpc_state_loss, mpc_torque_loss])
 
 
