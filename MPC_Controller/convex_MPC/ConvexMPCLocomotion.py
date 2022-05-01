@@ -92,11 +92,12 @@ class ConvexMPCLocomotion:
             print("Alpha was set too high (" + str(Parameters.cmpc_alpha) + ") adjust to 1e-5\n")
             Parameters.cmpc_alpha = 1e-5
 
-        # flush last log
-        if not self.logger.is_empty():
-            self.logger.flush_logging()
-        # start new logs
-        self.logger.start_logging()
+        if Parameters.cmpc_enable_log:
+            # flush last log
+            if not self.logger.is_empty():
+                self.logger.flush_logging()
+            # start new logs
+            self.logger.start_logging()
 
         self._cpp_mpc = mpc.ConvexMpc(data._quadruped._bodyMass, 
                             list(data._quadruped._bodyInertia),
@@ -214,8 +215,8 @@ class ConvexMPCLocomotion:
             MPC_WEI = mpc_weight, # MPC_WEI
             TIM_STA = self.iterationCounter # TIM_STA
         )
-
-        self.logger.update_logging(log_data_frame)
+        if Parameters.cmpc_enable_log:
+            self.logger.update_logging(log_data_frame)
 
     def updateMPCIfNeeded(self, mpcTable:list, data:ControlFSMData):
         # self.solveDenseMPC(mpcTable, data)
