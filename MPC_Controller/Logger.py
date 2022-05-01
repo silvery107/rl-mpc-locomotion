@@ -7,9 +7,10 @@ class Logger:
         self._logdir = logdir
         if not os.path.exists(self._logdir):
             os.makedirs(self._logdir)
-        self.filename = 'log_{}.pkl'.format(datetime.now().strftime('%Y_%m_%d_%H_%M_%S'))
+        self._logs = []
 
     def start_logging(self):
+        self.filename = 'log_{}.pkl'.format(datetime.now().strftime('%Y_%m_%d_%H_%M_%S'))
         self._logs = []
 
     def update_logging(self, frame):
@@ -20,3 +21,6 @@ class Logger:
             pickle.dump(self._logs, logfile)
 
         print("Data logged to: {}".format(os.path.join(self._logdir, self.filename)))
+
+    def is_empty(self):
+        return True if not self._logs else False
