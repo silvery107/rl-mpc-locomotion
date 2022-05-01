@@ -17,7 +17,7 @@ class Parameters:
 
     policy_print_time = False
 
-    bridge_MPC_to_RL = False
+    bridge_MPC_to_RL = True
 
     # * [-1, 1] -> [a, b] => [-1, 1] * (b-a)/2 + (b+a)/2
     MPC_param_scale = [4, 4, 4,     # 1-9

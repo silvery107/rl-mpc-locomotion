@@ -198,9 +198,6 @@ class ConvexMPCLocomotion:
         if Parameters.cmpc_print_update_time:
             print("MPC Update Time %.3f s\n"%(time.time()-timer))
 
-        if Parameters.cmpc_log_loss:
-            print("MPC Loss: %.3f" % (mpc_state_loss + mpc_torque_loss))
-
         log_data_frame = dict(
             COM_RPY = np.rad2deg(com_roll_pitch_yaw), # COM_RPY
             COM_POS = com_position, # COM_POS
