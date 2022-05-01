@@ -7,9 +7,9 @@
 <img src="images/controller_blocks.png" width=700>
 
 ## Dependencies
-- *PyTorch* - 1.8.1
-- *Isaac Gym* - Preview 3
-- *RL Games* - 1.1.3
+- [*PyTorch* - 1.8.1](https://pytorch.org/get-started/previous-versions/)
+- [*Isaac Gym* - Preview 3](https://developer.nvidia.com/isaac-gym)
+- [*RL Games* - 1.1.3](https://github.com/Denys88/rl_games)
 - *OSQP* - 0.6.2
 
 ## Installation
