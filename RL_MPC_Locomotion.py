@@ -70,7 +70,7 @@ def main():
 
     # Setup MPC Controller
     if use_gamepad:
-        gamepad = gamepad_reader.Gamepad(vel_scale_x=2.5, vel_scale_y=1.5, vel_scale_rot=2.0)
+        gamepad = gamepad_reader.Gamepad(vel_scale_x=2.5, vel_scale_y=1.5, vel_scale_rot=3.0)
 
     count = 0
     render_fps = args.render_fps
