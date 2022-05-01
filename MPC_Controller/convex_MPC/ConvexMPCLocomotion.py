@@ -1,7 +1,6 @@
-import math
+# import math
 import time
 import sys
-import csv
 
 import numpy as np
 # import MPC_Controller.convex_MPC.mpc_osqp as mpc
@@ -13,6 +12,7 @@ from MPC_Controller.FSM_states.ControlFSMData import ControlFSMData
 from MPC_Controller.common.FootSwingTrajectory import FootSwingTrajectory
 from MPC_Controller.utils import NUM_LEGS, CoordinateAxis, DTYPE, getSideSign
 from MPC_Controller.math_utils.orientation_tools import coordinateRotation
+from MPC_Controller.Logger import Logger
 
 try:
     import mpc_osqp as mpc
@@ -84,26 +84,25 @@ class ConvexMPCLocomotion:
         self.Kp_stance:np.ndarray = None
         self.Kd:np.ndarray = None
         self.Kd_stance:np.ndarray = None
-        
-        if Parameters.cmpc_log_loss:
-            self.logger = open("record.csv", "w", newline='')
-            self.log_writter = csv.writer(self.logger)
 
+        self.logger = Logger("logs/")
+ 
     def initialize(self, data:ControlFSMData):
         if Parameters.cmpc_alpha > 1e-4:
             print("Alpha was set too high (" + str(Parameters.cmpc_alpha) + ") adjust to 1e-5\n")
             Parameters.cmpc_alpha = 1e-5
-        # if data._desiredStateCommand.mpc_weights is None:
-        #     mpc_weight = data._quadruped._mpc_weights
-        # else:
-        #     mpc_weight = data._desiredStateCommand.mpc_weights
+
+        # flush last log
+        if not self.logger.is_empty():
+            self.logger.flush_logging()
+        # start new logs
+        self.logger.start_logging()
 
         self._cpp_mpc = mpc.ConvexMpc(data._quadruped._bodyMass, 
                             list(data._quadruped._bodyInertia),
                             NUM_LEGS,
                             self.horizonLength,
-                            self.dtMPC, 
-                            # mpc_weight,
+                            self.dtMPC,
                             Parameters.cmpc_alpha,
                             mpc.QPOASES)
 
@@ -120,15 +119,6 @@ class ConvexMPCLocomotion:
     def __SetupCommand(self, data:ControlFSMData):
 
         self._body_height = data._quadruped._bodyHeight
-
-        # filter = 0.1
-        # x_vel_cmd = DesiredStateCommand.x_vel_cmd
-        # y_vel_cmd = DesiredStateCommand.y_vel_cmd
-        # self._x_vel_des = self._x_vel_des*(1-filter) + x_vel_cmd*filter
-        # self._y_vel_des = self._y_vel_des*(1-filter) + y_vel_cmd*filter
-        
-        # self._x_vel_des = DesiredStateCommand.x_vel_cmd
-        # self._y_vel_des = DesiredStateCommand.y_vel_cmd
         self._x_vel_des = data._desiredStateCommand.x_vel_cmd
         self._y_vel_des = data._desiredStateCommand.y_vel_cmd
         if data._quadruped._robotType is RobotType.MINI_CHEETAH:
@@ -201,17 +191,31 @@ class ConvexMPCLocomotion:
                     
         mpc_torque_loss = Parameters.cmpc_alpha * np.sum(predicted_contact_forces[:12])
 
-        # print("MPC Loss: %.3f" % mpc_torque_loss)
-        if Parameters.cmpc_log_loss:
-            print("MPC Loss: %.3f" % (mpc_state_loss + mpc_torque_loss))
-            self.log_writter.writerow([mpc_state_loss, mpc_torque_loss])
-
-
         for leg in range(4):
             self.f_ff[leg] = np.array(predicted_contact_forces[leg*3: (leg+1)*3],dtype=DTYPE).reshape((3,1))
 
         if Parameters.cmpc_print_update_time:
             print("MPC Update Time %.3f s\n"%(time.time()-timer))
+
+        if Parameters.cmpc_log_loss:
+            print("MPC Loss: %.3f" % (mpc_state_loss + mpc_torque_loss))
+
+        log_data_frame = dict(
+            COM_RPY = np.rad2deg(com_roll_pitch_yaw), # COM_RPY
+            COM_POS = com_position, # COM_POS
+            COM_ANG = com_angular_velocity, # COM_ANG
+            COM_VEL = com_velocity, # COM_VEL
+            DES_RPY = np.rad2deg(desired_com_roll_pitch_yaw), # DES_RPY
+            DES_POS = desired_com_position, # DES_POS
+            DES_ANG = desired_com_angular_velocity, # DES_ANG
+            DES_VEL = desired_com_velocity, # DES_VEL
+            MPC_GRF = predicted_contact_forces[:12], # MPC_GRF
+            MPC_LOS = mpc_state_loss+mpc_torque_loss, # MPC_LOS
+            MPC_WEI = mpc_weight, # MPC_WEI
+            TIM_STA = self.iterationCounter # TIM_STA
+        )
+
+        self.logger.update_logging(log_data_frame)
 
     def updateMPCIfNeeded(self, mpcTable:list, data:ControlFSMData):
         # self.solveDenseMPC(mpcTable, data)
