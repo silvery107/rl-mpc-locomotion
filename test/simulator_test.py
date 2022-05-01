@@ -21,8 +21,8 @@ robot = RobotType.ALIENGO
 dt =  1 / 60
 gym = gymapi.acquire_gym()
 sim = acquire_sim(gym, dt)
-# add_ground(gym, sim)
-add_random_uniform_terrain(gym, sim)
+add_ground(gym, sim)
+# add_random_uniform_terrain(gym, sim)
 
 # set up the env grid
 num_envs = 1
