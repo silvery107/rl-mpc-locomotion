@@ -193,12 +193,11 @@
   </ul>
 </details>
 
-注意 Aliengo PD 参数为 (30, 1)
-将pybind11、qpoases、eigen3设置成submodule，并通过编译, 通过windows 编译
-logs 是否以 dict 的形式保存?
+- 注意 Aliengo PD 参数为 (30, 1)
+- 将 pybind11, qpoases, eigen3 设置成 submodule, 并通过编译, 通过 windows 编译
 
 ### Roadmaps
-- [x] **MPC_Controller**
+- [x] **MPC Controller**
 - [Quadruped](MPC_Controller/common/Quadruped.py),
 - [RobotRunner](MPC_Controller/robot_runner/RobotRunnerFSM.py) ->
     - [LegController](MPC_Controller/common/LegController.py),
@@ -211,7 +210,7 @@ logs 是否以 dict 的形式保存?
                 - [Gait](MPC_Controller/convex_MPC/Gait.py),
                 - [MPC Solver in C](MPC_Controller/convex_MPC/mpc_osqp.cc)
 
-- [x] **RL_Environment**
+- [x] **RL Environment**
 - [Gamepad Reader](RL_Simulator/gamepad_reader.py),
 - [Simulation Utils](RL_Environment/sim_utils.py),
 - [Weight Policy](RL_Environment/WeightPolicy.py),
@@ -221,18 +220,17 @@ logs 是否以 dict 的形式保存?
 
 ## User Notes
 
-- [Import URDF model in ISAAC](docs/0-model_import.md)
+- [Import URDF models in Isaac Gym](docs/0-model_import.md)
 - [Install MIT Cheetah Software](docs/1-MIT_cheetah_installation.md)
-- [Development Log: Cheetah Software in Python](docs/2-development_log.md)
+- [Convensions in Python](docs/2-development_log.md)
 - [Setup a Simulation in Isaac Gym](docs/3-isaac_api_note.md)
 - [Upgrade Isaac Gym Preview 2 to Preview 3](docs/5-upgrade_isaac_gym.md)
-- [OSQP, qpOASES and CVXOPT Solver Installation](docs/6-qp_solver.md)
+- [OSQP, qpOASES and CVXOPT Solver Instructions](docs/6-qp_solver.md)
 - [Train PPO Model Using RL Games](docs/8-rl_games_api_note.md)
 
 ## Gallery
 
 https://user-images.githubusercontent.com/44640904/157265160-ffc0c7b1-ef05-48a6-ad8e-8d93ae7ccfc3.mp4
-
 
 <img src="images/trot_demo.gif" width=500>
 <img src="images/4_cheetah_trot.gif" width=500>
