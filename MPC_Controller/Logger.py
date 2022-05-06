@@ -1,6 +1,7 @@
 import os
 import pickle
 from datetime import datetime
+from random import random
 
 class Logger:
     def __init__(self, logdir="logs/") -> None:
@@ -10,7 +11,7 @@ class Logger:
         self._logs = []
 
     def start_logging(self):
-        self.filename = 'log_{}.pkl'.format(datetime.now().strftime('%Y_%m_%d_%H_%M_%S'))
+        self.filename = 'log_{}_{:d}.pkl'.format(datetime.now().strftime('%Y_%m_%d_%H_%M_%S'), int(random()*1000))
         self._logs = []
 
     def update_logging(self, frame):
