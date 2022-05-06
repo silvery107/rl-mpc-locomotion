@@ -42,6 +42,48 @@
 
 \end{tabular}
 
+\section{Dynamics}
+
+\begin{align}
+    \ddot{\mathbf{p}} &=\frac{\sum_{i=1}^{n} \mathbf{f}_{i}}{m}-\mathbf{g} \\
+    \frac{\mathrm{d}}{\mathrm{d} t}(\mathbf{I} \boldsymbol{\omega}) &=\sum_{i=1}^{n} \mathbf{r}_{i} \times \mathbf{f}_{i} \\
+    \dot{\mathbf{R}} &=[\boldsymbol{\omega}]_{\times} \mathbf{R}
+\end{align}
+
+\begin{align}
+    \mathbf{R} &=\mathbf{R}_{z}(\psi) \mathbf{R}_{y}(\theta) \mathbf{R}_{x}(\phi) \\
+    \frac{\mathrm{d}}{\mathrm{d} t}(\mathbf{I} \boldsymbol{\omega}) &=\mathbf{I} \dot{\boldsymbol{\omega}}+\boldsymbol{\omega} \times(\mathbf{I} \boldsymbol{\omega}) \approx \mathbf{I} \dot{\boldsymbol{\omega}}
+\end{align}
+
+$$
+\boldsymbol{\omega}=\left[\begin{array}{ccc}
+    \cos (\theta) \cos (\psi) & -\sin (\psi) & 0 \\
+    \cos (\theta) \sin (\psi) & \cos (\psi) & 0 \\
+    -\sin (\theta) & 0 & 1
+    \end{array}\right]\left[\begin{array}{l}
+    \dot{\phi} \\
+    \dot{\theta} \\
+    \dot{\psi}
+\end{array}\right]
+$$
+
+\begin{align}
+    \left[\begin{array}{l}
+    \dot{\phi} \\
+    \dot{\theta} \\
+    \dot{\psi}
+    \end{array}\right] &=\left[\begin{array}{ccc}
+    \cos (\psi) / \cos (\theta) & \sin (\psi) / \cos (\theta) & 0 \\
+    -\sin (\psi) & \cos (\psi) & 0 \\
+    \cos (\psi) \tan (\theta) & \sin (\psi) \tan (\theta) & 1
+    \end{array}\right] \boldsymbol{\omega} \\
+    & \approx\left[\begin{array}{ccc}
+    \cos (\psi) & \sin (\psi) & 0 \\
+    -\sin (\psi) & \cos (\psi) & 0 \\
+    0 & 0 & 1
+    \end{array}\right] \boldsymbol{\omega} \approx \mathbf{R}_{z}^{\top}(\psi) \boldsymbol{\omega}
+\end{align}
+
 \section{State Space Model}
 
 \begin{align}
@@ -52,8 +94,7 @@
 \end{align}
 
 
-$$
-\begin{aligned}
+\begin{align}
     \frac{\mathrm{d}}{\mathrm{d} t}\left[
     \begin{array}{c}
         \hat{\mathbf\Theta} \\
@@ -93,9 +134,15 @@ $$
     \vdots \\
     \mathbf{f}_{4}
     \end{array}\right]
-\end{aligned}
+\end{align}
+
 $$
-\section{ZOOH Discretization}
+\dot{\mathbf{x}}(t)=\mathbf{A}_{c}(\psi) \mathbf{x}(t)+\mathbf{B}_{c}\left(\mathbf{r}_{1}, \ldots, \mathbf{r}_{n}, \psi\right) \mathbf{u}(t)
+$$
+where $\mathbf{A}_{c} \in \mathbb{R}^{13 \times 13}$ and $\mathbf{B}_{c} \in \mathbb{R}^{13 \times 3 n}$
+
+
+\section{ZOH Discretization}
 
 Given a linear system $\dot{x} = Ax+Bu$ and its solution 
 $$
@@ -119,6 +166,35 @@ $\mathbf{A}_{d} =e^{\mathbf{A} T}$
 and 
 $\mathbf{B}_{d} =\int_{0}^{T} e^{\mathbf{A} \tau} d \tau \mathbf{B}$
 
+\begin{align}
+    \mathbf{x}_{k+1} &=\mathbf{A}_{d} \mathbf{x}_{k}+\mathbf{B}_{d} \mathbf{u}_{k} \\
+    \mathbf{A}_{d} &=e^{\mathbf{A} T} \\
+    \mathbf{B}_{d} &=\int_{0}^{T} e^{\mathbf{A} \tau} d \tau \mathbf{B}
+\end{align}
+
+\section{MPC Formulation}
+
+$$
+\min _{\mathbf{x}, \mathbf{u}} \sum_{i=0}^{k-1}\left\|\mathbf{x}_{i+1}-\mathbf{x}_{i+1, \mathrm{ref}}\right\|_{\mathbf{Q}_{i}}+\left\|\mathbf{u}_{i}\right\|_{\mathbf{R}_{i}}
+$$
+
+$$
+subject \  to \quad \mathbf{x}_{i+1}=\mathbf{A}_{i} \mathbf{x}_{i}+\mathbf{B}_{i} \mathbf{u}_{i}, i=0 \ldots k-1
+$$
+$$
+\underline{\mathbf{c}}_{i} \leq \mathbf{C}_{i} \mathbf{u}_{i} \leq \overline{\mathbf{c}}_{i}, i=0 \ldots k-1
+$$
+$$
+\mathbf{D}_{i} \mathbf{u}_{i}=0, i=0 \ldots k-1
+$$
+
+$$
+\begin{array}{r}
+    f_{\min } \leq f_{z} \leq f_{\max } \\
+    -\mu f_{z} \leq \pm f_{x} \leq \mu f_{z} \\
+    -\mu f_{z} \leq \pm f_{y} \leq \mu f_{z}
+\end{array}
+$$
 
 \section{QP Formulation}
 $$
@@ -163,8 +239,20 @@ $$
 \end{aligned}
 $$
 
+$$
+\begin{array}{lr}
+    \min _{\mathbf{U}} & \frac{1}{2} \mathbf{U}^{\boldsymbol{\top}} \mathbf{H} \mathbf{U}+\mathbf{U}^{\boldsymbol{\top}} \mathbf{g} \\
+    \text { s. t. } & \underline{\mathbf{c}} \leq \mathbf{C U} \leq \overline{\mathbf{c}}
+\end{array}
+$$
+
+\begin{align}
+    \mathbf{H} &=2\left(\mathbf{B}_{\mathrm{qp}}^{\boldsymbol{L}} \mathbf{\mathbf { B } _ { \mathrm { qp } }}+\mathbf{K}\right) \\
+    \mathbf{g} &=2 \mathbf{B}_{\mathrm{qp}}^{\top} \mathbf{L}\left(\mathbf{A}_{\mathrm{qp}} \mathbf{x}_{0}-\mathbf{y}\right)
+\end{align} 
 
 \section{Ground Normal Estimation}
+
 To enable the ability to traverse stairs and sloped terrain without vision, we use
 measurements of each footstep location $$\boldsymbol{p}_i=(p^{x}_i, p^{y}_i, p^{z}_i)$$
 to approximate the local slope of the walking surface.
