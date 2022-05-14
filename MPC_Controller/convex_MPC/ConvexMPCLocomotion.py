@@ -99,6 +99,7 @@ class ConvexMPCLocomotion:
             # start new logs
             self.logger.start_logging()
 
+        self.iterationCounter = 0
         self._cpp_mpc = mpc.ConvexMpc(data._quadruped._bodyMass, 
                             list(data._quadruped._bodyInertia),
                             NUM_LEGS,
@@ -199,11 +200,11 @@ class ConvexMPCLocomotion:
             print("MPC Update Time %.3f s\n"%(time.time()-timer))
 
         log_data_frame = dict(
-            COM_RPY = np.rad2deg(com_roll_pitch_yaw), # COM_RPY
+            COM_RPY = com_roll_pitch_yaw, # COM_RPY
             COM_POS = com_position, # COM_POS
             COM_ANG = com_angular_velocity, # COM_ANG
             COM_VEL = com_velocity, # COM_VEL
-            DES_RPY = np.rad2deg(desired_com_roll_pitch_yaw), # DES_RPY
+            DES_RPY = desired_com_roll_pitch_yaw, # DES_RPY
             DES_POS = desired_com_position, # DES_POS
             DES_ANG = desired_com_angular_velocity, # DES_ANG
             DES_VEL = desired_com_velocity, # DES_VEL
