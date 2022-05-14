@@ -182,7 +182,7 @@
 </details>
 
 <details>
-  <summary>Apr 8, 2022 -- Present</summary>
+  <summary>Apr 8, 2022 -- May 7, 2022</summary>
   <ul>
   <li> 并不是 x vel 正向无法行走, 是因为裁减了输出力矩 4.8
   <li> 实现 random uniform terrain MPC 训练 4.8
@@ -190,11 +190,12 @@
   <li> 如何权衡 50Hz 的 MPC 和实时的网络更新? 暂时只差两倍, 或许可以接受 4.9
   <li> 实现 MPC Loss 计算 4.9
   <li> TODO 绘制 state 和 torque loss 曲线 (已完成) 4.9
+  <li> 注意 Aliengo PD 参数为 (30, 1)
+  <li> 将 pybind11, qpoases, eigen3 设置成 submodule, 并通过编译, 通过 windows 编译
+  <li> 绘制了速度跟随曲线
   </ul>
 </details>
 
-- 注意 Aliengo PD 参数为 (30, 1)
-- 将 pybind11, qpoases, eigen3 设置成 submodule, 并通过编译, 通过 windows 编译
 
 ## Roadmaps
 - [x] **MPC Controller**
