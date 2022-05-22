@@ -63,8 +63,8 @@ params:
     # *batch_size = horizon_length*num_envs
     # minibatch_size: 12288 # 512 envs 1%
     # minibatch_size: 1536 # 64 envs 6%
-    # minibatch_size: 768 # 32 envs 8%
-    minibatch_size: 384 # 16 envs 15%
+    minibatch_size: 768 # 32 envs 8%
+    # minibatch_size: 384 # 16 envs 15%
     # minibatch_size: 192 # 8 envs 20%
     # minibatch_size: 96 # 4 envs 28%
     # minibatch_size: 24 # 1 envs 35%
@@ -74,7 +74,7 @@ params:
     seq_len: 4 # only for rnn
     bounds_loss_coef: 0.001
 
-    max_epochs: ${resolve_default:5000,${....max_iterations}}
+    max_epochs: ${resolve_default:20000,${....max_iterations}}
     save_best_after: 200
     score_to_win: 20000
     save_frequency: 100
