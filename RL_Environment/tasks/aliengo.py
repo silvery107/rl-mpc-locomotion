@@ -133,12 +133,14 @@ class Aliengo(VecTask):
         self._create_envs(self.num_envs, self.cfg["env"]['envSpacing'], int(np.sqrt(self.num_envs)))
 
     def _create_ground_plane(self):
-        add_random_uniform_terrain(self.gym, self.sim)
-        # plane_params = gymapi.PlaneParams()
-        # plane_params.normal = gymapi.Vec3(0.0, 0.0, 1.0)
-        # plane_params.static_friction = self.plane_static_friction
-        # plane_params.dynamic_friction = self.plane_dynamic_friction
-        # self.gym.add_ground(self.sim, plane_params)
+        if Parameters.flat_ground:
+            plane_params = gymapi.PlaneParams()
+            plane_params.normal = gymapi.Vec3(0.0, 0.0, 1.0)
+            plane_params.static_friction = self.plane_static_friction
+            plane_params.dynamic_friction = self.plane_dynamic_friction
+            self.gym.add_ground(self.sim, plane_params)
+        else:
+            add_random_uniform_terrain(self.gym, self.sim)
 
     def _create_envs(self, num_envs, spacing, num_per_row):
         asset_root = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../assets')
@@ -421,16 +423,18 @@ def compute_robot_observations(root_states,
     # 
     # type: (Tensor, Tensor, Tensor, Tensor, Tensor, Tensor, Tensor, float, float, float, float) -> Tensor
     base_quat = root_states[:, 3:7]
+    base_pos = quat_rotate_inverse(base_quat, root_states[:, 0:3]) * lin_vel_scale
     base_lin_vel = quat_rotate_inverse(base_quat, root_states[:, 7:10]) * lin_vel_scale
     base_ang_vel = quat_rotate_inverse(base_quat, root_states[:, 10:13]) * ang_vel_scale
-    projected_gravity = quat_rotate(base_quat, gravity_vec)
+    # projected_gravity = quat_rotate(base_quat, gravity_vec)
     dof_pos_scaled = (dof_pos - default_dof_pos) * dof_pos_scale
 
     commands_scaled = commands*torch.tensor([lin_vel_scale, lin_vel_scale, ang_vel_scale], requires_grad=False, device=commands.device)
 
-    obs = torch.cat((base_lin_vel,
+    obs = torch.cat((base_pos,
+                     base_lin_vel,
                      base_ang_vel,
-                     projected_gravity,
+                    #  projected_gravity,
                      commands_scaled,
                      dof_pos_scaled,
                      dof_vel*dof_vel_scale,
