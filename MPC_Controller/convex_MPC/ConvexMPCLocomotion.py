@@ -10,7 +10,7 @@ from MPC_Controller.convex_MPC.Gait import OffsetDurationGait
 from MPC_Controller.DesiredStateCommand import DesiredStateCommand
 from MPC_Controller.FSM_states.ControlFSMData import ControlFSMData
 from MPC_Controller.common.FootSwingTrajectory import FootSwingTrajectory
-from MPC_Controller.utils import NUM_LEGS, CoordinateAxis, DTYPE, getSideSign
+from MPC_Controller.utils import CASTING, NUM_LEGS, CoordinateAxis, DTYPE, getSideSign
 from MPC_Controller.math_utils.orientation_tools import coordinateRotation
 from MPC_Controller.Logger import Logger
 
@@ -349,15 +349,15 @@ class ConvexMPCLocomotion:
                           - data._quadruped.getHipLocation(foot)
                 vDesLeg = (vDesFoot - seResult.vBody)
 
-                data._legController.commands[foot].pDes = pDesLeg
-                data._legController.commands[foot].vDes = vDesLeg
-                data._legController.commands[foot].kpCartesian = self.Kp
-                data._legController.commands[foot].kdCartesian = self.Kd
+                # data._legController.commands[foot].pDes = pDesLeg
+                # data._legController.commands[foot].vDes = vDesLeg
+                # data._legController.commands[foot].kpCartesian = self.Kp
+                # data._legController.commands[foot].kdCartesian = self.Kd
 
-                # np.copyto(data._legController.commands[foot].pDes, pDesLeg, casting=CASTING)
-                # np.copyto(data._legController.commands[foot].vDes, vDesLeg, casting=CASTING)
-                # np.copyto(data._legController.commands[foot].kpCartesian, self.Kp, casting=CASTING)
-                # np.copyto(data._legController.commands[foot].kdCartesian, self.Kd, casting=CASTING)
+                np.copyto(data._legController.commands[foot].pDes, pDesLeg, casting=CASTING)
+                np.copyto(data._legController.commands[foot].vDes, vDesLeg, casting=CASTING)
+                np.copyto(data._legController.commands[foot].kpCartesian, self.Kp, casting=CASTING)
+                np.copyto(data._legController.commands[foot].kdCartesian, self.Kd, casting=CASTING)
 
             else: #* foot is in stance
                 self.firstSwing[foot] = True
@@ -368,20 +368,20 @@ class ConvexMPCLocomotion:
                           - data._quadruped.getHipLocation(foot)
                 vDesLeg = (vDesFoot - seResult.vBody)
                 
-                data._legController.commands[foot].pDes = pDesLeg
-                data._legController.commands[foot].vDes = vDesLeg
-                data._legController.commands[foot].kpCartesian = self.Kp_stance
-                data._legController.commands[foot].kdCartesian = self.Kd_stance
+                # data._legController.commands[foot].pDes = pDesLeg
+                # data._legController.commands[foot].vDes = vDesLeg
+                # data._legController.commands[foot].kpCartesian = self.Kp_stance
+                # data._legController.commands[foot].kdCartesian = self.Kd_stance
 
-                data._legController.commands[foot].forceFeedForward = self.f_ff[foot]
-                data._legController.commands[foot].kdJoint = np.identity(3, dtype=DTYPE)*0.2
+                # data._legController.commands[foot].forceFeedForward = self.f_ff[foot]
+                # data._legController.commands[foot].kdJoint = np.identity(3, dtype=DTYPE)*0.2
 
-                # np.copyto(data._legController.commands[foot].pDes, pDesLeg, casting=CASTING)
-                # np.copyto(data._legController.commands[foot].vDes, vDesLeg, casting=CASTING)
-                # np.copyto(data._legController.commands[foot].kpCartesian, self.Kp_stance, casting=CASTING)
-                # np.copyto(data._legController.commands[foot].kdCartesian, self.Kd_stance, casting=CASTING)
-                # np.copyto(data._legController.commands[foot].forceFeedForward, self.f_ff[foot], casting=CASTING)
-                # np.copyto(data._legController.commands[foot].kdJoint, np.identity(3, dtype=DTYPE)*0.2, casting=CASTING)
+                np.copyto(data._legController.commands[foot].pDes, pDesLeg, casting=CASTING)
+                np.copyto(data._legController.commands[foot].vDes, vDesLeg, casting=CASTING)
+                np.copyto(data._legController.commands[foot].kpCartesian, self.Kp_stance, casting=CASTING)
+                np.copyto(data._legController.commands[foot].kdCartesian, self.Kd_stance, casting=CASTING)
+                np.copyto(data._legController.commands[foot].forceFeedForward, self.f_ff[foot], casting=CASTING)
+                np.copyto(data._legController.commands[foot].kdJoint, np.identity(3, dtype=DTYPE)*0.2, casting=CASTING)
 
                 se_contactState[foot] = contactState
 
