@@ -67,15 +67,12 @@ class LegController:
     def __init__(self, quad:Quadruped):
         self.commands = [LegControllerCommand() for _ in range(4)]
         self.datas = [LegControllerData() for _ in range(4)]
-        self._legsEnabled = False
+        # self._legsEnabled = False
         self._maxTorque = 0.0
 
         self._quadruped = quad
         for data in self.datas:
             data.setQuadruped(self._quadruped)
-
-    def setEnable(self, enabled:bool):
-        self._legsEnabled = enabled
 
     def zeroCommand(self):
         """
@@ -85,7 +82,6 @@ class LegController:
         """
         for cmd in self.commands:
             cmd.zero()
-        self._legsEnabled = False
 
     def setMaxTorque(self, tau:float):
         self._maxTorque = tau     
@@ -116,7 +112,6 @@ class LegController:
         # ! update joint PD gain, leg enable, feedforward torque and estimate torque
         legTorques = np.zeros(12, dtype=DTYPE)
 
-        # if self._legsEnabled == True:
         for leg in range(4):
             # MPC -> f_ff -R^T-> forceFeedForward
             # force feedforward + cartesian PD

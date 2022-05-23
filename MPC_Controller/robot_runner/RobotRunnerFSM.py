@@ -54,7 +54,7 @@ class RobotRunnerFSM:
         # Update the joint states
         self._legController.updateData(dof_states)
         self._legController.zeroCommand()
-        self._legController.setEnable(True)
+        # self._legController.setEnable(True)
 
         # Update robot states
         self._stateEstimator.update(body_states)
