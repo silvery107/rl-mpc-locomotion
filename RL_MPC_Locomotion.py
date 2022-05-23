@@ -111,10 +111,10 @@ def main():
 
         if count % render_count == 0:
             # update the viewer
+            count = 0
             gym.step_graphics(sim)
             gym.draw_viewer(viewer, sim, True)
             gym.clear_lines(viewer)
-            count = 0
 
         # Wait for dt to elapse in real time.
         gym.sync_frame_time(sim)
