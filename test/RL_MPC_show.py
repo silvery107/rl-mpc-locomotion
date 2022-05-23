@@ -124,8 +124,8 @@ while not gym.query_viewer_has_closed(viewer):
         gym.draw_viewer(viewer, sim, True)
         
         # Wait for dt to elapse in real time.
-        gym.sync_frame_time(sim)
         count = 0
+    gym.sync_frame_time(sim)
 
     count += 1
 
