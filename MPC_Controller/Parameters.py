@@ -19,6 +19,8 @@ class Parameters:
 
     bridge_MPC_to_RL = False
 
+    flat_ground = False
+
     # * [-1, 1] -> [a, b] => [-1, 1] * (b-a)/2 + (b+a)/2
     MPC_param_scale = [4, 4, 4,     # 1-9
                        20, 20, 20,  # 30-70
