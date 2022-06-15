@@ -193,6 +193,7 @@
   <li> 注意 Aliengo PD 参数为 (30, 1)
   <li> 将 pybind11, qpoases, eigen3 设置成 submodule, 并通过编译, 通过 windows 编译
   <li> 绘制了速度跟随曲线
+  <li> Adapt to flat ground training, modified observations (removed projected gravity, add base pos)
   </ul>
 </details>
 
