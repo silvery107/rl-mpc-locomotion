@@ -7,7 +7,6 @@ parentdir = os.path.dirname(currentdir)
 os.sys.path.insert(0, parentdir)
 
 from MPC_Controller.robot_runner.RobotRunnerFSM import RobotRunnerFSM
-from MPC_Controller.deprecated.RobotController import RobotController
 from MPC_Controller.common.Quadruped import Quadruped, RobotType
 from MPC_Controller.common.LegController import LegController
 from MPC_Controller.StateEstimator import StateEstimator
@@ -42,13 +41,6 @@ for idx in range(num_envs):
     props["stiffness"].fill(1000.0)
     props["damping"].fill(100.0)
     gym.set_actor_dof_properties(envs[idx], actors[idx], props)
-
-
-# Setup MPC Controller
-# robotController = RobotController()
-# robotRunner = RobotRunner(robotController)
-# print("[Simulator Driver] First run of robot controller...")
-# robotRunner.init(robot)
 
 # simulation loop
 while not gym.query_viewer_has_closed(viewer):
