@@ -60,7 +60,51 @@
     ```
     By default the controller mode is `Fsm`, and you can also try `Min` for the minimum MPC controller (without FSM).
 
+## Roadmaps
+- [x] **MPC Controller**
+- [Quadruped](MPC_Controller/common/Quadruped.py),
+- [RobotRunner](MPC_Controller/robot_runner/RobotRunnerFSM.py) ->
+    - [LegController](MPC_Controller/common/LegController.py),
+    - [StateEstimator](MPC_Controller/StateEstimatorContainer.py),
+    - [ControlFSM](MPC_Controller/FSM_states/ControlFSM.py) ->
+        - [FSM State RecoveryStand](MPC_Controller/FSM_states/FSM_State_RecoveryStand.py),
+        - [FSM State Locomotion](MPC_Controller/FSM_states/FSM_State_Locomotion.py) ->
+            - [ConvexMPCLocomotion](MPC_Controller/convex_MPC/ConvexMPCLocomotion.py) ->
+                - [FootSwingTrajectory](MPC_Controller/common/FootSwingTrajectory.py),
+                - [Gait](MPC_Controller/convex_MPC/Gait.py),
+                - [MPC Solver in C](MPC_Controller/convex_MPC/mpc_osqp.cc)
+
+- [x] **RL Environment**
+- [Gamepad Reader](RL_Simulator/gamepad_reader.py),
+- [Simulation Utils](RL_Environment/sim_utils.py),
+- [Weight Policy](RL_Environment/WeightPolicy.py),
+- [Train](RL_Environment/train.py) ->
+    - [Vectorized Env](RL_Environment/tasks/base/vec_task.py),
+    - [Aliengo Env](RL_Environment/tasks/aliengo.py)
+
+## User Notes
+
+- [Import URDF models in Isaac Gym](docs/0-model_import.md)
+- [Install MIT Cheetah Software](docs/1-MIT_cheetah_installation.md)
+- [Convensions in Python](docs/2-development_log.md)
+- [Setup a Simulation in Isaac Gym](docs/3-isaac_api_note.md)
+- [Upgrade Isaac Gym Preview 2 to Preview 3](docs/5-upgrade_isaac_gym.md)
+- [OSQP, qpOASES and CVXOPT Solver Instructions](docs/6-qp_solver.md)
+- [Train PPO Model Using RL Games](docs/8-rl_games_api_note.md)
+
+## Gallery
+
+https://user-images.githubusercontent.com/44640904/157265160-ffc0c7b1-ef05-48a6-ad8e-8d93ae7ccfc3.mp4
+
+<img src="images/trot_demo.gif" width=500>
+<img src="images/4_cheetah_trot.gif" width=500>
+<img src="images/aliengo_trot.gif" width=500>
+<img src="images/aliengo_train.png" width=500>
+<img src="images/aliengo_static.png" width=500>
+
+
 ## Development Logs
+
 <details>
   <summary>Dec 3, 2019 -- Jan 7, 2022</summary>
   <ul>
@@ -196,46 +240,3 @@
   <li> Adapt to flat ground training, modified observations (removed projected gravity, add base pos)
   </ul>
 </details>
-
-
-## Roadmaps
-- [x] **MPC Controller**
-- [Quadruped](MPC_Controller/common/Quadruped.py),
-- [RobotRunner](MPC_Controller/robot_runner/RobotRunnerFSM.py) ->
-    - [LegController](MPC_Controller/common/LegController.py),
-    - [StateEstimator](MPC_Controller/StateEstimatorContainer.py),
-    - [ControlFSM](MPC_Controller/FSM_states/ControlFSM.py) ->
-        - [FSM State RecoveryStand](MPC_Controller/FSM_states/FSM_State_RecoveryStand.py),
-        - [FSM State Locomotion](MPC_Controller/FSM_states/FSM_State_Locomotion.py) ->
-            - [ConvexMPCLocomotion](MPC_Controller/convex_MPC/ConvexMPCLocomotion.py) ->
-                - [FootSwingTrajectory](MPC_Controller/common/FootSwingTrajectory.py),
-                - [Gait](MPC_Controller/convex_MPC/Gait.py),
-                - [MPC Solver in C](MPC_Controller/convex_MPC/mpc_osqp.cc)
-
-- [x] **RL Environment**
-- [Gamepad Reader](RL_Simulator/gamepad_reader.py),
-- [Simulation Utils](RL_Environment/sim_utils.py),
-- [Weight Policy](RL_Environment/WeightPolicy.py),
-- [Train](RL_Environment/train.py) ->
-    - [Vectorized Env](RL_Environment/tasks/base/vec_task.py),
-    - [Aliengo Env](RL_Environment/tasks/aliengo.py)
-
-## User Notes
-
-- [Import URDF models in Isaac Gym](docs/0-model_import.md)
-- [Install MIT Cheetah Software](docs/1-MIT_cheetah_installation.md)
-- [Convensions in Python](docs/2-development_log.md)
-- [Setup a Simulation in Isaac Gym](docs/3-isaac_api_note.md)
-- [Upgrade Isaac Gym Preview 2 to Preview 3](docs/5-upgrade_isaac_gym.md)
-- [OSQP, qpOASES and CVXOPT Solver Instructions](docs/6-qp_solver.md)
-- [Train PPO Model Using RL Games](docs/8-rl_games_api_note.md)
-
-## Gallery
-
-https://user-images.githubusercontent.com/44640904/157265160-ffc0c7b1-ef05-48a6-ad8e-8d93ae7ccfc3.mp4
-
-<img src="images/trot_demo.gif" width=500>
-<img src="images/4_cheetah_trot.gif" width=500>
-<img src="images/aliengo_trot.gif" width=500>
-<img src="images/aliengo_train.png" width=500>
-<img src="images/aliengo_static.png" width=500>
