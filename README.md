@@ -11,7 +11,7 @@
 - [*Isaac Gym* - Preview 3](https://developer.nvidia.com/isaac-gym)
 - [*RL Games* - 1.1.3](https://github.com/Denys88/rl_games)
 - *OSQP* - 0.6.2
-
+Be sure you have [Isaac Gym Benchmark Environments](https://github.com/NVIDIA-Omniverse/IsaacGymEnvs) installed.
 ## Installation
 
 1. Clone this repository
