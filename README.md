@@ -20,7 +20,7 @@ Be sure you have [Isaac Gym Benchmark Environments](https://github.com/NVIDIA-Om
     git clone https://github.com/silvery107/rl-mpc-locomotion.git
     git submodule init
     ```
-    Or use `--recurse-submodules` option to clone submodules at the same time.
+    Or use `--recurse` option to clone submodules at the same time.
 
 3. Create the conda environment:
     ```bash
