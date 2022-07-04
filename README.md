@@ -83,7 +83,7 @@ Be sure you have [Isaac Gym Benchmark Environments](https://github.com/NVIDIA-Om
                 - [MPC Solver in C](MPC_Controller/convex_MPC/mpc_osqp.cc)
 
 - [x] **RL Environment**
-- [Gamepad Reader](RL_Simulator/gamepad_reader.py),
+- [Gamepad Reader](RL_Environment/gamepad_reader.py),
 - [Simulation Utils](RL_Environment/sim_utils.py),
 - [Weight Policy](RL_Environment/WeightPolicy.py),
 - [Train](RL_Environment/train.py) ->
