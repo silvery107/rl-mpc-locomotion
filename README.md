@@ -73,7 +73,7 @@ Be sure you have [Isaac Gym Benchmark Environments](https://github.com/NVIDIA-Om
 - [Quadruped](MPC_Controller/common/Quadruped.py),
 - [RobotRunner](MPC_Controller/robot_runner/RobotRunnerFSM.py) ->
     - [LegController](MPC_Controller/common/LegController.py),
-    - [StateEstimator](MPC_Controller/StateEstimatorContainer.py),
+    - [StateEstimator](MPC_Controller/StateEstimator.py),
     - [ControlFSM](MPC_Controller/FSM_states/ControlFSM.py) ->
         - [FSM State RecoveryStand](MPC_Controller/FSM_states/FSM_State_RecoveryStand.py),
         - [FSM State Locomotion](MPC_Controller/FSM_states/FSM_State_Locomotion.py) ->
