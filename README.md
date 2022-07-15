@@ -1,6 +1,10 @@
 # RL MPC Locomotion
+This repo is aim to provide a fast simulation and RL training platform for quadrupad locomotion. The control framework is a hierarchical controller  composed of an higher-level policy network and a lower-level model predictive controller (MPC). 
 
-<img src="images/Isaac.png" width=150>
+The MPC controller refers to [Cheetah Software](https://github.com/mit-biomimetics/Cheetah-Software) but written in python, and it completely opens the interface between sensor data and motor commands, so that the controller can be easily ported to mainstream simulators like MuJoCo.
+
+The RL training is carried out in the [NVDIA Isaac Gym](https://developer.nvidia.com/isaac-gym) using Unitree Robotics Aliengo model, and transferring it from simulation to reality on a [real Aliengo robot](#sim2real_anchor).
+
 
 ## Frameworks
 
@@ -97,20 +101,21 @@ Be sure you have [Isaac Gym Benchmark Environments](https://github.com/NVIDIA-Om
 
 ## User Notes
 
-- [Import URDF models in Isaac Gym](docs/0-model_import.md)
-- [Install MIT Cheetah Software](docs/1-MIT_cheetah_installation.md)
-- [Convensions in Python](docs/2-development_log.md)
 - [Setup a Simulation in Isaac Gym](docs/3-isaac_api_note.md)
+- [Install MIT Cheetah Software](docs/1-MIT_cheetah_installation.md)
+- [Import the Aliengo model in Isaac Gym](docs/0-model_import.md)
+- [Convensions in Python](docs/2-development_log.md)
 - [Upgrade Isaac Gym Preview 2 to Preview 3](docs/5-upgrade_isaac_gym.md)
 - [OSQP, qpOASES and CVXOPT Solver Instructions](docs/6-qp_solver.md)
 - [Train PPO Model Using RL Games](docs/8-rl_games_api_note.md)
 
 ## Gallery
 
-<img src="images/MPC_Sim2Real.gif" width=500>
-<img src="images/MPC_Stair_Demo.gif" width=500>
-<img src="images/RL_Paraller_16.gif" width=500>
 <img src="images/4_cheetah_trot.gif" width=500>
+<img src="images/RL_Paraller_16.gif" width=500>
+<img src="images/MPC_Stair_Demo.gif" width=500>
+<img src="images/MPC_Sim2Real.gif" width=500 tag>
+<a name="sim2real_anchor"></a>
 
 ## Development Logs
 
