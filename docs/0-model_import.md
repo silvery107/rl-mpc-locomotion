@@ -24,16 +24,3 @@ python python/rlgpu/train.py --task=Aliengo
 ```
 
 <img src="../images/aliengo_train.png" width=400>
-
-
-## Xiaotian
-
-### Modifications
-1. Convert `STL` mesh file to either `dae` mesh or `obj` file [online](https://anyconv.com/stl-to-dae-converter/).
-1. Replace `package://xiaotian_description/` with `../` in *URDF*.
-1. Replace `.STL'` with `.dae` or `.obj` in *URDF*.
-1. Set `flip_visual_attachments` to `False` when loading asset.
-
-### Static Import
-
-<img src="../images/xiaotian_static.png" width=400>
