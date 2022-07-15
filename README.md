@@ -3,7 +3,7 @@ This repo is aim to provide a fast simulation and RL training platform for quadr
 
 The MPC controller refers to [Cheetah Software](https://github.com/mit-biomimetics/Cheetah-Software) but written in python, and it completely opens the interface between sensor data and motor commands, so that the controller can be easily ported to mainstream simulators like MuJoCo.
 
-The RL training is carried out in the [NVDIA Isaac Gym](https://developer.nvidia.com/isaac-gym) using Unitree Robotics Aliengo model, and transferring it from simulation to reality on a [real Aliengo robot](#sim2real_anchor).
+The RL training is carried out in the [NVDIA Isaac Gym](https://developer.nvidia.com/isaac-gym) in parallel using Unitree Robotics Aliengo model, and transferring it from simulation to reality on a [real Aliengo robot](#sim2real_anchor).
 
 
 ## Frameworks
