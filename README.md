@@ -10,9 +10,10 @@
 - [*PyTorch* - 1.8.1](https://pytorch.org/get-started/previous-versions/)
 - [*Isaac Gym* - Preview 3](https://developer.nvidia.com/isaac-gym)
 - [*RL Games* - 1.1.3](https://github.com/Denys88/rl_games)
-- *OSQP* - 0.6.2
+<!-- - *OSQP* - 0.6.2 -->
 
 Be sure you have [Isaac Gym Benchmark Environments](https://github.com/NVIDIA-Omniverse/IsaacGymEnvs) installed.
+
 ## Installation
 
 1. Clone this repository
@@ -45,7 +46,6 @@ Be sure you have [Isaac Gym Benchmark Environments](https://github.com/NVIDIA-Om
 
         > Press `RB` to switch FSM states between `Locomotion` and `Recovery Stand`
 
-
 2. Train a new policy:
     ```bash
     cd RL_Environment
@@ -69,10 +69,10 @@ Be sure you have [Isaac Gym Benchmark Environments](https://github.com/NVIDIA-Om
     By default the controller mode is `Fsm`, and you can also try `Min` for the minimum MPC controller (without FSM).
 
 ## Roadmaps
+
+<img src="images/MPC_block.png" width=600>
+
 - [x] **MPC Controller**
-<img src="images/MPC_block.png" width=700>
-
-
 - [Quadruped](MPC_Controller/common/Quadruped.py),
 - [RobotRunner](MPC_Controller/robot_runner/RobotRunnerFSM.py) ->
     - [LegController](MPC_Controller/common/LegController.py),
@@ -85,10 +85,9 @@ Be sure you have [Isaac Gym Benchmark Environments](https://github.com/NVIDIA-Om
                 - [Gait](MPC_Controller/convex_MPC/Gait.py),
                 - [MPC Solver in C](MPC_Controller/convex_MPC/mpc_osqp.cc)
 
+<img src="images/training_data_flow.png" width=400>
+
 - [x] **RL Environment**
-
-<img src="images/training_data_flow.png" width=500>
-
 - [Gamepad Reader](RL_Environment/gamepad_reader.py),
 - [Simulation Utils](RL_Environment/sim_utils.py),
 - [Weight Policy](RL_Environment/WeightPolicy.py),
