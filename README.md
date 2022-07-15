@@ -16,7 +16,7 @@ The RL training is carried out in the [NVDIA Isaac Gym](https://developer.nvidia
 - [*RL Games* - 1.1.3](https://github.com/Denys88/rl_games)
 <!-- - *OSQP* - 0.6.2 -->
 
-Be sure you have [Isaac Gym Benchmark Environments](https://github.com/NVIDIA-Omniverse/IsaacGymEnvs) installed.
+Be sure you have [Isaac Gym Benchmark Environments](https://github.com/NVIDIA-Omniverse/IsaacGymEnvs) installed after Isaac Gym.
 
 ## Installation
 
