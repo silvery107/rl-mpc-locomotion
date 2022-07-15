@@ -104,12 +104,12 @@ Be sure you have [Isaac Gym Benchmark Environments](https://github.com/NVIDIA-Om
 
 https://user-images.githubusercontent.com/44640904/157265160-ffc0c7b1-ef05-48a6-ad8e-8d93ae7ccfc3.mp4
 
-<img src="images/trot_demo.gif" width=500>
-<img src="images/4_cheetah_trot.gif" width=500>
-<img src="images/aliengo_trot.gif" width=500>
-<img src="images/aliengo_train.png" width=500>
-<img src="images/aliengo_static.png" width=500>
+<img src="images/MPC_Sim2Real.gif" width=500>
+<img src="images/RL_Paraller_16.gif" width=500>
 
+<img src="images/trot_demo.gif" width=250>
+<img src="images/gallop_demo.gif" width=250>
+<img src="images/4_cheetah_trot.gif" width=500>
 
 ## Development Logs
 
