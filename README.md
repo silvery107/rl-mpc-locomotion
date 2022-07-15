@@ -70,6 +70,9 @@ Be sure you have [Isaac Gym Benchmark Environments](https://github.com/NVIDIA-Om
 
 ## Roadmaps
 - [x] **MPC Controller**
+<img src="images/MPC_block.png" width=700>
+
+
 - [Quadruped](MPC_Controller/common/Quadruped.py),
 - [RobotRunner](MPC_Controller/robot_runner/RobotRunnerFSM.py) ->
     - [LegController](MPC_Controller/common/LegController.py),
@@ -83,6 +86,9 @@ Be sure you have [Isaac Gym Benchmark Environments](https://github.com/NVIDIA-Om
                 - [MPC Solver in C](MPC_Controller/convex_MPC/mpc_osqp.cc)
 
 - [x] **RL Environment**
+
+<img src="images/training_data_flow.png" width=500>
+
 - [Gamepad Reader](RL_Environment/gamepad_reader.py),
 - [Simulation Utils](RL_Environment/sim_utils.py),
 - [Weight Policy](RL_Environment/WeightPolicy.py),
@@ -102,13 +108,9 @@ Be sure you have [Isaac Gym Benchmark Environments](https://github.com/NVIDIA-Om
 
 ## Gallery
 
-https://user-images.githubusercontent.com/44640904/157265160-ffc0c7b1-ef05-48a6-ad8e-8d93ae7ccfc3.mp4
-
 <img src="images/MPC_Sim2Real.gif" width=500>
+<img src="images/MPC_Stair_Demo.gif" width=500>
 <img src="images/RL_Paraller_16.gif" width=500>
-
-<img src="images/trot_demo.gif" width=250>
-<img src="images/gallop_demo.gif" width=250>
 <img src="images/4_cheetah_trot.gif" width=500>
 
 ## Development Logs
