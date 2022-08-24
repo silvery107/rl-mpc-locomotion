@@ -12,7 +12,7 @@ The RL training is carried out in the [NVDIA Isaac Gym](https://developer.nvidia
 
 ## Dependencies
 - [*PyTorch* - 1.8.1](https://pytorch.org/get-started/previous-versions/)
-- [*Isaac Gym* - Preview 3](https://developer.nvidia.com/isaac-gym)
+- [*Isaac Gym* - Preview 4](https://developer.nvidia.com/isaac-gym)
 - [*RL Games* - 1.1.3](https://github.com/Denys88/rl_games)
 <!-- - *OSQP* - 0.6.2 -->
 
