@@ -23,7 +23,7 @@ Be sure you have [Isaac Gym Benchmark Environments](https://github.com/NVIDIA-Om
 1. Clone this repository
     ```bash
     git clone https://github.com/silvery107/rl-mpc-locomotion.git
-    git submodule init
+    git submodule update --init
     ```
     Or use `--recurse` option to clone submodules at the same time.
 
