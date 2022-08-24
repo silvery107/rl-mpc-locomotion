@@ -16,8 +16,6 @@ The RL training is carried out in the [NVDIA Isaac Gym](https://developer.nvidia
 - [*RL Games* - 1.1.3](https://github.com/Denys88/rl_games)
 <!-- - *OSQP* - 0.6.2 -->
 
-Be sure you have [Isaac Gym Benchmark Environments](https://github.com/NVIDIA-Omniverse/IsaacGymEnvs) installed after Isaac Gym.
-
 ## Installation
 
 1. Clone this repository
@@ -51,6 +49,7 @@ Be sure you have [Isaac Gym Benchmark Environments](https://github.com/NVIDIA-Om
         > Press `RB` to switch FSM states between `Locomotion` and `Recovery Stand`
 
 2. Train a new policy:
+    Set `bridge_MPC_to_RL` to `True` in `<MPC_Controller/Parameters.py>`
     ```bash
     cd RL_Environment
     python train.py task=Aliengo headless=False
