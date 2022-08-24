@@ -12,10 +12,10 @@ dependencies:
   - scipy>=1.5.0
   - tensorboard>=2.2.1
   - osqp # conda install -c conda-forge osqp
-  - cvxopt # conda install -c conda-forge cvxopt
-  - mosek # conda install -c mosek mosek
   - pybind11 # conda install -c conda-forge pybind11
   - inputs # pip install inputs
   - rl_games == 1.1.3 # pip install rl_games==1.1.3
   - scipy # conda install scipy
+  # - cvxopt # conda install -c conda-forge cvxopt
+  # - mosek # conda install -c mosek mosek
   # - pybullet # pip3 install pybullet --user --upgrade
