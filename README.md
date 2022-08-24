@@ -40,7 +40,7 @@ Be sure you have [Isaac Gym Benchmark Environments](https://github.com/NVIDIA-Om
 ## Quick Start
 1. Play the MPC controller on Aliengo:
     ```bash
-    python RL_MPC_Locomotion --robot=Aliengo
+    python RL_MPC_Locomotion.py --robot=Aliengo
     ```
     All supported robot types are `Aliengo`, `A1` and `Mini_Cheetah`.
     Note that by default you need to plug in your Xbox-like gamepad to control it.
