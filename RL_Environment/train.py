@@ -36,8 +36,8 @@ import hydra
 from omegaconf import DictConfig, OmegaConf
 from hydra.utils import to_absolute_path
 
-from isaacgymenvs.utils.reformat import omegaconf_to_dict, print_dict
-from isaacgymenvs.utils.rlgames_utils import RLGPUEnv, RLGPUAlgoObserver, get_rlgames_env_creator
+from utils.reformat import omegaconf_to_dict, print_dict
+from utils.rlgames_utils import RLGPUEnv, RLGPUAlgoObserver, get_rlgames_env_creator
 
 from utils.utils import set_np_formatting, set_seed
 
