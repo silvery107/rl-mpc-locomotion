@@ -50,7 +50,7 @@ class Gamepad:
     self._gait_generator = itertools.cycle(ALLOWED_GAITS)
     self._gait = next(self._gait_generator)
     self._mode_generator = itertools.cycle(ALLOWED_MODES)
-    self._mode = Parameters.control_mode
+    self._mode = next(self._mode_generator)#Parameters.control_mode
 
     # Controller states
     self.vx, self.vy, self.wz = 0., 0., 0.

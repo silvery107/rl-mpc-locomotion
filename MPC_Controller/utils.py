@@ -21,12 +21,12 @@ class CoordinateAxis(Enum):
 
 class GaitType(Enum):
     TROT = 0
-    TROTRUN = 7
-    GALLOP = 5
+    # TROTRUN = 7
+    # GALLOP = 5
     WALK = 6
-    PACE = 3
+    # PACE = 3
     # PRONK = 2
-    # BOUND = 1
+    BOUND = 1
     # STAND = 4
 
 class FSM_StateName(Enum):

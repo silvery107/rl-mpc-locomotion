@@ -36,7 +36,7 @@ class Parameters:
         control_mode = FSM_StateName.LOCOMOTION
         operatingMode = FSM_OperatingMode.TEST
     else:
-        control_mode = FSM_StateName.PASSIVE # 0 passive, 4 locomotion, 6 recovery stand
+        control_mode = FSM_StateName.RECOVERY_STAND # 0 passive, 4 locomotion, 6 recovery stand
         operatingMode = FSM_OperatingMode.NORMAL # 0 no transition and safe check, 1 normal
     
     controller_dt = 0.01 # in sec
