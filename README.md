@@ -13,7 +13,7 @@ The RL training is carried out in the [NVDIA Isaac Gym](https://developer.nvidia
 ## Dependencies
 - [*PyTorch* - 1.8.1](https://pytorch.org/get-started/previous-versions/)
 - [*Isaac Gym* - Preview 4](https://developer.nvidia.com/isaac-gym)
-- [*RL Games* - 1.1.3](https://github.com/Denys88/rl_games)
+- [*RL Games* - 1.5.2](https://github.com/Denys88/rl_games)
 <!-- - *OSQP* - 0.6.2 -->
 
 ## Installation
@@ -67,7 +67,7 @@ The RL training is carried out in the [NVDIA Isaac Gym](https://developer.nvidia
 
 4. Run the trained weight-policy for MPC controller on Aliengo:
     ```bash
-    python RL_MPC_Locomotion --robot=Aliengo --mode=Policy
+    python RL_MPC_Locomotion.py --robot=Aliengo --mode=Policy
     ```
     By default the controller mode is `Fsm`, and you can also try `Min` for the minimum MPC controller (without FSM).
 
