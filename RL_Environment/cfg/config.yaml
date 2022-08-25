@@ -39,6 +39,11 @@ checkpoint: ''
 # set to True to use multi-gpu horovod training
 multi_gpu: False
 
+capture_video: False
+capture_video_freq: 1464
+capture_video_len: 100
+force_render: True
+
 # disables rendering
 headless: False
 
