@@ -183,7 +183,7 @@ class FSM_State_RecoveyrStand(FSM_State):
 
 
     def _StandUp(self, curr_iter:int):
-        body_height = self._data._stateEstimator.getResult().position[2]
+        body_height = self._data._quadruped._bodyHeight #self._data._stateEstimator.getResult().position[2]
         something_wrong = False
 
         if self._UpsideDown() or body_height<0.1:
