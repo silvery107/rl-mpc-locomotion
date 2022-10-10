@@ -423,7 +423,7 @@ def compute_robot_observations(root_states,
     # 
     # type: (Tensor, Tensor, Tensor, Tensor, Tensor, Tensor, Tensor, float, float, float, float) -> Tensor
     base_quat = root_states[:, 3:7]
-    base_pos = quat_rotate_inverse(base_quat, root_states[:, 0:3]) * lin_vel_scale
+    base_pos = root_states[:, 0:3]
     base_lin_vel = quat_rotate_inverse(base_quat, root_states[:, 7:10]) * lin_vel_scale
     base_ang_vel = quat_rotate_inverse(base_quat, root_states[:, 10:13]) * ang_vel_scale
     # projected_gravity = quat_rotate(base_quat, gravity_vec)
