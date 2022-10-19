@@ -1,5 +1,5 @@
 # RL MPC Locomotion
-This repo is aim to provide a fast simulation and RL training platform for quadrupad locomotion. The control framework is a hierarchical controller  composed of an higher-level policy network and a lower-level model predictive controller (MPC). 
+This repo is aim to provide a fast simulation and RL training framework for quadrupad locomotion. The control framework is a hierarchical controller  composed of an higher-level policy network and a lower-level model predictive controller (MPC). 
 
 The MPC controller refers to [Cheetah Software](https://github.com/mit-biomimetics/Cheetah-Software) but written in python, and it completely opens the interface between sensor data and motor commands, so that the controller can be easily ported to mainstream simulators like MuJoCo.
 
