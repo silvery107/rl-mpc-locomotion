@@ -3,8 +3,8 @@ import scipy
 from MPC_Controller.Parameters import Parameters
 from MPC_Controller.common.Quadruped import Quadruped
 from MPC_Controller.math_utils.moving_window_filter import MovingWindowFilter
-from MPC_Controller.utils import Quaternion, DTYPE
-from MPC_Controller.math_utils.orientation_tools import quat_to_rot, quat_to_rpy,rot_to_rpy, get_rot_from_normals, rpy_to_rot
+from MPC_Controller.utils import DTYPE
+from MPC_Controller.math_utils.orientation_tools import quat_to_rot, quat_to_rpy,rot_to_rpy, get_rot_from_normals, rpy_to_rot, Quaternion
 
 class StateEstimate:
     def __init__(self):
