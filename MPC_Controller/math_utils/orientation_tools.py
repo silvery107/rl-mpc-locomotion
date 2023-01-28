@@ -1,3 +1,10 @@
+"""
+Orientation tools for 3D in Python include conversions between Quaternion, rotation matrix and RPY angles.
+
+Author: Yulun Zhuang
+Date: Jan 28, 2023
+"""
+
 import math
 import numpy as np
 from math import sin, cos
