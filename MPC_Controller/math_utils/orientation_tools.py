@@ -70,7 +70,7 @@ def rpy_to_quat(rpy)->Quaternion:
 
 def get_rot_from_normals(world_normal, ground_normal):
     """
-    get rotation matrix from two plane normals
+    Get rotation matrix from two plane normals
     """
     axis = np.cross(world_normal, ground_normal)
     theta = np.arccos(world_normal.dot(ground_normal))
@@ -114,8 +114,8 @@ def coordinateRotation(axis:CoordinateAxis, theta:float) -> np.ndarray:
 
 def quat_to_rpy(q:Quaternion) -> np.ndarray:
     """
-    * Convert a quaternion to RPY. Return
-    * angles in (roll, pitch, yaw).
+    Convert a quaternion to RPY. Return
+    angles in (roll, pitch, yaw).
     """
     rpy = np.zeros((3,1), dtype=DTYPE)
     as_ = np.min([-2.*(q.x*q.z-q.w*q.y),.99999])
@@ -129,9 +129,9 @@ def quat_to_rpy(q:Quaternion) -> np.ndarray:
 
 def quat_to_rot(q:Quaternion) -> np.ndarray:
     """
-    * Convert a quaternion to a rotation matrix.  This matrix represents a
-    * coordinate transformation into the frame which has the orientation specified
-    * by the quaternion
+    Convert a quaternion to a rotation matrix.  This matrix represents a
+    coordinate transformation into the frame which has the orientation specified
+    by the quaternion
     """
     e0 = q.w
     e1 = q.x
@@ -147,7 +147,7 @@ def quat_to_rot(q:Quaternion) -> np.ndarray:
 
 def rpy_to_rot(rpy)->np.ndarray:
     """
-    convert RPY to a rotation matrix
+    Convert RPY to a rotation matrix
     """
     R = coordinateRotation(CoordinateAxis.X, rpy[0]) @\
         coordinateRotation(CoordinateAxis.Y, rpy[1]) @\
@@ -156,7 +156,7 @@ def rpy_to_rot(rpy)->np.ndarray:
 
 def rot_to_quat(rot:np.ndarray)->Quaternion:
     """
-    * Convert a coordinate transformation matrix to an orientation quaternion.
+    Convert a coordinate transformation matrix to an orientation quaternion.
     """
     q = Quaternion()
     r = rot.T.copy() # important
