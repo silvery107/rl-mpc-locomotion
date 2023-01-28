@@ -101,13 +101,16 @@ class Gamepad:
       self.wz = _interpolate(-event.state, MAX_ABS_VAL, self._vel_scale_rot)
     
     if self._estop_flagged and self._lj_pressed:
-      self._estop_flagged = False
       print("Estop Released.")
+      self._estop_flagged = False
+      self._mode_generator = itertools.cycle(ALLOWED_MODES)
+      self._mode = next(self._mode_generator)#Parameters.control_mode
 
     if self._lb_pressed and self._rb_pressed:
       print("EStop Flagged, press LEFT joystick to release.")
       self._estop_flagged = True
       self.vx, self.vy, self.wz = 0., 0., 0.
+      self._mode = FSM_StateName.RECOVERY_STAND
 
   def get_command(self):
     return (self.vx, self.vy, 0), self.wz, self._estop_flagged
