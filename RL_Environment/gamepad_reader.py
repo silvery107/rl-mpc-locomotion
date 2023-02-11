@@ -93,12 +93,12 @@ class Gamepad:
 
     elif event.ev_type == 'Absolute' and event.code == 'ABS_X':
       # Left Joystick L/R axis
-      self.vy = _interpolate(-event.state, MAX_ABS_VAL, self._vel_scale_y)
+      self.wz = _interpolate(-event.state, MAX_ABS_VAL, self._vel_scale_rot)
     elif event.ev_type == 'Absolute' and event.code == 'ABS_Y':
       # Left Joystick F/B axis; need to flip sign for consistency
       self.vx = _interpolate(-event.state, MAX_ABS_VAL, self._vel_scale_x)
     elif event.ev_type == 'Absolute' and event.code == 'ABS_RX':
-      self.wz = _interpolate(-event.state, MAX_ABS_VAL, self._vel_scale_rot)
+      self.vy = _interpolate(-event.state, MAX_ABS_VAL, self._vel_scale_y)
     
     if self._estop_flagged and self._lj_pressed:
       print("Estop Released.")
