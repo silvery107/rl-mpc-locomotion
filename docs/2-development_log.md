@@ -11,7 +11,7 @@
 ## True Dev Logs
 
 <details>
-  <summary>Dec 3, 2019 -- Jan 7, 2022</summary>
+  <summary>Dec 3, 2021 -- Jan 7, 2022</summary>
   <ul>
   <li> python模仿结构体必须放在__init__()里面, 否则无法实例化
   <li> class可以声明确定类型的值为None成员变量
