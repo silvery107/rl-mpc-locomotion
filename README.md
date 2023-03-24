@@ -102,7 +102,7 @@ The RL training is carried out in the [NVDIA Isaac Gym](https://developer.nvidia
 
 - [Setup a Simulation in Isaac Gym](docs/3-isaac_api_note.md)
 - [Install MIT Cheetah Software](docs/1-MIT_cheetah_installation.md)
-- [Upgrade Isaac Gym Preview 2 to Preview 3](docs/5-upgrade_isaac_gym.md)
+<!-- - [Upgrade Isaac Gym Preview 2 to Preview 3](docs/5-upgrade_isaac_gym.md) -->
 - [OSQP, qpOASES and CVXOPT Solver Instructions](docs/6-qp_solver.md)
 - [Development Logs](docs/2-development_log.md)
 
