@@ -35,12 +35,14 @@ class Parameters:
     if bridge_MPC_to_RL:
         control_mode = FSM_StateName.LOCOMOTION
         operatingMode = FSM_OperatingMode.TEST
+        FSM_check_safety = False
     else:
         control_mode = FSM_StateName.RECOVERY_STAND # 0 passive, 4 locomotion, 6 recovery stand
         operatingMode = FSM_OperatingMode.NORMAL # 0 no transition and safe check, 1 normal
+        FSM_check_safety = True
     
     controller_dt = 0.01 # in sec
 
     locomotionUnsafe = False # global indicator for switching contorl mode
-    FSM_check_safety = False
+    # FSM_check_safety = False
     FSM_print_info = False
