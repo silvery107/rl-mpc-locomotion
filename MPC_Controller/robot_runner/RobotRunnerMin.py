@@ -26,7 +26,10 @@ class RobotRunnerMin:
                 27/(1000.0*Parameters.controller_dt))
         elif self.robotType is RobotType.A1:
             self.cMPC = ConvexMPCLocomotion(Parameters.controller_dt,
-                29/(1000.0*Parameters.controller_dt))
+                27/(1000.0*Parameters.controller_dt))
+        elif self.robotType is RobotType.GO1:
+            self.cMPC = ConvexMPCLocomotion(Parameters.controller_dt,
+                27/(1000.0*Parameters.controller_dt))
         else:
             raise Exception("Invalid RobotType")
 

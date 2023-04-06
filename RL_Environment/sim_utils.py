@@ -7,6 +7,7 @@ MINI_CHEETAH = "mini_cheetah/mini_cheetah.urdf"
 ALIENGO = "aliengo_description/xacro/aliengo.urdf"
 A1 = "a1_description/a1.urdf"
 ANYMAL = "anymal_c/urdf/anymal.urdf"
+GO1 = "go1_description/go1.urdf"
 
 FOOT_IDX = [4, 8, 12, 16]
 
@@ -49,6 +50,8 @@ def load_asset(gym, sim, robot, fix_base_link):
         asset_file = MINI_CHEETAH
     elif robot is RobotType.A1:
         asset_file = A1
+    elif robot is RobotType.GO1:
+        asset_file = GO1
     elif robot is RobotType.ANYMAL:
         asset_file = ANYMAL
     else:

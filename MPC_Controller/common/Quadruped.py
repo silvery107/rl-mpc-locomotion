@@ -6,8 +6,9 @@ from MPC_Controller.utils import DTYPE
 class RobotType(Enum):
     ALIENGO = auto()
     MINI_CHEETAH = auto()
-    ANYMAL = auto()
+    # ANYMAL = auto()
     A1 = auto()
+    GO1 = auto()
 
 class Quadruped:
 
@@ -34,6 +35,26 @@ class Quadruped:
                                  0.0]
             # self._mpc_weights = [0.25, 0.25, 10, 2, 2, 50, 0, 0, 0.3, 0.2, 0.2, 0.1, 0]
             # self._mpc_weights = [1., 1., 0, 0, 0, 10, 0., 0., .1, .1, .1, .0, 0]
+
+        elif robotype is RobotType.GO1:
+            self._abadLinkLength = 0.04
+            self._hipLinkLength = 0.213
+            self._kneeLinkLength = 0.213
+            self._kneeLinkY_offset = 0.0
+            self._abadLocation = np.array([0.1881, 0.04675, 0], dtype=DTYPE).reshape((3,1))
+            self._bodyName = "trunk"
+            self._bodyMass = 5.204 * 2
+            self._bodyInertia = np.array([0.0168128557, 0, 0, 
+                                      0, 0.063009565, 0, 
+                                      0, 0, 0.0716547275]) * 5
+            self._bodyHeight = 0.26
+            self._friction_coeffs = np.ones(4, dtype=DTYPE) * 0.4
+            # (roll_pitch_yaw, position, angular_velocity, velocity, gravity_place_holder)
+            self._mpc_weights = [1.0, 1.5, 0.0,
+                                 0.0, 0.0, 50,
+                                 0.0, 0.0, 0.1,
+                                 1.0, 1.0, 0.1,
+                                 0.0]
 
         elif robotype is RobotType.A1:
             self._abadLinkLength = 0.04
