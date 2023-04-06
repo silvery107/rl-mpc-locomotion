@@ -568,13 +568,13 @@
       <inertia ixx="5.9647e-05" ixy="0.0" ixz="0.0" iyy="0.000111842" iyz="0.0" izz="5.9647e-05"/>
     </inertial>
   </link>
-  <joint name="FR_calf_joint" type="continuous">
+  <joint name="FR_calf_joint" type="revolute">
     <origin rpy="0 0 0" xyz="0 0 -0.213"/>
     <parent link="FR_thigh"/>
     <child link="FR_calf"/>
     <axis xyz="0 -1 0"/>
     <dynamics damping="0.0" friction="0.0"/>
-    <limit effort="35.55" lower="-2.818" upper="-0.888" velocity="20.06"/>
+    <limit effort="35.55" lower="0.888" upper="2.818" velocity="20.06"/>
   </joint>
   <joint name="FR_calf_rotor_joint" type="fixed">
     <origin rpy="0 0 0" xyz="0.0 0.03235 0"/>
@@ -781,13 +781,13 @@
       <inertia ixx="5.9647e-05" ixy="0.0" ixz="0.0" iyy="0.000111842" iyz="0.0" izz="5.9647e-05"/>
     </inertial>
   </link>
-  <joint name="FL_calf_joint" type="continuous">
+  <joint name="FL_calf_joint" type="revolute">
     <origin rpy="0 0 0" xyz="0 0 -0.213"/>
     <parent link="FL_thigh"/>
     <child link="FL_calf"/>
     <axis xyz="0 -1 0"/>
     <dynamics damping="0.0" friction="0.0"/>
-    <limit effort="35.55" lower="-2.818" upper="-0.888" velocity="20.06"/>
+    <limit effort="35.55" lower="0.888" upper="2.818" velocity="20.06"/>
   </joint>
   <joint name="FL_calf_rotor_joint" type="fixed">
     <origin rpy="0 0 0" xyz="0.0 -0.03235 0"/>
@@ -994,13 +994,13 @@
       <inertia ixx="5.9647e-05" ixy="0.0" ixz="0.0" iyy="0.000111842" iyz="0.0" izz="5.9647e-05"/>
     </inertial>
   </link>
-  <joint name="RR_calf_joint" type="continuous">
+  <joint name="RR_calf_joint" type="revolute">
     <origin rpy="0 0 0" xyz="0 0 -0.213"/>
     <parent link="RR_thigh"/>
     <child link="RR_calf"/>
     <axis xyz="0 -1 0"/>
     <dynamics damping="0.0" friction="0.0"/>
-    <limit effort="35.55" lower="-2.818" upper="-0.888" velocity="20.06"/>
+    <limit effort="35.55" lower="0.888" upper="2.818" velocity="20.06"/>
   </joint>
   <joint name="RR_calf_rotor_joint" type="fixed">
     <origin rpy="0 0 0" xyz="0.0 0.03235 0"/>
@@ -1207,13 +1207,13 @@
       <inertia ixx="5.9647e-05" ixy="0.0" ixz="0.0" iyy="0.000111842" iyz="0.0" izz="5.9647e-05"/>
     </inertial>
   </link>
-  <joint name="RL_calf_joint" type="continuous">
+  <joint name="RL_calf_joint" type="revolute">
     <origin rpy="0 0 0" xyz="0 0 -0.213"/>
     <parent link="RL_thigh"/>
     <child link="RL_calf"/>
     <axis xyz="0 -1 0"/>
     <dynamics damping="0.0" friction="0.0"/>
-    <limit effort="35.55" lower="-2.818" upper="-0.888" velocity="20.06"/>
+    <limit effort="35.55" lower="0.888" upper="2.818" velocity="20.06"/>
   </joint>
   <joint name="RL_calf_rotor_joint" type="fixed">
     <origin rpy="0 0 0" xyz="0.0 -0.03235 0"/>
