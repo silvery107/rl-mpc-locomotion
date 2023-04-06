@@ -40,11 +40,11 @@ The RL training is carried out in the [NVDIA Isaac Gym](https://developer.nvidia
     ```bash
     python RL_MPC_Locomotion.py --robot=Aliengo
     ```
-    All supported robot types are `Aliengo`, `A1` and `Mini_Cheetah`.
+    All supported robot types are `GO1`, `A1`, `Aliengo` and `Mini_Cheetah`.
     Note that by default you need to plug in your Xbox-like gamepad to control it.
 
     - Gamepad keymap
-        > Press `LB` to switch gait types between `Trot`, `Fly Tort`, `Gallop`, `Walk` and `Pace`.
+        > Press `LB` to switch gait types between `Trot`, `Walk` and `Bound`.
 
         > Press `RB` to switch FSM states between `Locomotion` and `Recovery Stand`
 
