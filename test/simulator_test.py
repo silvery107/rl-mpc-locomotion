@@ -30,6 +30,7 @@ env_spacing = 1.0
 # one actor per env 
 envs, actors = create_envs(gym, sim, robot, num_envs, envs_per_row, env_spacing)
 # force_sensors = add_force_sensor(gym, num_envs, envs, actor_handles)
+# force_sensors = get_force_sensor(gym, envs, actors)
 # cam_pos = gymapi.Vec3(-0.1, 0, 1.5) # w.r.t target env
 cam_pos = gymapi.Vec3(1,1,1) # w.r.t target env
 viewer = add_viewer(gym, sim, envs[0], cam_pos)
@@ -73,7 +74,10 @@ while not gym.query_viewer_has_closed(viewer):
                         0, -0.8, 1.6],
                         dtype=np.float32)
     gym.set_actor_dof_position_targets(envs[0], actors[0], targets)
-
+    # force_data = force_sensors[0].get_forces()
+    
+    # print(force_data.force)   # force as Vec3
+    # print(force_data.torque)  # torque as Vec3
 
     # update the viewer
     gym.step_graphics(sim)
