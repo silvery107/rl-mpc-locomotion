@@ -31,6 +31,7 @@
 from tasks.anymal import Anymal
 from tasks.aliengo import Aliengo
 from tasks.anymal_terrain import AnymalTerrain
+from tasks.go1 import Go1
 # from tasks.ball_balance import BallBalance
 # from tasks.cartpole import Cartpole 
 # from tasks.humanoid import Humanoid
@@ -41,6 +42,7 @@ isaacgym_task_map = {
     "Anymal": Anymal,
     "Aliengo":Aliengo,
     "AnymalTerrain": AnymalTerrain,
+    "Go1":Go1,
     # "BallBalance": BallBalance,
     # "Cartpole": Cartpole,
     # "Humanoid": Humanoid,
