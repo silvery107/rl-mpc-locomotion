@@ -13,9 +13,12 @@ dependencies:
   - tensorboard>=2.2.1
   - osqp # conda install -c conda-forge osqp
   - pybind11 # conda install -c conda-forge pybind11
-  - inputs # pip install inputs
-  - rl_games == 1.5.2 # pip install rl_games==1.5.2
   - scipy # conda install scipy
+  - omegaconf # conda install -c conda-forge omegaconf
   # - cvxopt # conda install -c conda-forge cvxopt
   # - mosek # conda install -c mosek mosek
-  # - pybullet # pip3 install pybullet --user --upgrade
+  # - pybullet # conda install -c conda-forge pybullet
+  - pip:
+    - rl_games == 1.5.2
+    - inputs
+    - hydra-core
