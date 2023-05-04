@@ -42,9 +42,10 @@ class RobotRunnerPolicy:
 
         # init weight policy
         self._weightPolicy = WeightPolicy(checkpoint="RL_Environment/runs/Aliengo/nn/Aliengo.pth")
-        weights = self._quadruped._mpc_weights
-        weights.pop() # keep weights shape (12,)
-        self.weights = np.asarray(weights, dtype=DTYPE)
+        weights = self._quadruped._mpc_weights[:-1] # keep weights shape (12,)
+        # weights.pop() # keep weights shape (12,)
+        # self.weights = np.asarray(weights, dtype=DTYPE)
+        self.weights = weights
 
         # Controller initializations
         self._controlFSM = ControlFSM(self._quadruped, 

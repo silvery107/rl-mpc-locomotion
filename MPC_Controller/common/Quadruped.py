@@ -24,15 +24,15 @@ class Quadruped:
             self._bodyMass = 9.041 * 2
             self._bodyInertia = np.array([0.033260231, 0, 0, 
                                       0, 0.16117211, 0, 
-                                      0, 0, 0.17460442]) * 5
-            self._bodyHeight = 0.4
+                                      0, 0, 0.17460442])
+            self._bodyHeight = 0.35
             self._friction_coeffs = np.ones(4, dtype=DTYPE) * 0.4
             # (roll_pitch_yaw, position, angular_velocity, velocity, gravity_place_holder)
-            self._mpc_weights = [1.0, 1.5, 0.0,
+            self._mpc_weights = np.array([1.0, 1.5, 0.0,
                                  0.0, 0.0, 50,
                                  0.0, 0.0, 0.1,
                                  1.0, 1.0, 0.1,
-                                 0.0]
+                                 0.0], dtype=DTYPE)
             # self._mpc_weights = [0.25, 0.25, 10, 2, 2, 50, 0, 0, 0.3, 0.2, 0.2, 0.1, 0]
             # self._mpc_weights = [1., 1., 0, 0, 0, 10, 0., 0., .1, .1, .1, .0, 0]
 
@@ -50,11 +50,11 @@ class Quadruped:
             self._bodyHeight = 0.26
             self._friction_coeffs = np.ones(4, dtype=DTYPE) * 0.4
             # (roll_pitch_yaw, position, angular_velocity, velocity, gravity_place_holder)
-            self._mpc_weights = [1.0, 1.5, 0.0,
+            self._mpc_weights = np.array([1.0, 1.5, 0.0,
                                  0.0, 0.0, 50,
                                  0.0, 0.0, 0.1,
                                  1.0, 1.0, 0.1,
-                                 0.0]
+                                 0.0], dtype=DTYPE) * 10
 
         elif robotype is RobotType.A1:
             self._abadLinkLength = 0.04
@@ -71,7 +71,7 @@ class Quadruped:
             self._friction_coeffs = np.ones(4, dtype=DTYPE) * 0.4
             # (roll_pitch_yaw, position, angular_velocity, velocity, gravity_place_holder)
             # self._mpc_weights = [1., 1., 0, 0, 0, 20, 0., 0., .1, .1, .1, .0, 0]
-            self._mpc_weights = [0.25, 0.25, 10, 2, 2, 50, 0, 0, 0.3, 0.5, 0.5, 0.1, 0]
+            self._mpc_weights = np.array([0.25, 0.25, 10, 2, 2, 50, 0, 0, 0.3, 0.5, 0.5, 0.1, 0], dtype=DTYPE)
 
         elif robotype is RobotType.MINI_CHEETAH:
             self._abadLinkLength = 0.062
@@ -87,7 +87,7 @@ class Quadruped:
             self._bodyHeight = 0.29
             self._friction_coeffs = np.ones(4, dtype=DTYPE) * 0.4
             # (roll_pitch_yaw, position, angular_velocity, velocity, gravity_place_holder)
-            self._mpc_weights = [0.25, 0.25, 10, 2, 2, 50, 0, 0, 0.3, 0.2, 0.2, 0.1, 0]
+            self._mpc_weights = np.array([0.25, 0.25, 10, 2, 2, 50, 0, 0, 0.3, 0.2, 0.2, 0.1, 0], dtype=DTYPE)
         
         else:
             raise Exception("Invalid RobotType")

@@ -72,7 +72,7 @@ class WeightPolicy:
         obs_shape = (self.num_obs,)
 
         # use model directly
-        checkpoint = torch_ext.load_checkpoint(load_path)
+        state_dict_ckpt = torch_ext.load_checkpoint(load_path)
         # load model
         self.model = config['network'].build({
                 'actions_num' : self.num_actions,
@@ -80,12 +80,12 @@ class WeightPolicy:
                 'num_seqs' : num_agents
             })
         self.model.to(self.device)
+        self.model.load_state_dict(state_dict_ckpt['model'])
         self.model.eval()
-        self.model.load_state_dict(checkpoint['model'])
         # load obs normalizer
         self.running_mean_std = RunningMeanStd(obs_shape).to(self.device)
+        self.running_mean_std.load_state_dict(state_dict_ckpt['running_mean_std'])
         self.running_mean_std.eval()
-        self.running_mean_std.load_state_dict(checkpoint['running_mean_std'])
 
         self.num_agents = num_agents
         self.obs = torch.ones([self.num_agents, self.num_obs], requires_grad=False, dtype=torch.float, device=self.device)
@@ -159,7 +159,8 @@ class WeightPolicy:
                 obs_batch = obs_batch.float() / 255.0
                 
         # normalize obs
-        obs_batch = self.running_mean_std(obs_batch)
+        with torch.no_grad():
+            obs_batch = self.running_mean_std(obs_batch)
         return obs_batch
 
     def _rescale_actions(self, low, high, action):

@@ -2,7 +2,7 @@ import numpy as np
 from enum import Enum, auto
 
 # Constants
-DTYPE = np.float16
+DTYPE = np.float32
 CASTING = "same_kind"
 SIDE_SIGN = [1, -1, 1, -1]
 K_MAX_GAIT_SEGMENTS = 40
