@@ -40,7 +40,7 @@ The RL training is carried out in the [NVDIA Isaac Gym](https://developer.nvidia
     ```bash
     python RL_MPC_Locomotion.py --robot=Aliengo
     ```
-    All supported robot types are `GO1`, `A1`, `Aliengo` and `Mini_Cheetah`.
+    All supported robot types are `GO1`, `A1` and `Aliengo`.
     Note that by default you need to plug in your Xbox-like gamepad to control it.
 
     - Gamepad keymap

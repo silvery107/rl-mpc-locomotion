@@ -19,13 +19,13 @@ class FootSwingTrajectory:
         """
         Set the starting location of the foot
         """
-        self._p0 = p0
+        self._p0 = p0.copy()
     
     def setFinalPosition(self, pf:np.ndarray):
         """
         Set the desired final position of the foot
         """
-        self._pf = pf
+        self._pf = pf.copy()
 
     def setHeight(self, h:float):
         """

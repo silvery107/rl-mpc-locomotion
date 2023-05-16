@@ -18,20 +18,8 @@ class RobotRunnerMin:
         """
         self.robotType = robotType
 
-        if self.robotType is RobotType.MINI_CHEETAH:
-            self.cMPC = ConvexMPCLocomotion(Parameters.controller_dt,
+        self.cMPC = ConvexMPCLocomotion(Parameters.controller_dt,
                 27/(1000.0*Parameters.controller_dt))
-        elif self.robotType is RobotType.ALIENGO:
-            self.cMPC = ConvexMPCLocomotion(Parameters.controller_dt,
-                27/(1000.0*Parameters.controller_dt))
-        elif self.robotType is RobotType.A1:
-            self.cMPC = ConvexMPCLocomotion(Parameters.controller_dt,
-                27/(1000.0*Parameters.controller_dt))
-        elif self.robotType is RobotType.GO1:
-            self.cMPC = ConvexMPCLocomotion(Parameters.controller_dt,
-                27/(1000.0*Parameters.controller_dt))
-        else:
-            raise Exception("Invalid RobotType")
 
         # init quadruped
         if self.robotType in RobotType:

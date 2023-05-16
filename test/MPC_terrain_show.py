@@ -25,15 +25,16 @@ add_terrain(gym, sim, "stair", 3.95, True)
 
 robots = [RobotType.ALIENGO, RobotType.ALIENGO,
           RobotType.A1, RobotType.A1,
-          RobotType.MINI_CHEETAH, RobotType.MINI_CHEETAH]
+          RobotType.GO1, RobotType.GO1]
 
-mini_cheetah = load_asset(gym, sim, RobotType.MINI_CHEETAH, False)
+# mini_cheetah = load_asset(gym, sim, RobotType.MINI_CHEETAH, False)
 a1 = load_asset(gym, sim, RobotType.A1, False)
 aliengo = load_asset(gym, sim, RobotType.ALIENGO, False)
+go1 = load_asset(gym, sim, RobotType.GO1, False)
 
 assets = [aliengo, aliengo,
           a1, a1,
-          mini_cheetah, mini_cheetah]
+          go1, go1]
 
 
 # set up the env grid

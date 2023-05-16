@@ -17,21 +17,8 @@ class FSM_State_Locomotion(FSM_State):
     def __init__(self, _controlFSMData:ControlFSMData):
         super().__init__(_controlFSMData, FSM_StateName.LOCOMOTION, "LOCOMOTION")
 
-        if _controlFSMData._quadruped._robotType is RobotType.MINI_CHEETAH:
-            self.cMPC = ConvexMPCLocomotion(Parameters.controller_dt,
+        self.cMPC = ConvexMPCLocomotion(Parameters.controller_dt,
                 27/(1000.0*Parameters.controller_dt))
-        elif _controlFSMData._quadruped._robotType is RobotType.ALIENGO:
-            self.cMPC = ConvexMPCLocomotion(Parameters.controller_dt,
-                27/(1000.0*Parameters.controller_dt))
-        elif _controlFSMData._quadruped._robotType is RobotType.A1:
-            self.cMPC = ConvexMPCLocomotion(Parameters.controller_dt,
-                27/(1000.0*Parameters.controller_dt))
-        elif _controlFSMData._quadruped._robotType is RobotType.GO1:
-            self.cMPC = ConvexMPCLocomotion(Parameters.controller_dt,
-                27/(1000.0*Parameters.controller_dt))
-        else:
-            raise Exception("Invalid RobotType")
-        
         self.turnOnAllSafetyChecks()
 
         # Turn off Foot pos command since it is set in WBC as operational task

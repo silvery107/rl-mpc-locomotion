@@ -18,7 +18,7 @@ try:
     import mpc_osqp as mpc
 except:
     print("You need to install 'rl-mpc-locomotion'")
-    print("Run 'pip install .' in this repo")
+    print("Run 'pip install -e .' in this repo")
     sys.exit()
 
 class ConvexMPCLocomotion:
@@ -63,9 +63,7 @@ class ConvexMPCLocomotion:
         self.firstRun = True
         self.iterationCounter = 0
         self.pFoot = np.zeros((4,3,1), dtype=DTYPE)
-        # self.pFoot = [np.zeros((3,1), dtype=DTYPE) for _ in range(4)]
         self.f_ff = np.zeros((4,3,1), dtype=DTYPE)
-        # self.f_ff = [np.zeros((3,1), dtype=DTYPE) for _ in range(4)]
 
         self.foot_positions = np.zeros((4,3,1), dtype=DTYPE)
 
@@ -81,10 +79,10 @@ class ConvexMPCLocomotion:
         self.swingTimes = np.zeros((4,1), dtype=DTYPE)
         self.swingTimeRemaining = [0.0 for _ in range(4)]
 
-        self.Kp:np.ndarray = None
-        self.Kp_stance:np.ndarray = None
-        self.Kd:np.ndarray = None
-        self.Kd_stance:np.ndarray = None
+        self.Kp = np.array([700, 0, 0, 0, 700, 0, 0, 0, 150], dtype=DTYPE).reshape((3,3))
+        self.Kd = np.array([7, 0, 0, 0, 7, 0, 0, 0, 7], dtype=DTYPE).reshape((3,3))
+        self.Kp_stance = np.zeros_like(self.Kp)
+        self.Kd_stance = self.Kd
 
         self.logger = Logger("logs/")
  
@@ -124,15 +122,12 @@ class ConvexMPCLocomotion:
         self._body_height = data._quadruped._bodyHeight
         self._x_vel_des = data._desiredStateCommand.x_vel_cmd
         self._y_vel_des = data._desiredStateCommand.y_vel_cmd
-        if data._quadruped._robotType is RobotType.MINI_CHEETAH:
-            self._y_vel_des -= 0.125
 
-        # self._yaw_turn_rate = DesiredStateCommand.yaw_turn_rate
         self._yaw_turn_rate = data._desiredStateCommand.yaw_turn_rate
 
     def solveDenseMPC(self, mpcTable:list, data:ControlFSMData):
         seResult = data._stateEstimator.getResult()
-        # self.dtMPC = self.dt*self.iterationsBetweenMPC
+        
         # *MPC Weights
         if data._desiredStateCommand.mpc_weights is None:
             mpc_weight = data._quadruped._mpc_weights
@@ -188,35 +183,35 @@ class ConvexMPCLocomotion:
             desired_com_roll_pitch_yaw,  # desired_com_roll_pitch_yaw
             desired_com_angular_velocity  # desired_com_angular_velocity
             )
-        
-        mpc_state_loss = (com_roll_pitch_yaw - desired_com_roll_pitch_yaw).dot(mpc_weight[0:3]) + \
-                        (com_position - desired_com_position).dot(mpc_weight[3:6]) + \
-                        (com_angular_velocity - desired_com_velocity).dot(mpc_weight[6:9]) + \
-                        (com_velocity - desired_com_velocity).dot(mpc_weight[9:12])
-                    
-        mpc_torque_loss = Parameters.cmpc_alpha * np.sum(predicted_contact_forces[:12])
-
         for leg in range(4):
             self.f_ff[leg] = np.array(predicted_contact_forces[leg*3: (leg+1)*3],dtype=DTYPE).reshape((3,1))
 
         if Parameters.cmpc_print_update_time:
             print("MPC Update Time %.3f s\n"%(time.time()-timer))
-
-        log_data_frame = dict(
-            COM_RPY = com_roll_pitch_yaw, # COM_RPY
-            COM_POS = com_position, # COM_POS
-            COM_ANG = com_angular_velocity, # COM_ANG
-            COM_VEL = com_velocity, # COM_VEL
-            DES_RPY = desired_com_roll_pitch_yaw, # DES_RPY
-            DES_POS = desired_com_position, # DES_POS
-            DES_ANG = desired_com_angular_velocity, # DES_ANG
-            DES_VEL = desired_com_velocity, # DES_VEL
-            MPC_GRF = predicted_contact_forces[:12], # MPC_GRF
-            MPC_LOS = mpc_state_loss+mpc_torque_loss, # MPC_LOS
-            MPC_WEI = mpc_weight, # MPC_WEI
-            TIM_STA = self.iterationCounter # TIM_STA
-        )
+        
         if Parameters.cmpc_enable_log:
+            mpc_state_loss = (com_roll_pitch_yaw - desired_com_roll_pitch_yaw).dot(mpc_weight[0:3]) + \
+                            (com_position - desired_com_position).dot(mpc_weight[3:6]) + \
+                            (com_angular_velocity - desired_com_velocity).dot(mpc_weight[6:9]) + \
+                            (com_velocity - desired_com_velocity).dot(mpc_weight[9:12])
+                        
+            mpc_torque_loss = Parameters.cmpc_alpha * np.sum(predicted_contact_forces[:12])
+
+
+            log_data_frame = dict(
+                COM_RPY = com_roll_pitch_yaw, # COM_RPY
+                COM_POS = com_position, # COM_POS
+                COM_ANG = com_angular_velocity, # COM_ANG
+                COM_VEL = com_velocity, # COM_VEL
+                DES_RPY = desired_com_roll_pitch_yaw, # DES_RPY
+                DES_POS = desired_com_position, # DES_POS
+                DES_ANG = desired_com_angular_velocity, # DES_ANG
+                DES_VEL = desired_com_velocity, # DES_VEL
+                MPC_GRF = predicted_contact_forces[:12], # MPC_GRF
+                MPC_LOS = mpc_state_loss+mpc_torque_loss, # MPC_LOS
+                MPC_WEI = mpc_weight, # MPC_WEI
+                TIM_STA = self.iterationCounter # TIM_STA
+            )
             self.logger.update_logging(log_data_frame)
 
     def updateMPCIfNeeded(self, mpcTable:list, data:ControlFSMData):
@@ -291,7 +286,7 @@ class ConvexMPCLocomotion:
             # self.footSwingTrajectories[i].setHeight(0.2)
             self.footSwingTrajectories[i].setHeight(self._body_height/3)
             
-            offset = np.array([0, getSideSign(i)*0.065, 0], dtype=DTYPE).reshape((3,1))
+            offset = np.array([0, getSideSign(i)*data._quadruped._abadLinkLength, 0], dtype=DTYPE).reshape((3,1))
             pRobotFrame = data._quadruped.getHipLocation(i) + offset
             # pRobotFrame[1] += interleave_y[i] * v_abs * interleave_gain
             stance_time = gait.getCurrentStanceTime(self.dtMPC, i)
@@ -317,12 +312,6 @@ class ConvexMPCLocomotion:
 
         # calc gait
         self.iterationCounter += 1
-
-        self.Kp = np.array([700, 0, 0, 0, 700, 0, 0, 0, 150], dtype=DTYPE).reshape((3,3))
-        self.Kp_stance = np.zeros_like(self.Kp)
-
-        self.Kd = np.array([7, 0, 0, 0, 7, 0, 0, 0, 7], dtype=DTYPE).reshape((3,3))
-        self.Kd_stance = self.Kd
 
         # gait
         contactStates = gait.getContactState()
