@@ -79,7 +79,7 @@ The RL training is carried out in the [NVDIA Isaac Gym](https://developer.nvidia
 - [Quadruped](MPC_Controller/common/Quadruped.py),
 - [RobotRunner](MPC_Controller/robot_runner/RobotRunnerFSM.py) ->
     - [LegController](MPC_Controller/common/LegController.py),
-    - [StateEstimator](MPC_Controller/StateEstimator.py),
+    - [StateEstimator](MPC_Controller/common/StateEstimator.py),
     - [ControlFSM](MPC_Controller/FSM_states/ControlFSM.py) ->
         - [FSM State RecoveryStand](MPC_Controller/FSM_states/FSM_State_RecoveryStand.py),
         - [FSM State Locomotion](MPC_Controller/FSM_states/FSM_State_Locomotion.py) ->
@@ -102,7 +102,6 @@ The RL training is carried out in the [NVDIA Isaac Gym](https://developer.nvidia
 
 - [Setup a Simulation in Isaac Gym](docs/3-isaac_api_note.md)
 - [Install MIT Cheetah Software](docs/1-MIT_cheetah_installation.md)
-<!-- - [Upgrade Isaac Gym Preview 2 to Preview 3](docs/5-upgrade_isaac_gym.md) -->
 - [OSQP, qpOASES and CVXOPT Solver Instructions](docs/6-qp_solver.md)
 - [Development Logs](docs/2-development_log.md)
 
