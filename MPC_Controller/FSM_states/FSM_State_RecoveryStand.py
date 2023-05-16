@@ -33,30 +33,30 @@ class FSM_State_RecoveyrStand(FSM_State):
         # * test passed
         self.fold_ramp_iter = int(45 / (Parameters.controller_dt*100))
         self.fold_settle_iter = int(75 / (Parameters.controller_dt*100))
-        self.fold_jpos = np.array([0.0, -1.4, 2.7,
-                                   -0.0, -1.4, 2.7,
-                                   0.0, -1.4, 2.7,
-                                   -0.0, -1.4, 2.7],
+        self.fold_jpos = np.array([0.0, 1.4, -2.7,
+                                   -0.0, 1.4, -2.7,
+                                   0.0, 1.4, -2.7,
+                                   -0.0, 1.4, -2.7],
                                    dtype=DTYPE).reshape((4,3,1))
 
         # Stand Up 
         # * test passed
         self.standup_ramp_iter = int(30 / (Parameters.controller_dt*100))
         self.standup_settle_iter = int(30 / (Parameters.controller_dt*100))
-        self.stand_jpos = np.array([0., -.8, 1.6,
-                                    0., -.8, 1.6,
-                                    0., -.8, 1.6,
-                                    0., -.8, 1.6],
+        self.stand_jpos = np.array([0., 0.8, -1.6,
+                                    0., 0.8, -1.6,
+                                    0., 0.8, -1.6,
+                                    0., 0.8, -1.6],
                                     dtype=DTYPE).reshape((4,3,1))
 
         # Rolling
         # * test passed
         self.rollover_ramp_iter = int(13 / (Parameters.controller_dt*100))
         self.rollover_settle_iter = int(15 / (Parameters.controller_dt*100))
-        self.rolling_jpos = np.array([1.3, -3.1, 2.77,
-                                      0.0, -1.6, 2.77,
-                                      1.3, -3.1, 2.77,
-                                      0.0, -1.6, 2.77],
+        self.rolling_jpos = np.array([1.3, 3.1, -2.77,
+                                      0.0, 1.6, -2.77,
+                                      1.3, 3.1, -2.77,
+                                      0.0, 1.6, -2.77],
                                      dtype=DTYPE).reshape((4,3,1))
 
         self.initial_jpos = np.zeros((4,3,1), dtype=DTYPE)

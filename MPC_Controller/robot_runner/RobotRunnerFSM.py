@@ -1,8 +1,8 @@
-from MPC_Controller.DesiredStateCommand import DesiredStateCommand
+from MPC_Controller.common.DesiredStateCommand import DesiredStateCommand
 from MPC_Controller.FSM_states.ControlFSM import ControlFSM
 from MPC_Controller.common.Quadruped import Quadruped, RobotType
 from MPC_Controller.common.LegController import LegController
-from MPC_Controller.StateEstimator import StateEstimator
+from MPC_Controller.common.StateEstimator import StateEstimator
 
 class RobotRunnerFSM:
     def __init__(self):

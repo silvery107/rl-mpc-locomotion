@@ -6,7 +6,7 @@ parentdir = os.path.dirname(currentdir)
 os.sys.path.insert(0, parentdir)
 
 from MPC_Controller.utils import DTYPE
-from MPC_Controller.DesiredStateCommand import DesiredStateCommand
+from MPC_Controller.common.DesiredStateCommand import DesiredStateCommand
 from MPC_Controller.Parameters import Parameters
 from MPC_Controller.robot_runner.RobotRunnerFSM import RobotRunnerFSM
 from MPC_Controller.common.Quadruped import RobotType

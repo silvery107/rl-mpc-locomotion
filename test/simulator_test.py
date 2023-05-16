@@ -9,8 +9,8 @@ os.sys.path.insert(0, parentdir)
 from MPC_Controller.robot_runner.RobotRunnerFSM import RobotRunnerFSM
 from MPC_Controller.common.Quadruped import Quadruped, RobotType
 from MPC_Controller.common.LegController import LegController
-from MPC_Controller.StateEstimator import StateEstimator
-from MPC_Controller.DesiredStateCommand import DesiredStateCommand
+from MPC_Controller.common.StateEstimator import StateEstimator
+from MPC_Controller.common.DesiredStateCommand import DesiredStateCommand
 from MPC_Controller.Parameters import Parameters
 
 from isaacgym import gymapi
@@ -68,10 +68,10 @@ while not gym.query_viewer_has_closed(viewer):
     #                     -0.03, -0.4, 0.8],
     #                     dtype=np.float32)
     # *Aliengo Stand Pose
-    targets = np.array([0, -0.8, 1.6,
-                        0, -0.8, 1.6,
-                        0, -0.8, 1.6,
-                        0, -0.8, 1.6],
+    targets = np.array([0, 0.8, -1.6,
+                        0, 0.8, -1.6,
+                        0, 0.8, -1.6,
+                        0, 0.8, -1.6],
                         dtype=np.float32)
     gym.set_actor_dof_position_targets(envs[0], actors[0], targets)
     # force_data = force_sensors[0].get_forces()

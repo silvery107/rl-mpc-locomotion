@@ -13,7 +13,7 @@ from hydra import compose, initialize
 from hydra.utils import to_absolute_path
 from MPC_Controller.Parameters import Parameters
 from MPC_Controller.utils import DTYPE
-from MPC_Controller.StateEstimator import StateEstimate
+from MPC_Controller.common.StateEstimator import StateEstimate
 
 from RL_Environment.utils.reformat import omegaconf_to_dict, print_dict
 

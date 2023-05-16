@@ -1,5 +1,6 @@
 import numpy as np
-import scipy
+from scipy import linalg
+
 from MPC_Controller.Parameters import Parameters
 from MPC_Controller.common.Quadruped import Quadruped
 from MPC_Controller.math_utils.moving_window_filter import MovingWindowFilter
@@ -126,7 +127,7 @@ class StateEstimator:
         self._update_contact_history(foot_positions)
 
         contact_foot_positions = self._foot_contact_history.reshape((4,3)) # reshape from (4,3,1) to (4,3)
-        normal_vec = scipy.linalg.lstsq(contact_foot_positions, np.ones(4, dtype=DTYPE))[0]
+        normal_vec = linalg.lstsq(contact_foot_positions, np.ones(4, dtype=DTYPE))[0]
         # numpy lstsq not support float16 or less
         # normal_vec = np.linalg.lstsq(contact_foot_positions.astype(np.float32), 
         #                              np.ones(4, dtype=np.float32), rcond=None)[0]

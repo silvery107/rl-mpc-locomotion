@@ -7,7 +7,7 @@ import numpy as np
 from MPC_Controller.common.Quadruped import RobotType
 from MPC_Controller.Parameters import Parameters
 from MPC_Controller.convex_MPC.Gait import OffsetDurationGait
-from MPC_Controller.DesiredStateCommand import DesiredStateCommand
+from MPC_Controller.common.DesiredStateCommand import DesiredStateCommand
 from MPC_Controller.FSM_states.ControlFSMData import ControlFSMData
 from MPC_Controller.common.FootSwingTrajectory import FootSwingTrajectory
 from MPC_Controller.utils import CASTING, NUM_LEGS, DTYPE, getSideSign

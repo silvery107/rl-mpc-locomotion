@@ -1,12 +1,12 @@
 import time
 import numpy as np
-from MPC_Controller.DesiredStateCommand import DesiredStateCommand
+from MPC_Controller.common.DesiredStateCommand import DesiredStateCommand
 from MPC_Controller.FSM_states.ControlFSM import ControlFSM
 from MPC_Controller.FSM_states.ControlFSMData import ControlFSMData
 from MPC_Controller.Parameters import Parameters
 from MPC_Controller.common.Quadruped import Quadruped, RobotType
 from MPC_Controller.common.LegController import LegController
-from MPC_Controller.StateEstimator import StateEstimator
+from MPC_Controller.common.StateEstimator import StateEstimator
 from MPC_Controller.convex_MPC.ConvexMPCLocomotion import ConvexMPCLocomotion
 from MPC_Controller.utils import DTYPE
 from RL_Environment.WeightPolicy import WeightPolicy

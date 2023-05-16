@@ -3,11 +3,11 @@ from MPC_Controller.common.Quadruped import RobotType
 from isaacgym.terrain_utils import *
 
 ASSET_ROOT = "assets"
+ALIENGO = "aliengo_description/urdf/aliengo.urdf"
+A1 = "a1_description/urdf/a1.urdf"
+GO1 = "go1_description/urdf/go1.urdf"
 # MINI_CHEETAH = "mini_cheetah/mini_cheetah.urdf"
-ALIENGO = "aliengo_description/xacro/aliengo.urdf"
-A1 = "a1_description/a1.urdf"
-ANYMAL = "anymal_c/urdf/anymal.urdf"
-GO1 = "go1_description/go1.urdf"
+# ANYMAL = "anymal_c/urdf/anymal.urdf"
 
 FOOT_IDX = [4, 8, 12, 16]
 
@@ -52,15 +52,15 @@ def load_asset(gym, sim, robot, fix_base_link):
         asset_file = A1
     elif robot is RobotType.GO1:
         asset_file = GO1
-    elif robot is RobotType.ANYMAL:
-        asset_file = ANYMAL
+    # elif robot is RobotType.ANYMAL:
+    #     asset_file = ANYMAL
     else:
         raise Exception("Invalid RobotType")
     
     asset_options = gymapi.AssetOptions()
     asset_options.fix_base_link = fix_base_link
     asset_options.use_mesh_materials = True
-    asset_options.flip_visual_attachments = False if asset_file==A1 else True
+    asset_options.flip_visual_attachments = True
     asset_options.angular_damping = 0.0
     asset_options.linear_damping = 0.0
     # asset_options.density = 0.001

@@ -136,11 +136,10 @@ class LegController:
         """
         return J and p
         """
-        l1 = self._quadruped._abadLinkLength
-        l2 = self._quadruped._hipLinkLength
-        l3 = self._quadruped._kneeLinkLength
-        l4 = self._quadruped._kneeLinkY_offset
-        sideSign = getSideSign(leg)
+        
+        dy = self._quadruped._abadLinkLength * getSideSign(leg)
+        dz1 = -self._quadruped._hipLinkLength
+        dz2 = -self._quadruped._kneeLinkLength
 
         q = self.datas[leg].q
 
@@ -155,16 +154,18 @@ class LegController:
         c23 = c2 * c3 - s2 * s3
         s23 = s2 * c3 + c2 * s3
 
-        self.datas[leg].J[0, 0] = 0.0
-        self.datas[leg].J[0, 1] = l3 * c23 + l2 * c2
-        self.datas[leg].J[0, 2] = l3 * c23
-        self.datas[leg].J[1, 0] = l3 * c1 * c23 + l2 * c1 * c2 - (l1 + l4) * sideSign * s1
-        self.datas[leg].J[1, 1] = -l3 * s1 * s23 - l2 * s1 * s2
-        self.datas[leg].J[1, 2] = -l3 * s1 * s23
-        self.datas[leg].J[2, 0] = l3 * s1 * c23 + l2 * c2 * s1 + (l1 + l4) * sideSign * c1
-        self.datas[leg].J[2, 1] = l3 * c1 * s23 + l2 * c1 * s2
-        self.datas[leg].J[2, 2] = l3 * c1 * s23
+        self.datas[leg].p[0] = dz2 * s23 + dz1 * s2
+        self.datas[leg].p[1] = dy * c1 - dz1 * c2 * s1 - dz2 * s1 * c23
+        self.datas[leg].p[2] = dy * s1 + dz1 * c1 * c2 + dz2 * c1 * c23
 
-        self.datas[leg].p[0] = l3 * s23 + l2 * s2
-        self.datas[leg].p[1] = (l1 + l4) * sideSign * c1 + l3 * (s1 * c23) + l2 * c2 * s1
-        self.datas[leg].p[2] = (l1 + l4) * sideSign * s1 - l3 * (c1 * c23) - l2 * c1 * c2
+        self.datas[leg].J[0, 0] = 0.0
+        self.datas[leg].J[1, 0] = - dy * s1 - dz2 * c1 * c23 - dz1 * c1 * c2
+        self.datas[leg].J[2, 0] = - dz2 * s1 * c23 + dy * c1 - dz1 * c2 * s1
+
+        self.datas[leg].J[0, 1] = dz2 * c23 + dz1 * c2
+        self.datas[leg].J[1, 1] = dz2 * s1 * s23 + dz1 * s1 * s2
+        self.datas[leg].J[2, 1] = - dz2 * c1 * s23 - dz1 * c1 * s2
+
+        self.datas[leg].J[0, 2] = dz2 * c23
+        self.datas[leg].J[1, 2] = dz2 * s1 * s23
+        self.datas[leg].J[2, 2] = - dz2 * c1 * s23

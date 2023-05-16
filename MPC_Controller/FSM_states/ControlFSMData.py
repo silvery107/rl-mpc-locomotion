@@ -1,8 +1,8 @@
 from MPC_Controller.common.Quadruped import Quadruped
 from MPC_Controller.common.LegController import LegController
 # from MPC_Controller.Parameters import Parameters
-from MPC_Controller.StateEstimator import StateEstimator
-from MPC_Controller.DesiredStateCommand import DesiredStateCommand
+from MPC_Controller.common.StateEstimator import StateEstimator
+from MPC_Controller.common.DesiredStateCommand import DesiredStateCommand
 
 class ControlFSMData:
     def __init__(self):
