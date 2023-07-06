@@ -14,11 +14,9 @@ dependencies:
   - osqp # conda install -c conda-forge osqp
   - pybind11 # conda install -c conda-forge pybind11
   - scipy # conda install scipy
-  - omegaconf # conda install -c conda-forge omegaconf
-  # - cvxopt # conda install -c conda-forge cvxopt
-  # - mosek # conda install -c mosek mosek
   # - pybullet # conda install -c conda-forge pybullet
   - pip:
     - rl_games == 1.5.2
     - inputs
-    - hydra-core
+    - hydra-core == 1.1.0
+    - omegaconf == 2.1
