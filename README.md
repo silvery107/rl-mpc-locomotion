@@ -1,9 +1,9 @@
 # RL MPC Locomotion
-This repo is aim to provide a fast simulation and RL training framework for quadrupad locomotion. The control framework is a hierarchical controller  composed of an higher-level policy network and a lower-level model predictive controller (MPC). 
+This repo is aim to provide a fast simulation and RL training framework for quadruped locomotion. The control framework is a hierarchical controller  composed of a higher-level policy network and a lower-level model predictive controller (MPC). 
 
 The MPC controller refers to [Cheetah Software](https://github.com/mit-biomimetics/Cheetah-Software) but written in python, and it completely opens the interface between sensor data and motor commands, so that the controller can be easily ported to mainstream simulators like MuJoCo.
 
-The RL training is carried out in the [NVDIA Isaac Gym](https://developer.nvidia.com/isaac-gym) in parallel using Unitree Robotics Aliengo model, and transferring it from simulation to reality on a [real Aliengo robot](#sim2real_anchor).
+The RL training is carried out in the [NVIDIA Isaac Gym](https://developer.nvidia.com/isaac-gym) in parallel using Unitree Robotics Aliengo model, and transferring it from simulation to reality on a [real Aliengo robot](#sim2real_anchor).
 
 
 ## Frameworks
@@ -23,7 +23,7 @@ The RL training is carried out in the [NVDIA Isaac Gym](https://developer.nvidia
     git clone git@github.com:silvery107/rl-mpc-locomotion.git
     git submodule update --init
     ```
-    Or use `--recurse` option to clone submodules at the same time.
+    Or use the `--recurse` option to clone submodules at the same time.
 
 3. Create the conda environment:
     ```bash
@@ -57,7 +57,7 @@ The RL training is carried out in the [NVDIA Isaac Gym](https://developer.nvidia
     Press the `v` key to disable viewer updates, and press again to resume. 
     Set `headless=True` to train without rendering.
 
-    Tensorboard support is avaliable, run `tensorboard --logdir runs`.
+    Tensorboard support is available, run `tensorboard --logdir runs`.
 
 3. Load a trained checkpoint:
     ```bash
