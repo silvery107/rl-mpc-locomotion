@@ -40,15 +40,15 @@ env:
     FR_hip_joint: 0.0   # [rad]
     RR_hip_joint: 0.0   # [rad]
 
-    FL_thigh_joint: -0.8     # [rad]
-    RL_thigh_joint: -0.8    # [rad]
-    FR_thigh_joint: -0.8     # [rad]
-    RR_thigh_joint: -0.8    # [rad]
+    FL_thigh_joint: 0.8     # [rad]
+    RL_thigh_joint: 0.8    # [rad]
+    FR_thigh_joint: 0.8     # [rad]
+    RR_thigh_joint: 0.8    # [rad]
 
-    FL_calf_joint: 1.6    # [rad]
-    RL_calf_joint: 1.6     # [rad]
-    FR_calf_joint: 1.6    # [rad]
-    RR_calf_joint: 1.6     # [rad]
+    FL_calf_joint: -1.6    # [rad]
+    RL_calf_joint: -1.6     # [rad]
+    FR_calf_joint: -1.6    # [rad]
+    RR_calf_joint: -1.6     # [rad]
 
   urdfAsset:
     collapseFixedJoints: True

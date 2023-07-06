@@ -69,4 +69,4 @@ params:
     save_best_after: 200
     score_to_win: 20000
     save_frequency: 50
-    print_stats: True
+    print_stats: False
