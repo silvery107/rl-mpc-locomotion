@@ -16,7 +16,7 @@ dependencies:
   - scipy # conda install scipy
   # - pybullet # conda install -c conda-forge pybullet
   - pip:
-    - rl_games == 1.5.2
+    - rl_games == 1.1.4
     - inputs
     - hydra-core == 1.1.0
     - omegaconf == 2.1
