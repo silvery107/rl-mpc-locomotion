@@ -1,9 +1,9 @@
 # RL MPC Locomotion
-This repo is aim to provide a fast simulation and RL training framework for quadruped locomotion. The control framework is a hierarchical controller  composed of a higher-level policy network and a lower-level model predictive controller (MPC). 
+This repo aims to provide a fast simulation and RL training framework for a quadruped locomotion task by dynamically predicting the weight parameters of a MPC controller. The control framework is a hierarchical controller composed of a higher-level policy network and a lower-level model predictive controller. 
 
-The MPC controller refers to [Cheetah Software](https://github.com/mit-biomimetics/Cheetah-Software) but written in python, and it completely opens the interface between sensor data and motor commands, so that the controller can be easily ported to mainstream simulators like MuJoCo.
+The MPC controller refers to [Cheetah Software](https://github.com/mit-biomimetics/Cheetah-Software) but written in python, and it completely opens the interface between sensor data and motor commands, so that the controller can be easily ported to any mainstream simulators.
 
-The RL training is carried out in the [NVIDIA Isaac Gym](https://developer.nvidia.com/isaac-gym) in parallel using Unitree Robotics Aliengo model, and transferring it from simulation to reality on a [real Aliengo robot](#sim2real_anchor).
+The RL training utilizes the [NVIDIA Isaac Gym](https://developer.nvidia.com/isaac-gym) in parallel using Unitree Robotics Aliengo model, and transferring it from simulation to reality on a [real Aliengo robot](#sim2real_anchor).
 
 
 ## Frameworks
@@ -13,7 +13,7 @@ The RL training is carried out in the [NVIDIA Isaac Gym](https://developer.nvidi
 ## Dependencies
 - [*PyTorch* - 1.8.1](https://pytorch.org/get-started/previous-versions/)
 - [*Isaac Gym* - Preview 4](https://developer.nvidia.com/isaac-gym)
-- [*RL Games* - 1.5.2](https://github.com/Denys88/rl_games)
+- *Python 3.7*
 <!-- - *OSQP* - 0.6.2 -->
 
 ## Installation
@@ -40,8 +40,10 @@ The RL training is carried out in the [NVIDIA Isaac Gym](https://developer.nvidi
     ```bash
     python RL_MPC_Locomotion.py --robot=Aliengo
     ```
-    All supported robot types are `GO1`, `A1` and `Aliengo`.
-    Note that by default you need to plug in your Xbox-like gamepad to control it.
+    All supported robot types are `Go1`, `A1` and `Aliengo`.
+
+    Note that you need to plug in your Xbox-like gamepad to control it, or pass `--disable_gamepad`.
+    The controller mode is default to `Fsm` (Finite State Machine), and you can also try `Min` for the minimum MPC controller without FSM.
 
     - Gamepad keymap
         > Press `LB` to switch gait types between `Trot`, `Walk` and `Bound`.
@@ -59,17 +61,19 @@ The RL training is carried out in the [NVIDIA Isaac Gym](https://developer.nvidi
 
     Tensorboard support is available, run `tensorboard --logdir runs`.
 
-3. Load a trained checkpoint:
+3. Load a pretrained checkpoint:
     ```bash
     python train.py task=Aliengo checkpoint=runs/Aliengo/nn/Aliengo.pth test=True num_envs=4
     ```
     Set `test=False` to continue training.
 
-4. Run the trained weight-policy for MPC controller on Aliengo:
+4. Run the pretrained weight-policy for MPC controller on Aliengo:
+   Set `bridge_MPC_to_RL` to `False` in `<MPC_Controller/Parameters.py>`
     ```bash
-    python RL_MPC_Locomotion.py --robot=Aliengo --mode=Policy
+    python RL_MPC_Locomotion.py --robot=Aliengo --mode=Policy --checkpoint=path/to/ckpt
     ```
-    By default the controller mode is `Fsm`, and you can also try `Min` for the minimum MPC controller (without FSM).
+    If no `checkpoint` is given, it will load the default `runs/{robot}/nn/{robot}.pth`
+
 
 ## Roadmaps
 
