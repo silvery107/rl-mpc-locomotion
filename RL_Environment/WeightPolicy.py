@@ -71,6 +71,9 @@ class WeightPolicy:
 
         obs_shape = (self.num_obs,)
 
+        self.clip_actions = config.get('clip_actions', True)
+        self.normalize_input = config['normalize_input']
+
         # use model directly
         state_dict_ckpt = torch_ext.load_checkpoint(load_path)
         # load model
@@ -80,15 +83,17 @@ class WeightPolicy:
                 'num_seqs' : num_agents
             })
         self.model.to(self.device)
-        self.model.load_state_dict(state_dict_ckpt['model'])
         self.model.eval()
+        self.model.load_state_dict(state_dict_ckpt['model'])
         # load obs normalizer
-        self.running_mean_std = RunningMeanStd(obs_shape).to(self.device)
-        self.running_mean_std.load_state_dict(state_dict_ckpt['running_mean_std'])
-        self.running_mean_std.eval()
+        if self.normalize_input:
+            self.running_mean_std = RunningMeanStd(obs_shape).to(self.device)
+            self.running_mean_std.eval()
+            self.running_mean_std.load_state_dict(state_dict_ckpt['running_mean_std'])
 
         self.num_agents = num_agents
-        self.obs = torch.ones([self.num_agents, self.num_obs], requires_grad=False, dtype=torch.float, device=self.device)
+        self.obs = torch.ones([self.num_agents, self.num_obs], 
+                              requires_grad=False, dtype=torch.float, device=self.device)
 
     def step(self):
         obs = self._preproc_obs(self.obs)
@@ -108,17 +113,20 @@ class WeightPolicy:
 
         if self.is_determenistic:
             # determenistic action
-            action = res_dict['mus']
+            current_action = res_dict['mus']
         else:
             # non-determenistic action
-            action = res_dict['actions']
+            current_action = res_dict['actions']
 
         # clip actions to (-1, 1)
-        action_clip = self._rescale_actions(-torch.ones_like(action, requires_grad=False, device=self.device), 
-                                        torch.ones_like(action, requires_grad=False, device=self.device), 
-                                        torch.clamp(action, -1.0, 1.0))
+        if self.clip_actions:
+            current_action = self._rescale_actions(
+                -torch.ones_like(current_action, requires_grad=False, device=self.device), 
+                torch.ones_like(current_action, requires_grad=False, device=self.device), 
+                torch.clamp(current_action, -1.0, 1.0))
+
         # * [-1, 1] -> [a, b] => [-1, 1] * (b-a)/2 + (b+a)/2
-        actions_rescale = torch.mul(action_clip, 
+        actions_rescale = torch.mul(current_action, 
                                     torch.tensor(
                                     Parameters.MPC_param_scale,
                                     dtype=torch.float,
@@ -137,7 +145,10 @@ class WeightPolicy:
 
         # TODO check gravity direction
         projected_gravity = - se_result.ground_normal_yaw
-        commands = _commands * np.array([self.lin_vel_scale, self.lin_vel_scale, self.ang_vel_scale], dtype=DTYPE)
+        commands = _commands * np.array([self.lin_vel_scale, 
+                                         self.lin_vel_scale, 
+                                         self.ang_vel_scale], 
+                                         dtype=DTYPE)
         dof_pos = dof_states["pos"] * self.dof_pos_scale
         dof_vel = dof_states["vel"] * self.dof_vel_scale
         observations = np.concatenate((base_lin_vel, 
@@ -159,8 +170,9 @@ class WeightPolicy:
                 obs_batch = obs_batch.float() / 255.0
                 
         # normalize obs
-        with torch.no_grad():
-            obs_batch = self.running_mean_std(obs_batch)
+        if self.normalize_input:
+            with torch.no_grad():
+                obs_batch = self.running_mean_std(obs_batch)
         return obs_batch
 
     def _rescale_actions(self, low, high, action):

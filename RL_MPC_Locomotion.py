@@ -14,14 +14,18 @@ parser = ArgumentParser(prog="RL_MPC_LOCOMOTION")
 
 parser.add_argument("--robot", default="Aliengo", choices=[name.title() for name in RobotType.__members__.keys()], help="robot types")
 parser.add_argument("--mode", default="Fsm", choices=[name.title() for name in ControllerType.__members__.keys()], help="controller types")
-parser.add_argument("--num_envs", default=1, type=int, help="the number of robots")
-parser.add_argument("--render-fps", type=int, default=30, help="render fps")
-parser.add_argument('--disable-gamepad', action='store_true')
+parser.add_argument("--num_envs", type=int, default=1, help="the number of robots")
+parser.add_argument("--render_fps", type=int, default=30, help="render fps")
+parser.add_argument("--disable_gamepad", action="store_true")
+parser.add_argument("--checkpoint", default=None)
 
 args = parser.parse_args()
 
 use_gamepad = not args.disable_gamepad
 debug_vis = False # draw ground normal vector
+
+if use_gamepad:
+    gamepad = gamepad_reader.Gamepad(vel_scale_x=2.5, vel_scale_y=1.5, vel_scale_rot=3.0)
 
 
 def main():
@@ -45,6 +49,7 @@ def main():
     cam_pos = gymapi.Vec3(2,2,2) # w.r.t target env
     viewer = add_viewer(gym, sim, envs[0], cam_pos)
 
+    # Setup MPC Controller
     controllers = []
     for idx in range(num_envs):
         # configure the joints for effort control mode (once)
@@ -61,16 +66,12 @@ def main():
         elif controller_type is ControllerType.MIN:
             robotRunner = RobotRunnerMin()
         elif controller_type is ControllerType.POLICY:
-            robotRunner = RobotRunnerPolicy()
+            robotRunner = RobotRunnerPolicy(args.checkpoint)
         else:
             raise Exception("Invalid ControllerType!")
 
         robotRunner.init(robot)
         controllers.append(robotRunner)
-
-    # Setup MPC Controller
-    if use_gamepad:
-        gamepad = gamepad_reader.Gamepad(vel_scale_x=2.5, vel_scale_y=1.5, vel_scale_rot=3.0)
 
     count = 0
     render_fps = args.render_fps

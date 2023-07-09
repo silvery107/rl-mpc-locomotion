@@ -13,8 +13,8 @@ from RL_Environment.WeightPolicy import WeightPolicy
 from RL_Environment.utils.utils import set_np_formatting
 
 class RobotRunnerPolicy:
-    def __init__(self):
-        pass
+    def __init__(self, checkpoint=None):
+        self.checkpoint = checkpoint
 
     def init(self, robotType:RobotType):
         """
@@ -22,8 +22,9 @@ class RobotRunnerPolicy:
         robot data, and any control logic specific data.
         """
         self.robotType = robotType
-
-        # print("[RobotRunner] initialize")
+        task = robotType.name.title()
+        if self.checkpoint is None:
+            self.checkpoint = f"RL_Environment/runs/{task}/nn/{task}.pth"
 
         # init quadruped
         if self.robotType in RobotType:
@@ -41,7 +42,8 @@ class RobotRunnerPolicy:
         self._desiredStateCommand = DesiredStateCommand()
 
         # init weight policy
-        self._weightPolicy = WeightPolicy(checkpoint="RL_Environment/runs/Aliengo/nn/Aliengo.pth")
+        self._weightPolicy = WeightPolicy(task=task,
+                                          checkpoint=self.checkpoint)
         weights = self._quadruped._mpc_weights[:-1] # keep weights shape (12,)
         # weights.pop() # keep weights shape (12,)
         # self.weights = np.asarray(weights, dtype=DTYPE)
