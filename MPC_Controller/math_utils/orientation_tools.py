@@ -17,6 +17,24 @@ class CoordinateAxis(Enum):
     Y = auto()
     Z = auto()
 
+def coordinateRotation(axis:CoordinateAxis, theta:float) -> np.ndarray:
+    """
+    Compute rotation matrix for coordinate transformation. Note that
+    coordinateRotation(CoordinateAxis:X, .1) * v will rotate v by -.1 radians
+    this transforms into a frame rotated by .1 radians!.
+    """
+    s = sin(float(theta))
+    c = cos(float(theta))
+    R:np.ndarray = None
+    if axis is CoordinateAxis.X:
+        R = np.array([1, 0, 0, 0, c, s, 0, -s, c], dtype=DTYPE).reshape((3,3))
+    elif axis is CoordinateAxis.Y:
+        R = np.array([c, 0, -s, 0, 1, 0, s, 0, c], dtype=DTYPE).reshape((3,3))
+    elif axis is CoordinateAxis.Z:
+        R = np.array([c, s, 0, -s, c, 0, 0, 0, 1], dtype=DTYPE).reshape((3,3))
+
+    return R
+
 class Quaternion:
     def __init__(self, w:float=1, x:float=0, y:float=0, z:float=0):
         self.w = float(w)
@@ -99,19 +117,6 @@ def axis_angle_to_quat(k, theta):
     q.z = k[2] * s2
     return q
 
-def coordinateRotation(axis:CoordinateAxis, theta:float) -> np.ndarray:
-    s = sin(float(theta))
-    c = cos(float(theta))
-    R:np.ndarray = None
-    if axis is CoordinateAxis.X:
-        R = np.array([1, 0, 0, 0, c, s, 0, -s, c], dtype=DTYPE).reshape((3,3))
-    elif axis is CoordinateAxis.Y:
-        R = np.array([c, 0, -s, 0, 1, 0, s, 0, c], dtype=DTYPE).reshape((3,3))
-    elif axis is CoordinateAxis.Z:
-        R = np.array([c, s, 0, -s, c, 0, 0, 0, 1], dtype=DTYPE).reshape((3,3))
-
-    return R
-
 def quat_to_rpy(q:Quaternion) -> np.ndarray:
     """
     Convert a quaternion to RPY. Return
@@ -190,7 +195,7 @@ def rot_to_quat(rot:np.ndarray)->Quaternion:
         q.z = 0.25 * S
     
     return q
-    
+
 def rot_to_rpy(R:np.ndarray):
     return quat_to_rpy(rot_to_quat(R))
 
