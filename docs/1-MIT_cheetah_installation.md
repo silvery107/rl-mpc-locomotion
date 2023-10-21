@@ -2,7 +2,7 @@
 
 Ubuntu 18.04 LTS
 
-## Dependency
+## Dependencies
 
 - Qt
     Download [Qt Online Installer](https://www.qt.io/download-qt-installer).
@@ -11,7 +11,7 @@ Ubuntu 18.04 LTS
     ./qt-unified-linux-x64-4.1.1-online.run
     ```
     After registration, install **qt5.10.0** newer (requires the gamepad library).
-    NOTE: on Ubuntu 18.10 or 19.04, you may instead install Qt with
+    NOTE: on Ubuntu 18.10 or 20.04, you may instead install Qt with
     ```
     sudo apt install libqt5 libqt5gamepad5
     ```
@@ -42,7 +42,9 @@ Ubuntu 18.04 LTS
     ```
     sudo apt install mesa-common-dev freeglut3-dev coinor-libipopt-dev libblas-dev liblapack-dev gfortran liblapack-dev coinor-libipopt-dev cmake gcc build-essential libglib2.0-dev
     ```
-## Build
+## Compilation
+- Change `master` to `main` in `<common/CMakeLists.txt>` line 30
+- For Ubuntu 20.04 user, comment out line 17 (`asm/termios.h`), 21 (`termios.h`), 24 (`stropts.h`) in `<robot/src/rt/rt_serial.cpp>`, and add `#include <sys/ioctl.h>` and `#include <asm/termbits.h>` after them. See this issue [link](https://github.com/mit-biomimetics/Cheetah-Software/issues/39).
 - Follow the official guide.
     ```
     git clone https://github.com/mit-biomimetics/Cheetah-Software.git
@@ -51,6 +53,10 @@ Ubuntu 18.04 LTS
     cmake ..
     ./../scripts/make_types.sh
     make -j4
+    ```
+- If you see an error from `strncpy()`, change line 73 in `<robot/src/SimulationBridge.cpp>` to
+    ```cpp
+    strncpy(_sharedMemory().robotToSim.errorMessage, e.what(), sizeof(_sharedMemory().robotToSim.errorMessage)-1);
     ```
 - Run `./common/test-common` to test the common library.
 
