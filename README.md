@@ -3,7 +3,7 @@ This repo aims to provide a fast simulation and RL training framework for a quad
 
 The MPC controller refers to [Cheetah Software](https://github.com/mit-biomimetics/Cheetah-Software) but written in python, and it completely opens the interface between sensor data and motor commands, so that the controller can be easily ported to any mainstream simulators.
 
-The RL training utilizes the [NVIDIA Isaac Gym](https://developer.nvidia.com/isaac-gym) in parallel using Unitree Robotics Aliengo model, and transferring it from simulation to reality on a [real Aliengo robot](#sim2real_anchor).
+The RL training utilizes the [NVIDIA Isaac Gym](https://developer.nvidia.com/isaac-gym) in parallel using Unitree Robotics Aliengo model, and transferring it from simulation to reality on a [real Aliengo robot](#sim2real_anchor) (sim2real is not included in this codebase).
 
 
 ## Frameworks
@@ -42,7 +42,7 @@ The RL training utilizes the [NVIDIA Isaac Gym](https://developer.nvidia.com/isa
     ```
     All supported robot types are `Go1`, `A1` and `Aliengo`.
 
-    Note that you need to plug in your Xbox-like gamepad to control it, or pass `--disable_gamepad`.
+    Note that you need to plug in your Xbox-like gamepad to control it, or pass `--disable-gamepad`.
     The controller mode is default to `Fsm` (Finite State Machine), and you can also try `Min` for the minimum MPC controller without FSM.
 
     - Gamepad keymap

@@ -14,9 +14,9 @@ parser = ArgumentParser(prog="RL_MPC_LOCOMOTION")
 
 parser.add_argument("--robot", default="Aliengo", choices=[name.title() for name in RobotType.__members__.keys()], help="robot types")
 parser.add_argument("--mode", default="Fsm", choices=[name.title() for name in ControllerType.__members__.keys()], help="controller types")
-parser.add_argument("--num_envs", type=int, default=1, help="the number of robots")
-parser.add_argument("--render_fps", type=int, default=30, help="render fps")
-parser.add_argument("--disable_gamepad", action="store_true")
+parser.add_argument("--num-envs", type=int, default=1, help="the number of robots")
+parser.add_argument("--render-fps", type=int, default=30, help="render fps")
+parser.add_argument("--disable-gamepad", action="store_true")
 parser.add_argument("--checkpoint", default=None)
 
 args = parser.parse_args()
