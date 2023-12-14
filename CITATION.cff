@@ -1,0 +1,11 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Zhuang"
+  given-names: "Yulun"
+- family-names: "Zhang"
+  given-names: "Wei"
+title: "rl-mpc-locomotion"
+version: 1.0.0
+date-released: 2022-7-15
+url: "https://github.com/silvery107/rl-mpc-locomotion"
