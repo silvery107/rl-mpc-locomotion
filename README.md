@@ -11,13 +11,12 @@ The RL training utilizes the [NVIDIA Isaac Gym](https://developer.nvidia.com/isa
 <img src="images/controller_blocks.png" width=700>
 
 ## Dependencies
-- [*PyTorch* - 1.8.1](https://pytorch.org/get-started/previous-versions/)
+- *Python* - 3.8
+- [*PyTorch* - 1.10.0 with CUDA 11.3](https://pytorch.org/get-started/previous-versions/)
 - [*Isaac Gym* - Preview 4](https://developer.nvidia.com/isaac-gym)
-- *Python 3.7*
 <!-- - *OSQP* - 0.6.2 -->
 
 ## Installation
-
 1. Clone this repository
     ```bash
     git clone git@github.com:silvery107/rl-mpc-locomotion.git

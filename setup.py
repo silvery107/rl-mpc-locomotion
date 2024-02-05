@@ -1,18 +1,3 @@
-#
-# Copyright 2022 Yulun Zhuang
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 from setuptools import find_packages
 from sys import platform as _platform
 import os
@@ -181,16 +166,6 @@ if _platform == "linux" or _platform == "linux2":
   CXX_FLAGS += '-Wno-unused-local-typedefs '
   CXX_FLAGS += '-Wno-unused-variable '
   CXX_FLAGS += '-Wno-unused-but-set-variable '
-
-elif _platform == "win32":
-  print("win32!")
-  include_dirs += ['extern/osqp/include/windows']
-  print(include_dirs)
-  libraries = ['User32', 'kernel32']
-  #CXX_FLAGS += '-DIS_WINDOWS '
-  CXX_FLAGS += '-DWIN32 '
-  CXX_FLAGS += '-DGLEW_STATIC '
-  CXX_FLAGS += '/std:c++17 '
 elif _platform == "darwin":
   print("darwin!")
   CXX_FLAGS += '-fpermissive '
@@ -204,14 +179,7 @@ elif _platform == "darwin":
   CXX_FLAGS += '-mmacosx-version-min=10.7 '
   #    CXX_FLAGS += '-framework Cocoa '
 else:
-  print("bsd!")
-  include_dirs += ['extern/osqp/include/linux']
-  libraries = ['GL', 'GLEW', 'pthread']
-  os.environ['LDFLAGS'] = '-L/usr/X11R6/lib'
-  CXX_FLAGS += '-D_BSD '
-  CXX_FLAGS += '-I/usr/X11R6/include '
-  CXX_FLAGS += '-DHAS_SOCKLEN_T '
-  CXX_FLAGS += '-fno-inline-functions-called-once'
+  raise NotImplementedError(f"OS not support: {_platform}")
 
 setup_py_dir = os.path.dirname(os.path.realpath(__file__))
 
@@ -244,22 +212,5 @@ setup(
         'numpy'
     ],
     ext_modules=extensions,
-    classifiers=[
-        'Development Status :: 5 - Production/Stable',
-        'License :: OSI Approved :: zlib/libpng License',
-        'Operating System :: Microsoft :: Windows',
-        'Operating System :: POSIX :: Linux', 'Operating System :: MacOS',
-        'Intended Audience :: Science/Research',
-        "Programming Language :: Python",
-        'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3.4',
-        'Programming Language :: Python :: 3.5',
-        'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.7',
-        'Programming Language :: Python :: 3.8',
-        'Topic :: Games/Entertainment :: Simulation',
-        'Topic :: Scientific/Engineering :: Artificial Intelligence',
-        'Framework :: Robot Framework'
-    ],
     packages=[x for x in find_packages('.')],
 )
