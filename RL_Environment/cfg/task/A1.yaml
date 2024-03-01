@@ -1,0 +1,111 @@
+# used to create the object
+name: A1
+
+physics_engine: ${..physics_engine}
+
+env:
+  numEnvs: ${resolve_default:32,${...num_envs}}
+  envSpacing: 2.  # [m]
+
+  clipObservations: 5.0
+  clipActions: 1.0
+
+  plane:
+    staticFriction: 1.0  # [-]
+    dynamicFriction: 1.0  # [-]
+    restitution: 0.        # [-]
+
+  baseInitState:
+    pos: [0.0, 0.0, 0.3] # x,y,z [m]
+    rot: [0.0, 0.0, 0.0, 1.0] # x,y,z,w [quat]
+    vLinear: [0.0, 0.0, 0.0]  # x,y,z [m/s]
+    vAngular: [0.0, 0.0, 0.0]  # x,y,z [rad/s]
+
+  randomCommandVelocityRanges:
+    linear_x: [-2.5, 2.5] # min max [m/s]
+    linear_y: [-1.0, 1.0]   # min max [m/s]
+    yaw: [-2.5, 2.5]          # min max [rad/s]
+
+  control:
+    # PD Drive parameters:
+    stiffness: 0.0  # [N*m/rad]
+    damping: 0.0     # [N*m*s/rad]
+    actionScale: 0.5
+
+  defaultJointAngles:  # = target angles when action = 0.0
+  # FL RL FR RR
+  # LF LH RF RH
+    FL_hip_joint: 0.0    # [rad]
+    RL_hip_joint: 0.0    # [rad]
+    FR_hip_joint: 0.0   # [rad]
+    RR_hip_joint: 0.0   # [rad]
+
+    FL_thigh_joint: 0.8     # [rad]
+    RL_thigh_joint: 0.8    # [rad]
+    FR_thigh_joint: 0.8     # [rad]
+    RR_thigh_joint: 0.8    # [rad]
+
+    FL_calf_joint: -1.6    # [rad]
+    RL_calf_joint: -1.6     # [rad]
+    FR_calf_joint: -1.6    # [rad]
+    RR_calf_joint: -1.6     # [rad]
+
+  urdfAsset:
+    collapseFixedJoints: True
+    fixBaseLink: False
+    defaultDofDriveMode: 4 # see GymDofDriveModeFlags (0 is none, 1 is pos tgt, 2 is vel tgt, 4 effort)
+
+  learn:
+    # rewards
+    # velocity tracking reward
+    linearVelocityXYRewardScale: 1.0
+    angularVelocityZRewardScale: 0.5
+    # torque penalties
+    torqueRewardScale: -0.000025 
+    # base velocity penalties
+    linearVelocityZRewardScale: -4.0
+    angularVelocityXYRewardScale: -0.05
+    # collision penalties
+    kneeCollisionRewardScale: 0 #-0.25
+
+    # normalization
+    linearVelocityScale: 1 #2.0
+    angularVelocityScale: 1 #0.25
+    dofPositionScale: 1 #1.0
+    dofVelocityScale: 1 #0.05
+
+    # episode length in seconds
+    episodeLength_s: 20
+
+  # viewer cam:
+  viewer:
+    refEnv: 0
+    pos: [0, 0, 4]  # [m]
+    lookat: [1., 1, 3]  # [m]
+
+  # set to True if you use camera sensors in the environment
+  enableCameraSensors: False
+
+sim:
+  dt: 0.01
+  substeps: 2
+  up_axis: "z"
+  use_gpu_pipeline: ${eq:${...pipeline},"gpu"}
+  gravity: [0.0, 0.0, -9.81]
+  physx:
+    num_threads: ${....num_threads}
+    solver_type: ${....solver_type}
+    use_gpu: ${contains:"cuda",${....sim_device}} # set to False to run on CPU
+    num_position_iterations: 4
+    num_velocity_iterations: 1
+    contact_offset: 0.02
+    rest_offset: 0.0
+    bounce_threshold_velocity: 0.2
+    max_depenetration_velocity: 100.0
+    default_buffer_size_multiplier: 5.0
+    max_gpu_contact_pairs: 8388608 # 8*1024*1024
+    num_subscenes: ${....num_subscenes}
+    contact_collection: 1 # 0: CC_NEVER (don't collect contact info), 1: CC_LAST_SUBSTEP (collect only contacts on last substep), 2: CC_ALL_SUBSTEPS (default - all contacts)
+
+task:
+  randomize: False
