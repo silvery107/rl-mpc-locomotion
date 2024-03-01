@@ -250,7 +250,7 @@ class Aliengo(VecTask):
             root_states_cpu = self.root_states.detach().cpu().numpy().astype(DTYPE)
             commands_cpu = self.commands.detach().cpu().numpy().astype(DTYPE)
             for idx, controller in enumerate(self.controllers):
-                commands = np.concatenate((commands_cpu[idx], actions_cpu[idx], [0.0]), axis=0, dtype=DTYPE)
+                commands = np.concatenate((commands_cpu[idx], actions_cpu[idx], [0.0]), axis=0).astype(DTYPE)
                 torques_cpu[idx] = controller.run(dof_state_cpu[idx*self.num_dof:(idx+1)*self.num_dof],
                                                   root_states_cpu[idx],
                                                   commands)
