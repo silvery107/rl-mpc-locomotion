@@ -71,10 +71,10 @@ The RL training utilizes the [NVIDIA Isaac Gym](https://developer.nvidia.com/isa
     ```bash
     python RL_MPC_Locomotion.py --robot=Aliengo --mode=Policy --checkpoint=path/to/ckpt
     ```
-    If no `checkpoint` is given, it will load the default `runs/{robot}/nn/{robot}.pth`
+    If no `checkpoint` is given, it will load the latest run.
 
 
-## Roadmaps
+## Roadmap
 
 <img src="images/MPC_block.png" width=600>
 
