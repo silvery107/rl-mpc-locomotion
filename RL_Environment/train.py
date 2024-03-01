@@ -1,35 +1,7 @@
-# train.py
-# Script to train policies in Isaac Gym
-#
-# Copyright (c) 2018-2021, NVIDIA Corporation
-# All rights reserved.
-#
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions are met:
-#
-# 1. Redistributions of source code must retain the above copyright notice, this
-#    list of conditions and the following disclaimer.
-#
-# 2. Redistributions in binary form must reproduce the above copyright notice,
-#    this list of conditions and the following disclaimer in the documentation
-#    and/or other materials provided with the distribution.
-#
-# 3. Neither the name of the copyright holder nor the names of its
-#    contributors may be used to endorse or promote products derived from
-#    this software without specific prior written permission.
-#
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 import isaacgym
+from datetime import datetime
+
+from extern.rsl_rl.rsl_rl.runners import OnPolicyRunner
 
 import os
 import hydra
@@ -37,28 +9,25 @@ from omegaconf import DictConfig, OmegaConf
 from hydra.utils import to_absolute_path
 
 from utils.reformat import omegaconf_to_dict, print_dict
-from utils.rlgames_utils import RLGPUEnv, RLGPUAlgoObserver, get_rlgames_env_creator
-
 from utils.utils import set_np_formatting, set_seed
+from utils.rsl_rl_utils import update_cfg_from_args, class_to_dict, get_load_path
 
-from rl_games.common import env_configurations, vecenv
-from rl_games.torch_runner import Runner
+from tasks import isaacgym_task_map
 
-import yaml
-
+ROOT_DIR = os.path.dirname(os.path.realpath(__file__)) # Under <RL_Environment>
 
 ## OmegaConf & Hydra Config
 
-# Resolvers used in hydra configs (see https://omegaconf.readthedocs.io/en/2.1_branch/usage.html#resolvers)
+# Resolvers used in hydra configs
 OmegaConf.register_new_resolver('eq', lambda x, y: x.lower()==y.lower())
 OmegaConf.register_new_resolver('contains', lambda x, y: x.lower() in y.lower())
 OmegaConf.register_new_resolver('if', lambda pred, a, b: a if pred else b)
-# allows us to resolve default arguments which are copied in multiple places in the config. used primarily for
-# num_ensv
+# allows us to resolve default arguments which are copied in multiple places in the config. 
+# used primarily for num_ensv
 OmegaConf.register_new_resolver('resolve_default', lambda default, arg: default if arg=='' else arg)
 
 @hydra.main(config_name="config", config_path="./cfg")
-def launch_rlg_hydra(cfg: DictConfig):
+def launch_hydra(cfg: DictConfig):
 
     # ensure checkpoints can be specified as relative paths
     if cfg.checkpoint:
@@ -73,44 +42,50 @@ def launch_rlg_hydra(cfg: DictConfig):
     # sets seed. if seed is -1 will pick a random one
     cfg.seed = set_seed(cfg.seed, torch_deterministic=cfg.torch_deterministic)
 
-    # `create_rlgpu_env` is environment construction function which is passed to RL Games and called internally.
-    # We use the helper function here to specify the environment config.
-    create_rlgpu_env = get_rlgames_env_creator(
-        omegaconf_to_dict(cfg.task),
-        cfg.task_name,
-        cfg.sim_device,
-        cfg.rl_device,
-        cfg.graphics_device_id,
-        cfg.headless,
-        multi_gpu=cfg.multi_gpu,
+    # create native task and pass custom config
+    env = isaacgym_task_map[cfg.task_name](
+        cfg=omegaconf_to_dict(cfg.task),
+        sim_device=cfg.sim_device,
+        graphics_device_id=cfg.graphics_device_id,
+        headless=cfg.headless
     )
 
-    # register the rl-games adapter to use inside the runner
-    vecenv.register('RLGPU',
-                    lambda config_name, num_actors, **kwargs: RLGPUEnv(config_name, num_actors, **kwargs))
-    env_configurations.register('rlmpc', {
-        'vecenv_type': 'RLGPU',
-        'env_creator': lambda **kwargs: create_rlgpu_env(**kwargs),
-    })
+    train_cfg = isaacgym_task_map["ConfigPPO"]
+    train_cfg = update_cfg_from_args(train_cfg, cfg)
 
-    rlg_config_dict = omegaconf_to_dict(cfg.train)
+    log_root = os.path.join(ROOT_DIR, 'runs', cfg.task_name)
+    log_dir = os.path.join(log_root, datetime.now().strftime('%b%d_%H-%M-%S'))
 
-    # convert CLI arguments into dictionory
-    # create runner and set the settings
-    runner = Runner(RLGPUAlgoObserver())
-    runner.load(rlg_config_dict)
-    runner.reset()
+    train_cfg_dict = class_to_dict(train_cfg)
+    ppo_runner = OnPolicyRunner(env, train_cfg_dict, log_dir, cfg.rl_device)
+
+    if cfg.test or cfg.checkpoint:
+        # load previously trained model
+        try:
+            print(f"Loading model from: {cfg.checkpoint}")
+            ppo_runner.load(cfg.checkpoint)
+        except:
+            print("Failed...")
+            resume_path = get_load_path(log_root)
+            print(f"Loading model from the latest run: {resume_path}")
+            ppo_runner.load(resume_path)
 
     # dump config dict
-    experiment_dir = os.path.join('runs', cfg.train.params.config.name)
+    experiment_dir = log_dir
     os.makedirs(experiment_dir, exist_ok=True)
     with open(os.path.join(experiment_dir, 'config.yaml'), 'w') as f:
         f.write(OmegaConf.to_yaml(cfg))
 
-    runner.run({
-        'train': not cfg.test,
-        'play': cfg.test,
-    })
+    if not cfg.test:
+        ppo_runner.learn(num_learning_iterations=train_cfg.runner.max_iterations, init_at_random_ep_len=False)
+    else:
+        policy = ppo_runner.get_inference_policy(device=env.device)
+        obs = env.get_observations()
 
-if __name__ == "__main__":
-    launch_rlg_hydra()
+        for i in range(10*int(env.max_episode_length)):
+            actions = policy(obs.detach())
+            obs, _, rews, dones, infos = env.step(actions.detach())
+
+
+if __name__ == '__main__':
+    launch_hydra()

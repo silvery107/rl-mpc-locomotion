@@ -29,7 +29,6 @@
 from typing import Dict, Any, Tuple
 
 import gym
-from gym import spaces
 
 from isaacgym import gymtorch, gymapi
 from isaacgym.torch_utils import to_torch
@@ -84,15 +83,10 @@ class Env(ABC):
         self.num_environments = config["env"]["numEnvs"]
         self.num_agents = config["env"].get("numAgents", 1)  # used for multi-agent environments
         self.num_observations = config["env"]["numObservations"]
-        self.num_states = config["env"].get("numStates", 0)
+        self.num_privileged_obs = None
         self.num_actions = config["env"]["numActions"]
 
         self.control_freq_inv = config["env"].get("controlFrequencyInv", 1)
-
-        self.obs_space = spaces.Box(np.ones(self.num_obs) * -np.Inf, np.ones(self.num_obs) * np.Inf)
-        self.state_space = spaces.Box(np.ones(self.num_states) * -np.Inf, np.ones(self.num_states) * np.Inf)
-
-        self.act_space = spaces.Box(np.ones(self.num_actions) * -1., np.ones(self.num_actions) * 1.)
 
         self.clip_obs = config["env"].get("clipObservations", np.Inf)
         self.clip_actions = config["env"].get("clipActions", np.Inf)
@@ -192,7 +186,12 @@ class VecTask(Env):
         self.set_viewer()
         self.allocate_buffers()
 
-        self.obs_dict = {}
+
+    def get_observations(self):
+        return self.obs_buf
+    
+    def get_privileged_observations(self):
+        return self.privileged_obs_buf
 
     def set_viewer(self):
         """Create the viewer."""
@@ -234,8 +233,10 @@ class VecTask(Env):
         # allocate buffers
         self.obs_buf = torch.zeros(
             (self.num_envs, self.num_obs), device=self.device, dtype=torch.float)
-        self.states_buf = torch.zeros(
-            (self.num_envs, self.num_states), device=self.device, dtype=torch.float)
+        if self.num_privileged_obs is not None:
+            self.privileged_obs_buf = torch.zeros(self.num_envs, self.num_privileged_obs, device=self.device, dtype=torch.float)
+        else: 
+            self.privileged_obs_buf = None
         self.rew_buf = torch.zeros(
             self.num_envs, device=self.device, dtype=torch.float)
         self.reset_buf = torch.ones(
@@ -283,10 +284,6 @@ class VecTask(Env):
             quit()
 
         return sim
-
-    def get_state(self):
-        """Returns the state buffer of the environment (the priviledged observations for asymmetric training)."""
-        return torch.clamp(self.states_buf, -self.clip_obs, self.clip_obs).to(self.rl_device)
 
     @abc.abstractmethod
     def pre_physics_step(self, actions: torch.Tensor):
@@ -339,13 +336,9 @@ class VecTask(Env):
 
         self.extras["time_outs"] = self.timeout_buf.to(self.rl_device)
 
-        self.obs_dict["obs"] = torch.clamp(self.obs_buf, -self.clip_obs, self.clip_obs).to(self.rl_device)
+        self.obs_buf = torch.clamp(self.obs_buf, -self.clip_obs, self.clip_obs).to(self.rl_device)
 
-        # asymmetric actor-critic
-        if self.num_states > 0:
-            self.obs_dict["states"] = self.get_state()
-
-        return self.obs_dict, self.rew_buf.to(self.rl_device), self.reset_buf.to(self.rl_device), self.extras
+        return self.obs_buf, self.privileged_obs_buf, self.rew_buf.to(self.rl_device), self.reset_buf.to(self.rl_device), self.extras
 
     def zero_actions(self) -> torch.Tensor:
         """Returns a buffer with zero actions.
@@ -367,13 +360,9 @@ class VecTask(Env):
         # step the simulator
         self.step(zero_actions)
 
-        self.obs_dict["obs"] = torch.clamp(self.obs_buf, -self.clip_obs, self.clip_obs).to(self.rl_device)
+        self.obs_buf = torch.clamp(self.obs_buf, -self.clip_obs, self.clip_obs).to(self.rl_device)
 
-        # asymmetric actor-critic
-        if self.num_states > 0:
-            self.obs_dict["states"] = self.get_state()
-
-        return self.obs_dict
+        return self.obs_buf, self.privileged_obs_buf
 
     def render(self):
         """Draw the frame to the viewer, and check for keyboard events."""

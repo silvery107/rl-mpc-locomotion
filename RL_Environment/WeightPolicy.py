@@ -5,6 +5,7 @@ import inspect
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parentdir = os.path.dirname(currentdir)
 os.sys.path.insert(0, parentdir)
+
 import torch
 import time
 import numpy as np
@@ -15,17 +16,19 @@ from MPC_Controller.Parameters import Parameters
 from MPC_Controller.utils import DTYPE
 from MPC_Controller.common.StateEstimator import StateEstimate
 
-from RL_Environment.utils.reformat import omegaconf_to_dict, print_dict
+from RL_Environment.utils.utils import set_seed
+from RL_Environment.utils.rsl_rl_utils import update_cfg_from_args, class_to_dict, get_load_path
+from RL_Environment.tasks.legged_config_ppo import LeggedCfgPPO
 
-from rl_games.algos_torch.model_builder import ModelBuilder
-from rl_games.algos_torch.running_mean_std import RunningMeanStd
-from rl_games.algos_torch import torch_ext
+from extern.rsl_rl.rsl_rl.modules import ActorCritic
 
 ## OmegaConf & Hydra Config
 OmegaConf.register_new_resolver('eq', lambda x, y: x.lower()==y.lower())
 OmegaConf.register_new_resolver('contains', lambda x, y: x.lower() in y.lower())
 OmegaConf.register_new_resolver('if', lambda pred, a, b: a if pred else b)
 OmegaConf.register_new_resolver('resolve_default', lambda default, arg: default if arg=='' else arg)
+
+ROOT_DIR = os.path.dirname(os.path.realpath(__file__)) # Under <RL_Environment>
 
 class WeightPolicy:
     def __init__(self, 
@@ -37,6 +40,7 @@ class WeightPolicy:
         self.num_obs = 48
         self.device = "cuda" 
         self.is_determenistic = True
+        self.clip_actions = True
 
         # hydra global initialization
         initialize(config_path="./cfg")
@@ -52,71 +56,50 @@ class WeightPolicy:
         # cfg_dict = omegaconf_to_dict(cfg)
         # print_dict(cfg_dict)
 
+        cfg.seed = set_seed(cfg.seed, torch_deterministic=cfg.torch_deterministic)
         # ensure checkpoints can be specified as relative paths
         if cfg.checkpoint:
             cfg.checkpoint = to_absolute_path(cfg.checkpoint)
 
-        rlg_config_dict = omegaconf_to_dict(cfg.train)
-        
-        # prepare config and params dict
-        params = rlg_config_dict['params']
-        config = params['config']
-        model_builder = ModelBuilder()
-        config['network'] = model_builder.load(params)
-    
-        print('Found checkpoint:')
-        print(params['load_path'])
-        load_path = params['load_path']
-        num_agents = config['num_actors']
+        train_cfg = LeggedCfgPPO()
+        train_cfg = update_cfg_from_args(train_cfg, cfg)
+        train_cfg_dict = class_to_dict(train_cfg)
+        policy_cfg = train_cfg_dict["policy"]
+        self.actor_critic = ActorCritic(self.num_obs,
+                                        self.num_obs,
+                                        self.num_actions,
+                                        **policy_cfg).to(self.device)
 
-        obs_shape = (self.num_obs,)
+        # load checkpoint
+        try:
+            print(f"Loading model from: {cfg.checkpoint}")
+            loaded_dict = torch.load(checkpoint)
+            self.actor_critic.load_state_dict(loaded_dict['model_state_dict'])
+        except:
+            print("Failed...")
+            log_root = os.path.join(ROOT_DIR, 'runs', cfg.task_name)
+            fallback_path = get_load_path(log_root)
+            print(f"Loading model from the latest run: {fallback_path}")
+            loaded_dict = torch.load(fallback_path)
+            self.actor_critic.load_state_dict(loaded_dict['model_state_dict'])
 
-        self.clip_actions = config.get('clip_actions', True)
-        self.normalize_input = config['normalize_input']
+        self.actor_critic.eval()
+        self.actor_critic.to(self.device)
+        self.policy = self.actor_critic.act_inference
 
-        # use model directly
-        state_dict_ckpt = torch_ext.load_checkpoint(load_path)
-        # load model
-        self.model = config['network'].build({
-                'actions_num' : self.num_actions,
-                'input_shape' : obs_shape,
-                'num_seqs' : num_agents
-            })
-        self.model.to(self.device)
-        self.model.eval()
-        self.model.load_state_dict(state_dict_ckpt['model'])
-        # load obs normalizer
-        if self.normalize_input:
-            self.running_mean_std = RunningMeanStd(obs_shape).to(self.device)
-            self.running_mean_std.eval()
-            self.running_mean_std.load_state_dict(state_dict_ckpt['running_mean_std'])
-
-        self.num_agents = num_agents
+        self.num_agents = 1
         self.obs = torch.ones([self.num_agents, self.num_obs], 
                               requires_grad=False, dtype=torch.float, device=self.device)
 
     def step(self):
         obs = self._preproc_obs(self.obs)
         # get action
-        input_dict = {
-            'is_train': False,
-            'prev_actions': None, 
-            'obs' : obs,
-            'rnn_states' : None
-        }
 
         t_start = time.time()
         with torch.no_grad():
-            res_dict = self.model(input_dict)
+            current_action = self.policy(obs.detach())
         if Parameters.policy_print_time:
             print("Model Inference Time: {:.5f}".format(time.time()-t_start))
-
-        if self.is_determenistic:
-            # determenistic action
-            current_action = res_dict['mus']
-        else:
-            # non-determenistic action
-            current_action = res_dict['actions']
 
         # clip actions to (-1, 1)
         if self.clip_actions:
@@ -168,11 +151,7 @@ class WeightPolicy:
         else:
             if obs_batch.dtype == torch.uint8:
                 obs_batch = obs_batch.float() / 255.0
-                
-        # normalize obs
-        if self.normalize_input:
-            with torch.no_grad():
-                obs_batch = self.running_mean_std(obs_batch)
+
         return obs_batch
 
     def _rescale_actions(self, low, high, action):
