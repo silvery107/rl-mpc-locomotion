@@ -9,3 +9,6 @@
 	path = extern/eigen3
 	url = https://gitlab.com/libeigen/eigen.git
 	branch = 3.3
+[submodule "extern/rsl_rl"]
+	path = extern/rsl_rl
+	url = https://github.com/leggedrobotics/rsl_rl.git
