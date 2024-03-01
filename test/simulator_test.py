@@ -61,12 +61,6 @@ while not gym.query_viewer_has_closed(viewer):
     # Back
     # *Zero Pose
     # targets = np.zeros(12, dtype=np.float32)
-    # *Anymal Stand Pose
-    # targets = np.array([0.03, 0.4, -0.8,
-    #                     0.03, -0.4, 0.8,
-    #                     -0.03, 0.4, -0.8,
-    #                     -0.03, -0.4, 0.8],
-    #                     dtype=np.float32)
     # *Aliengo Stand Pose
     targets = np.array([0, 0.8, -1.6,
                         0, 0.8, -1.6,

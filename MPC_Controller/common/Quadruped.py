@@ -6,7 +6,6 @@ from MPC_Controller.utils import DTYPE
 class RobotType(Enum):
     ALIENGO = auto()
     # MINI_CHEETAH = auto()
-    # ANYMAL = auto()
     A1 = auto()
     GO1 = auto()
 
