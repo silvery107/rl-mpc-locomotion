@@ -15,7 +15,7 @@ from MPC_Controller.robot_runner.RobotRunnerMin import RobotRunnerMin
 from MPC_Controller.Parameters import Parameters
 from MPC_Controller.utils import DTYPE
 
-from sim_utils import ALIENGO, add_random_uniform_terrain, add_uneven_terrains
+from RL_Environment.sim_utils import ALIENGO, add_random_uniform_terrain, add_uneven_terrains
 from .base.vec_task import VecTask
 
 
