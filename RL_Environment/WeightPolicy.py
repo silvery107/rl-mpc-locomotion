@@ -20,7 +20,7 @@ from RL_Environment.utils.utils import set_seed
 from RL_Environment.utils.rsl_rl_utils import update_cfg_from_args, class_to_dict, get_load_path
 from RL_Environment.tasks.legged_config_ppo import LeggedCfgPPO
 
-from extern.rsl_rl.rsl_rl.modules import ActorCritic
+from rsl_rl.modules import ActorCritic
 
 ## OmegaConf & Hydra Config
 OmegaConf.register_new_resolver('eq', lambda x, y: x.lower()==y.lower())

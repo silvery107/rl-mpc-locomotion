@@ -1,7 +1,8 @@
 import isaacgym
 from datetime import datetime
 
-from extern.rsl_rl.rsl_rl.runners import OnPolicyRunner
+from rsl_rl.runners import OnPolicyRunner
+from MPC_Controller.Parameters import Parameters
 
 import os
 import hydra
@@ -88,4 +89,5 @@ def launch_hydra(cfg: DictConfig):
 
 
 if __name__ == '__main__':
+    Parameters.bridge_MPC_to_RL = True
     launch_hydra()

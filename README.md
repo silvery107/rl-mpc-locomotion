@@ -20,16 +20,22 @@ The RL training utilizes the [NVIDIA Isaac Gym](https://developer.nvidia.com/isa
 1. Clone this repository
     ```bash
     git clone git@github.com:silvery107/rl-mpc-locomotion.git
+    ```
+2. Initialize submodules
+   ```bash
     git submodule update --init
     ```
-    Or use the `--recurse` option to clone submodules at the same time.
-
+    Or use the `--recurse` option in step 1 to clone submodules at the same time.
 3. Create the conda environment:
     ```bash
     conda env create -f environment.yml
     ```
-
-2. Install the python binding of the MPC solver:
+4. Install `rsl_rl` at commit [2ad79cf](2ad79cf0caa85b91721abfe358105f869a784121) under `<extern>` folder
+   ```bash
+   cd extern/rsl_rl
+   pip install -e .
+   ```
+5. Compile python binding of the MPC solver:
     ```bash
     pip install -e .
     ```
@@ -50,7 +56,6 @@ The RL training utilizes the [NVIDIA Isaac Gym](https://developer.nvidia.com/isa
         > Press `RB` to switch FSM states between `Locomotion` and `Recovery Stand`
 
 2. Train a new policy:
-    Set `bridge_MPC_to_RL` to `True` in `<MPC_Controller/Parameters.py>`
     ```bash
     cd RL_Environment
     python train.py task=Aliengo headless=False
