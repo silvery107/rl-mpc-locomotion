@@ -28,8 +28,6 @@
 
 from typing import Dict, Any, Tuple
 
-import gym
-
 from isaacgym import gymtorch, gymapi
 from isaacgym.torch_utils import to_torch
 from isaacgym.gymutil import get_property_setter_map, get_property_getter_map, get_default_setter_args, apply_random_samples, check_buckets, generate_random_samples
@@ -114,12 +112,12 @@ class Env(ABC):
         """
 
     @property
-    def observation_space(self) -> gym.Space:
+    def observation_space(self):
         """Get the environment's observation space."""
         return self.obs_space
 
     @property
-    def action_space(self) -> gym.Space:
+    def action_space(self):
         """Get the environment's action space."""
         return self.act_space
 
