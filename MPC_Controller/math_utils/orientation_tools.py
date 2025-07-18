@@ -67,8 +67,8 @@ class Quaternion:
         return Quaternion(-self.w,self.x,self.y,self.z)
 
     def inverse(self):
-        n2 = self.norm ** 2
-        return Quaternion(self.w / n2, -self.x / n2, -self.y / n2, -self.z / n2)
+        norm_sq = self.norm ** 2
+        return Quaternion(self.w / norm_sq, -self.x / norm_sq, -self.y / norm_sq, -self.z / norm_sq)
     
     def __str__(self) -> str:
         return '['+str(self.w)+', '+str(self.x)+', '+str(self.y)+', '+str(self.z)+']'
