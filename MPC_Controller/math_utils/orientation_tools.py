@@ -36,20 +36,28 @@ def coordinateRotation(axis:CoordinateAxis, theta:float) -> np.ndarray:
     return R
 
 class Quaternion:
-    def __init__(self, w:float=1, x:float=0, y:float=0, z:float=0):
+    def __init__(self, w: float = 1, x: float = 0, y: float = 0, z: float = 0):
         self.w = float(w)
         self.x = float(x)
         self.y = float(y)
         self.z = float(z)
-        self._norm = np.sqrt(self.w*self.w+self.x*self.x+self.y*self.y+self.z*self.z, dtype=DTYPE)
+
+    @property
+    def norm(self) -> float:
+        """Return the quaternion magnitude."""
+        return float(np.sqrt(
+            self.w * self.w + self.x * self.x + self.y * self.y + self.z * self.z,
+            dtype=DTYPE,
+        ))
 
     def toNumpy(self):
         """convert to an (4,1) numpy array"""
         return np.array([self.w,self.x,self.y,self.z], dtype=DTYPE).reshape((4,1))
     
     def unit(self):
-        """return the unit quaternion"""
-        return Quaternion(self.w/self._norm,self.x/self._norm,self.y/self._norm,self.z/self._norm)
+        """Return the normalized quaternion."""
+        n = self.norm
+        return Quaternion(self.w / n, self.x / n, self.y / n, self.z / n)
 
     def conjugate(self):
         return Quaternion(self.w, -self.x, -self.y, -self.z)
@@ -59,7 +67,8 @@ class Quaternion:
         return Quaternion(-self.w,self.x,self.y,self.z)
 
     def inverse(self):
-        return Quaternion(self.w/(self._norm*self._norm),-self.x/(self._norm*self._norm),-self.y/(self._norm*self._norm),-self.z/(self._norm*self._norm))
+        n2 = self.norm ** 2
+        return Quaternion(self.w / n2, -self.x / n2, -self.y / n2, -self.z / n2)
     
     def __str__(self) -> str:
         return '['+str(self.w)+', '+str(self.x)+', '+str(self.y)+', '+str(self.z)+']'
